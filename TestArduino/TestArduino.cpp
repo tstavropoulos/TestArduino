@@ -104,30 +104,6 @@ int _tmain(int argc, _TCHAR* argv[])
 			}
 
 			vRunTimes.push_back(elapsed);
-
-			/*
-			char buffer[256] = "";
-			memset(&buffer[0], 0, sizeof(buffer));
-
-
-			sprintf_s(buffer, "%llums", elapsed);
-
-			if (bPrintedOther)
-			{
-				bPrintedOther = false;
-				printf("\n");
-			}
-			int decplace = strlen(buffer) - 5;
-			for (unsigned int i = 0; i < strlen(buffer); i++)
-			{
-				if (i == decplace)
-				{
-					printf(".");
-				}
-				printf("%c", buffer[i]);
-			}
-			printf("\n");
-			*/
 		}
 	}
 
