@@ -47,3 +47,7 @@ The likely cuplrit in MatLab's case is likey Garbage Collection, and there's not
 ##Known Issues
 
 * Sometimes the program will either fail to find or fail to connect to the Arduino.  In many cases, this seems to be because some remnants of old messages trickle in.  Peculiar.  Working on increasing the consistency of operation, but in general it seems pretty good.  Play with timing to help address this.
+
+##To Do
+
+* Create a Unix platform option.  Current Windows dependenices exist only in Serial.h, Serial.cpp, and CoreFunctions.cpp.
