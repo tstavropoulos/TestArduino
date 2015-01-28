@@ -43,3 +43,7 @@ The same hardware and software communicating with MatLab, however saw these char
 
 The likely cuplrit in MatLab's case is likey Garbage Collection, and there's not a lot we can do about that.  In any case, since Matlab is required for the task, the best solution may be to open a connection between MatLab and the C++ application, and let C++ handle the Computer<->Arduino communication.
 
+
+##Known Issues
+
+* Sometimes the program will either fail to find or fail to connect to the Arduino.  In many cases, this seems to be because some remnants of old messages trickle in.  Peculiar.  Working on increasing the consistency of operation, but in general it seems pretty good.  Play with timing to help address this.
