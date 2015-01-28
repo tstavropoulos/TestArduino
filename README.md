@@ -1,6 +1,7 @@
 # TestArduino
 
-A C++ application to interface with an Arduino.
+###A C++ application to interface with an Arduino.
+
 TargetPlatform: Windows. (Hghly OS-specific COM Port API)
 
 Design in progress on low-latency Arduino-PC communication software.
