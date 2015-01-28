@@ -13,7 +13,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{EC22156E-5793-4088-8598-06C18E2BCBB5}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>PingArduino</RootNamespace>
+    <RootNamespace>TestArduino</RootNamespace>
     <ProjectName>TestArduino</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
