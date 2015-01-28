@@ -72,8 +72,8 @@ Serial::Serial(LPCWSTR portName, bool bErrorSuppress) : m_bErrorSuppress(bErrorS
 				//If everything went fine we're connected
 				this->connected = true;
 				FlushBuffer();
-				//We wait 2s as the arduino board will be reseting
-				//Sleep(ARDUINO_WAIT_TIME);
+				//We do not need to sleep here, as our first action will be to wait
+				// for communication from the Arduino.
 			}
 		}
 	}

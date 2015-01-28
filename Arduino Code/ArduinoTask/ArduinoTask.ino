@@ -111,16 +111,18 @@ void loop()
 
 void identifyMyself()
 {
+   delay ( 100 ); 
    Serial.print ( arduinoIdentifier );
-   delay ( 500 ); 
+   delay ( 100 ); 
 }
 
 void establishConnection()
 {
    while ( Serial.available() <= 0 )
    {
+      delay ( 200 ); 
       Serial.print ( versionIdentifier );
-      delay ( 1000 ); 
+      delay ( 300 ); 
    }
 
    //Flush the buffer of the initialization character
@@ -140,6 +142,9 @@ void communicateProperties()
         
          switch (inChar)
          {
+            case versionIdentifier:
+               bAck = false;
+               break;
             case cReflectiveInd:
                bAck = true;
                bReflective = true;

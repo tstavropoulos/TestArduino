@@ -2,6 +2,7 @@
 #include "ArduinoClass.h"
 #include <iostream>
 #include <thread>
+#include <algorithm>
 
 const char csInitPhrase[] = "ARDUINO";
 const char csVersionPhrase[] = "C";
@@ -66,9 +67,9 @@ bool Arduino::tryPort(int iPortNum)
 	wchar_t wszPortName[26] = {};
 	wsprintf(wszPortName, L"\\\\.\\COM%u", iPortNum);
 
-	std::unique_ptr<Serial> tryPort = std::make_unique<Serial>(wszPortName, true);
+	Serial testSerial(wszPortName, true);
 
-	return connect(*(tryPort), m_bDebug);
+	return connect(testSerial, m_bDebug);
 }
 
 std::vector<int> Arduino::tryAllPorts(int iPortMax)
@@ -92,6 +93,8 @@ std::vector<int> Arduino::tryAllPorts(int iPortMax)
 	{
 		thread.join();
 	}
+
+	std::sort(std::begin(vSuccessList), std::end(vSuccessList));
 
 	return vSuccessList;
 }
