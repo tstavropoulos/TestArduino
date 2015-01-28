@@ -2,7 +2,7 @@
 
 ###A C++ application to interface with an Arduino.
 
-TargetPlatform: Windows. (Hghly OS-specific COM Port API)
+TargetPlatform: Windows. (Highly OS-specific COM Port API)
 
 Design in progress on low-latency Arduino-PC communication software.
 
