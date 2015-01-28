@@ -1,10 +1,11 @@
 #ifndef ARDUINO_CLASS_H_
 #define ARDUINO_CLASS_H_
 
-#include "SerialClass.h"
 #include <memory>
 #include <vector>
 #include <string>
+
+class Serial;
 
 enum ARDUINO_STATE
 {

@@ -1,5 +1,7 @@
 #include "CoreFunctions.h"
 #include "ArduinoClass.h"
+#include "SerialClass.h"
+
 #include <iostream>
 #include <thread>
 #include <algorithm>
