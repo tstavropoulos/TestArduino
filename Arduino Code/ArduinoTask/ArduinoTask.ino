@@ -16,6 +16,9 @@
 
 const char *arduinoIdentifier = "ARDUINO";
 
+//restart function
+void(* resetFunc) (void) = 0;
+
 //Use this to ensure that mutually incompatible MatLab code and Arduino software aren't used together
 const char versionIdentifier = 'C';
 
@@ -31,6 +34,8 @@ const char cMasterInd = 'M';
 const char cSlaveInd = 'S';
 ////The cFinishedInd character indicates you are Finished setting properties.
 const char cFinishedInd = 'F';
+////The cRestartChar causes the Arduino to restart
+const char cRestartChar = '~';
 ////The cAck character is used as a reply to acknowledge a property.
 const char cAck = 'A';
 
@@ -69,10 +74,10 @@ void setup()
    Serial.begin(115200);
    
    millisLastFrame=0;
+   
+   establishConnection();
 
    identifyMyself();
-
-   establishConnection();
 
    communicateProperties();
    
@@ -109,24 +114,38 @@ void loop()
    millisLastFrame=millisThisFrame;
 }
 
+void establishConnection()
+{
+   bool bFinished = false;
+   
+   while ( !bFinished )
+   {   
+      while ( Serial.available() <= 0 )
+      {
+         delay ( 200 ); 
+         Serial.print ( versionIdentifier );
+         delay ( 300 ); 
+      }
+   
+      //Flush the buffer of the initialization character
+      char tmpChar = Serial.read();
+      
+      if ( tmpChar == cRestartChar )
+      {
+         resetFunc();
+      }
+      else
+      {
+         bFinished = true;
+      }
+   }
+}
+
 void identifyMyself()
 {
    delay ( 100 ); 
    Serial.print ( arduinoIdentifier );
    delay ( 100 ); 
-}
-
-void establishConnection()
-{
-   while ( Serial.available() <= 0 )
-   {
-      delay ( 200 ); 
-      Serial.print ( versionIdentifier );
-      delay ( 300 ); 
-   }
-
-   //Flush the buffer of the initialization character
-   Serial.read();
 }
 
 void communicateProperties()
@@ -164,6 +183,9 @@ void communicateProperties()
             case cFinishedInd:
                bAck = true;
                bFinished = true;
+               break;
+            case cRestartChar:
+               resetFunc();
                break;
             default:
                bAck = false;
@@ -237,6 +259,11 @@ void HandleSerialComm()
 void HandleSerialCommMaster()
 {
    char inSerial = Serial.read();
+   
+   if ( inSerial == cRestartChar )
+   {
+      resetFunc();
+   }
 
    if ( bReflective )
    {

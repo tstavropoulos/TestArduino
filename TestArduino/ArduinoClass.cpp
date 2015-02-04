@@ -14,6 +14,7 @@ const char csMasterPhrase[] = "M";
 const char csSlavePhrase[] = "S";
 const char csFinishedPhrase[] = "F";
 const char csAckPhrase[] = "A";
+const char csRestartPhrase[] = "~";
 
 
 
@@ -70,8 +71,16 @@ bool Arduino::tryPort(int iPortNum)
 	wsprintf(wszPortName, L"\\\\.\\COM%u", iPortNum);
 
 	Serial testSerial(wszPortName, true);
+	if (confirmVersion(testSerial, false))
+	{
+		if (connect(testSerial, m_bDebug))
+		{
+			testSerial.WriteData(csRestartPhrase);
+			return true;
+		}
+	}
 
-	return connect(testSerial, m_bDebug);
+	return false;
 }
 
 std::vector<int> Arduino::tryAllPorts(int iPortMax)
@@ -109,8 +118,8 @@ bool Arduino::connectPort(int iPortNum)
 
 	m_pSerial = std::make_unique<Serial>(wszPortName);
 
-	if (!connect(*(m_pSerial), true) ||
-		!confirmVersion(*(m_pSerial), true) ||
+	if (!confirmVersion(*(m_pSerial), true) || 
+		!connect(*(m_pSerial), true) ||
 		!sendParameters(*(m_pSerial), true))
 	{
 		disconnect();
@@ -125,11 +134,12 @@ bool Arduino::connect(Serial &rSerial, bool bPrintErrors)
 	if (rSerial.IsConnected())
 	{
 		char incomingData[256] = "";
-		rSerial.WaitReadData(incomingData, 7, 4000);
+
+		rSerial.WaitReadData(incomingData, 7, 1000);
 
 		if (strcmp(incomingData, csInitPhrase) == 0)
 		{
-			m_eState = ARDUINO_STATE::CONFIRM_VERSION;
+			m_eState = ARDUINO_STATE::SEND_PARAMETERS;
 			return true;
 		}
 		else if (bPrintErrors)
@@ -160,11 +170,11 @@ bool Arduino::confirmVersion(Serial &rSerial, bool bPrintErrors)
 	if (rSerial.IsConnected())
 	{
 		char szBuffer[2] = "";
-		rSerial.WaitReadData(szBuffer, 1, 1000);
+		rSerial.WaitReadData(szBuffer, 1, 6000);
 		if (strcmp(szBuffer, csVersionPhrase) == 0)
 		{
 			rSerial.WriteData(csVersionPhrase);
-			m_eState = ARDUINO_STATE::SEND_PARAMETERS;
+			m_eState = ARDUINO_STATE::CONFIRM_VERSION;
 			return true;
 		}
 		else if (bPrintErrors)
@@ -186,6 +196,7 @@ bool Arduino::disconnect()
 {
 	if (m_pSerial && m_pSerial->IsConnected())
 	{
+		m_pSerial->WriteData(csRestartPhrase);
 		m_pSerial.release();
 		m_pSerial = nullptr;
 	}
