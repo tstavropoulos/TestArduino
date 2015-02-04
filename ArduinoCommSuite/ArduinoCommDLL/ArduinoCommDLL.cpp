@@ -13,6 +13,7 @@
 
 namespace SerialComm
 {
+	Arduino ArduinoComm::m_sArduino;
 	bool ArduinoComm::m_bInitialized = false;
 	
 	bool ArduinoComm::Init()
@@ -23,24 +24,54 @@ namespace SerialComm
 	bool ArduinoComm::Connect(int iPortNum)
 	{
 		inittest();
-		
+		return m_sArduino.connectPort(iPortNum);
 	}
 
 	bool ArduinoComm::SendChar(const char ccMessage)
 	{
 		inittest();
+		bool bConnected = m_sArduino.IsConnected();
+		if (bConnected)
+		{
+			m_sArduino.WriteChars(&ccMessage, 1);
+		}
 
+		return bConnected;
 	}
 
-	bool ArduinoComm::SendString(const char *cszMessage)
+	bool ArduinoComm::SendString(const char *cszMessage, int iLength)
 	{
 		inittest();
+		bool bConnected = m_sArduino.IsConnected();
+		if (bConnected)
+		{
+			m_sArduino.WriteChars(cszMessage, iLength);
+		}
 
+		return bConnected;
 	}
 
 	bool ArduinoComm::SendString(const std::string csMessage)
 	{
 		inittest();
+		bool bConnected = m_sArduino.IsConnected();
+		if (bConnected)
+		{
+			m_sArduino.WriteString(csMessage);
+		}
+
+		return bConnected;
+	}
+
+	int ArduinoComm::GetCharAvailable()
+	{
+		inittest();
+		if (m_sArduino.IsConnected())
+		{
+			return m_sArduino.QueuedCharacters();
+		}
+
+		return -1;
 	}
 
 	bool ArduinoComm::Disconnect()

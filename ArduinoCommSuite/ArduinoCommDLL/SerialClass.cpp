@@ -130,6 +130,19 @@ int Serial::ReadData(char *buffer, unsigned int nbChar)
 	return -1;
 }
 
+int Serial::CharsInQueue()
+{
+	//Number of bytes we'll have read
+	DWORD bytesRead;
+	//Number of bytes we'll really ask to read
+	unsigned int toRead;
+
+	//Use the ClearCommError function to get status info on the Serial port
+	ClearCommError(this->hSerial, &this->errors, &this->status);
+
+	return this->status.cbInQue;
+}
+
 bool Serial::FlushBuffer()
 {
 	return (bool)PurgeComm(this->hSerial, PURGE_RXCLEAR | PURGE_TXCLEAR);

@@ -14,3 +14,7 @@
 Release
 Debug
 /*.sdf
+/ArduinoCommSuite/*.opensdf
+/ArduinoCommSuite/*.sdf
+/ArduinoCommSuite/*.suo
+/ArduinoCommSuite/ipch/arduinocommdll-e08f06db/arduinocommdll-aedf6606.ipch

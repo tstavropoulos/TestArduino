@@ -49,6 +49,8 @@ public:
 	bool FlushBuffer();
 	//Find out the port name
 	void GetPortName(std::wstring &sName);
+	//Return the number of characters in the queue
+	int CharsInQueue();
 };
 
 #endif // SERIALCLASS_H_INCLUDED

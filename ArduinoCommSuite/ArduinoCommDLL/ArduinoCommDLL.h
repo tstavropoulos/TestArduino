@@ -10,6 +10,7 @@
 #endif
 
 #include <string>
+#include "ArduinoClass.h"
 
 namespace SerialComm
 {
@@ -20,13 +21,15 @@ namespace SerialComm
 
 		static ARDUINOCOMMDLL_API bool Connect(int iPortNum);
 		static ARDUINOCOMMDLL_API bool SendChar(const char ccMessage);
-		static ARDUINOCOMMDLL_API bool SendString(const char *cszMessage);
+		static ARDUINOCOMMDLL_API bool SendString(const char *cszMessage, int iLength);
 		static ARDUINOCOMMDLL_API bool SendString(const std::string csMessage);
+
+		static ARDUINOCOMMDLL_API int GetCharAvailable();
 
 		static ARDUINOCOMMDLL_API bool Disconnect();
 	protected:
 		static bool m_bInitialized;
-		static 
+		static Arduino m_sArduino;
 	};
 
 }

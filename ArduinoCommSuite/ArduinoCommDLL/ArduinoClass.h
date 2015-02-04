@@ -40,6 +40,7 @@ public:
 
 	bool WaitReadData(char *buffer, unsigned int nbChar, unsigned long long ullMaxWait);
 	int ReadData(char *buffer, unsigned int nbChar);
+	int QueuedCharacters();
 
 protected:
 	 std::unique_ptr<Serial> m_pSerial;

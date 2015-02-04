@@ -305,3 +305,13 @@ int Arduino::ReadData(char *buffer, unsigned int nbChar)
 
 	return -1;
 }
+
+int Arduino::QueuedCharacters()
+{
+	if (m_pSerial && m_pSerial->IsConnected() && m_eState == ARDUINO_STATE::CONNECTED)
+	{
+		return m_pSerial->CharsInQueue;
+	}
+
+	return -1;
+}
