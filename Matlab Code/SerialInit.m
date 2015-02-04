@@ -74,11 +74,12 @@ function SerialInit(bRefl,bPair,bMaster)
 		%Initiate the connection
         fopen(serialthing);
 		
+		%The Arduino is configured to send a message when it's ready.  Wait for it.
+		waitForConfirmation();
+		
         %Skip over the Arduino Identity Information
         WaitForMessage(7);
         
-		%The Arduino is configured to send a message when it's ready.  Wait for it.
-		waitForConfirmation();
 		setProperties(bRefl,bPair,bMaster);
 		bCallback = true;
 		
@@ -104,9 +105,11 @@ function outPort = findArduino(baudRate)
             set(ser,'Parity','none');
             set(ser,'Terminator','CR/LF');
             fopen(ser);
+			waitForConfirmation();
             ident = fscanf(ser,'%s',7);
             if strcmp(ident,'ARDUINO')
                outPort = port;
+			   SendMessage('~');
                fclose(ser);
                return;
             end
