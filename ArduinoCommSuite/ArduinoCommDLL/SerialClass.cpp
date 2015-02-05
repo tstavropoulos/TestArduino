@@ -1,5 +1,7 @@
+#include "stdafx.h"
 #include "SerialClass.h"
 #include "CoreFunctions.h"
+using namespace SerialComm;
 
 Serial::Serial(LPCWSTR portName) : Serial(portName, false)
 {
@@ -132,11 +134,6 @@ int Serial::ReadData(char *buffer, unsigned int nbChar)
 
 int Serial::CharsInQueue()
 {
-	//Number of bytes we'll have read
-	DWORD bytesRead;
-	//Number of bytes we'll really ask to read
-	unsigned int toRead;
-
 	//Use the ClearCommError function to get status info on the Serial port
 	ClearCommError(this->hSerial, &this->errors, &this->status);
 

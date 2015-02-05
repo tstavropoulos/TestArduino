@@ -1,21 +1,23 @@
+#include "stdafx.h"
 #include "CoreFunctions.h"
 #include "ArduinoClass.h"
 #include "SerialClass.h"
 
 #include <iostream>
-#include <thread>
-#include <algorithm>
+using namespace SerialComm;
 
-const char csInitPhrase[] = "ARDUINO";
-const char csVersionPhrase[] = "C";
-const char csReflexivePhrase[] = "R";
-const char csPairedPhrase[] = "P";
-const char csMasterPhrase[] = "M";
-const char csSlavePhrase[] = "S";
-const char csFinishedPhrase[] = "F";
-const char csAckPhrase[] = "A";
-const char csRestartPhrase[] = "~";
-
+namespace SerialComm
+{
+	const char csInitPhrase[] = "ARDUINO";
+	const char csVersionPhrase[] = "C";
+	const char csReflexivePhrase[] = "R";
+	const char csPairedPhrase[] = "P";
+	const char csMasterPhrase[] = "M";
+	const char csSlavePhrase[] = "S";
+	const char csFinishedPhrase[] = "F";
+	const char csAckPhrase[] = "A";
+	const char csRestartPhrase[] = "~";
+}
 
 
 #define SENDPARAM(csSendPhrase,csParamName) \
@@ -310,7 +312,7 @@ int Arduino::QueuedCharacters()
 {
 	if (m_pSerial && m_pSerial->IsConnected() && m_eState == ARDUINO_STATE::CONNECTED)
 	{
-		return m_pSerial->CharsInQueue;
+		return m_pSerial->CharsInQueue();
 	}
 
 	return -1;

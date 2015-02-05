@@ -14,3 +14,9 @@
 
 
 // TODO: reference additional headers your program requires here
+#include <string>
+#include <stdexcept>
+#include "ArduinoClass.h"
+#include <math.h>
+#include <thread>
+#include <algorithm>

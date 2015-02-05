@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "ArduinoCommDLL.h"
-#include <stdexcept>
 
 #define inittest() \
 	if (!m_bInitialized) \
@@ -19,6 +18,7 @@ namespace SerialComm
 	bool ArduinoComm::Init()
 	{
 		m_bInitialized = true;
+		return m_bInitialized;
 	}
 
 	bool ArduinoComm::Connect(int iPortNum)
@@ -77,7 +77,7 @@ namespace SerialComm
 	bool ArduinoComm::Disconnect()
 	{
 		inittest();
-
+		return m_sArduino.disconnect();
 	}
 
 }
