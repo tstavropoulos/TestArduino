@@ -1,13 +1,16 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%  Function:  SendMessage( message )
+%  Function:  HandleMessage(message)
 %
-%  Sends the passed in message to the Arduino.
+%  Handle function - Used to process incomming messages.
 %
 %  Global Variables:
 %    Owned:
 %    External:
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function SendMessage( message )
-	calllib('ArduinoCommDLL','SendChars', message, length(message));
+function HandleMessage(message)
+    disp(message);
+    UpdateButtons(message);
 end
+
+

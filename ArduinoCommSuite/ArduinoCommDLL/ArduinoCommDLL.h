@@ -21,7 +21,12 @@ namespace SerialComm
 	public:
 		static ARDUINOCOMMDLL_API bool Init();
 
+		static ARDUINOCOMMDLL_API bool SetProperties(bool bRefl, bool bPaired = false, bool bMaster = false);
+
 		static ARDUINOCOMMDLL_API bool Connect(int iPortNum);
+
+		static ARDUINOCOMMDLL_API void FindArduinos(int *piArduinos, int iMaxPortNum);
+
 		static ARDUINOCOMMDLL_API bool SendChar(const char ccMessage);
 		static ARDUINOCOMMDLL_API bool SendChars(const char *cszMessage, int iLength);
 		static ARDUINOCOMMDLL_API bool SendString(const std::string csMessage);

@@ -8,19 +8,19 @@
 %  Global Variables:
 %    Owned:
 %    External:
-%      Owner: SerialInit
-%        serialthing - A handle to the Serial object created to interface with
-%          the Arduino.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function message = WaitForMessage(bytes)
-	global serialthing;
+	global iWaitTimeOut;
+	global iReadBufferSize;
 	
 	if nargin > 1
 		error('WaitForMessage:TooManyInputs','Supports only 0 or 1 inputs');
 	elseif nargin == 0
-		bytes = 1;
+		message = calllib('ArduinoCommDLL','WaitForChar',iWaitTimeOut);
+	else if nargin == 1
+		pcBuffer = libpointer('int8',zeros(iReadBufferSize,1));
+		calllib('ArduinoCommDLL','WaitForChars',pcBuffer,bytes,iWaitTimeOut);
+		message = pcBuffer.Value';
 	end
-	
-    message = fscanf(serialthing,'%s',bytes);
 end

@@ -6,9 +6,6 @@
 %  Global Variables:
 %    Owned:
 %    External:
-%      Owner: SerialInit
-%        serialthing - A handle to the Serial object created to interface with
-%          the Arduino.
 %      Owner: Init
 %        bCallback - Can be used to disable the callback.
 %

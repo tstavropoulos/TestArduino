@@ -22,10 +22,36 @@ namespace SerialComm
 		return m_bInitialized;
 	}
 
+	bool ArduinoComm::SetProperties(bool bRefl, bool bPaired, bool bMaster)
+	{
+		inittest();
+		m_sArduino.setReflexivity(bRefl);
+
+		if (bPaired)
+		{
+			m_sArduino.setPairedness(bPaired, bMaster);
+		}
+
+		return true;
+	}
+
 	bool ArduinoComm::Connect(int iPortNum)
 	{
 		inittest();
 		return m_sArduino.connectPort(iPortNum);
+	}
+
+	void ArduinoComm::FindArduinos(int *piArduinos, int iMaxPortNum)
+	{
+		inittest();
+		std::vector<int> vValidPorts = m_sArduino.tryAllPorts(iMaxPortNum);
+		int index = 0;
+		for (int i : vValidPorts)
+		{
+			piArduinos[index++] = i;
+		}
+
+		return;
 	}
 
 	bool ArduinoComm::SendChar(const char ccMessage)

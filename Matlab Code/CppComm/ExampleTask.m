@@ -8,9 +8,6 @@
 %      bQuit - An exposed variable to allow other scripts to declare the end of
 %        the task.
 %    External:
-%      Owner: SerialInit
-%        serialthing - A handle to the Serial object created to interface with
-%          the Arduino.
 %
 %  Required Functions:
 %    Init
@@ -22,7 +19,6 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 global bQuit;
-global serialthing;
 
 
 bQuit = false;

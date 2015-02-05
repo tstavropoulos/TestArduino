@@ -1,13 +1,18 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%  Function:  SendMessage( message )
+%  Function:  MessageMonitor(~)
 %
-%  Sends the passed in message to the Arduino.
+%  Monitors Serial Communication.
+%    RegisterUpdate ( @MessageMonitor );
 %
 %  Global Variables:
 %    Owned:
 %    External:
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function SendMessage( message )
-	calllib('ArduinoCommDLL','SendChars', message, length(message));
+function MessageMonitor(~)
+	
+	while ( SerialDataAvail() )
+		HandleMessage ( ReadChar() );
+	end
 end
+
