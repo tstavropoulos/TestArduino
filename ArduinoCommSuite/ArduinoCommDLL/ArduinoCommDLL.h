@@ -9,6 +9,9 @@
 #define ARDUINOCOMMDLL_API __declspec(dllimport)
 #endif
 
+#include "ArduinoClass.h"
+#include <string>
+
 namespace SerialComm
 {
 	class Arduino;
