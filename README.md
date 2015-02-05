@@ -6,6 +6,11 @@ TargetPlatform: Windows. (Highly OS-specific COM Port API)
 
 Design in progress on low-latency Arduino-PC communication software.
 
+Communication is available in three flavors:
+* MatLab's Java-Based Serial package
+* Native C++/WinAPI serial communicaiton
+* C++/WinAPI DLL to import into MatLab
+
 ##Purpose
 
 The ultimate intended purpose is scientific data acquisition (at a 2% the cost, with comparable effort).
@@ -14,11 +19,11 @@ The Arduino connects to the PC via USB cable.  The design has been tested succes
 
 The original usecase is an interactive psychology experiment (explaining some of the quirks of the naming conventions in the Arduino sketch).
 
-Matlab-Arduino interface (via COM port, not the available MatLab sketch) is also in development.
+Matlab-Arduino interface (via COM port, not the widely available (and slow) MatLab sketch) is also in development.
 
 ##Install
 
-The C++ software was developed on a Windows 8 machine with Visual Studio 2013.  Outside of this platform, your mileage may vary.  No special API needed, as far as I am aware, outside of the default installs.  Probably WinAPI or something of the sort.
+The C++ software was developed on a Windows 8.1 machine with Visual Studio 2013.  Outside of this platform, your mileage may vary.  No special API needed, as far as I am aware, outside of the default installs.  Probably WinAPI or something of the sort.
 
 The Arduino sketches can be flashed to any Arduino-compatible device with the Arduino IDE.
 
@@ -41,13 +46,14 @@ The same hardware and software communicating with MatLab, however saw these char
 * Standard Deviation of Response Time:  3.000 ms  !!UPDATE!!
 * Max Response Time:                   22.000 ms  !!UPDATE!!
 
-The likely cuplrit in MatLab's case is likey Garbage Collection, and there's not a lot we can do about that.  In any case, since Matlab is required for the task, the best solution may be to open a connection between MatLab and the C++ application, and let C++ handle the Computer<->Arduino communication.
+The likely cuplrit in MatLab's case is likey Garbage Collection [update: perhaps not].  In an attempt to improve performance, the C++ application has been ported to a static library that MatLab can import.  Now we can let MatLab run the task and let C++ handle the Computer<->Arduino communication.
 
 
 ##Known Issues
 
-* Sometimes the program will either fail to find or fail to connect to the Arduino.  In many cases, this seems to be because some remnants of old messages trickle in.  Peculiar.  Working on increasing the consistency of operation, but in general it seems pretty good.  Play with timing to help address this.
+* The Arduino devices occasionally don't reset properly between connections, leading to inconsistent behavior.
 
 ##To Do
 
 * Create a Unix platform option.  Current Windows dependenices exist only in Serial.h, Serial.cpp, and CoreFunctions.cpp.
+* Test the MatLab-DLL communication option.  Yes, it is currently entirely untested.
