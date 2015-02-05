@@ -18,3 +18,4 @@ Debug
 /ArduinoCommSuite/*.sdf
 /ArduinoCommSuite/*.suo
 /ArduinoCommSuite/ipch/arduinocommdll-e08f06db/arduinocommdll-aedf6606.ipch
+/ArduinoCommSuite/ipch/arduinocommdll-e08f06db/*.ipch
