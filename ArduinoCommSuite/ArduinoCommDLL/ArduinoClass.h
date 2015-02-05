@@ -40,8 +40,16 @@ namespace SerialComm
 		void WriteString(std::string sString);
 		void WriteChars(const char *szMessage, int iLength);
 
-		bool WaitReadData(char *buffer, unsigned int nbChar, unsigned long long ullMaxWait);
 		int ReadData(char *buffer, unsigned int nbChar);
+		int ReadData(std::string &sBuffer);
+		char ReadChar();
+
+		bool WaitReadData(char *buffer, unsigned int nbChar, unsigned long long ullMaxWait);
+		char WaitReadChar(unsigned long long ullMaxWait);
+		bool WaitReadData(std::string &sBuffer, unsigned int nbChar, unsigned long long ullMaxWait);
+
+
+
 		int QueuedCharacters();
 
 	protected:

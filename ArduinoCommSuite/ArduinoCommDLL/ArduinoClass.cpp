@@ -298,6 +298,31 @@ bool Arduino::WaitReadData(char *buffer, unsigned int nbChar, unsigned long long
 	return false;
 }
 
+char Arduino::WaitReadChar(unsigned long long ullMaxWait)
+{
+	if (m_pSerial && m_pSerial->IsConnected() && m_eState == ARDUINO_STATE::CONNECTED)
+	{
+		char buffer[2];
+		m_pSerial->WaitReadData(buffer, 1, ullMaxWait);
+		return buffer[0];
+	}
+
+	return '\0';
+}
+
+bool Arduino::WaitReadData(std::string &sBuffer, unsigned int nbChar, unsigned long long ullMaxWait)
+{
+	if (m_pSerial && m_pSerial->IsConnected() && m_eState == ARDUINO_STATE::CONNECTED)
+	{
+		char buffer[1024];
+		bool bStatus = m_pSerial->WaitReadData(buffer, 1024, ullMaxWait);
+		sBuffer = buffer;
+		return bStatus;
+	}
+
+	return false;
+}
+
 int Arduino::ReadData(char *buffer, unsigned int nbChar)
 {
 	if (m_pSerial && m_pSerial->IsConnected() && m_eState == ARDUINO_STATE::CONNECTED)
@@ -306,6 +331,31 @@ int Arduino::ReadData(char *buffer, unsigned int nbChar)
 	}
 
 	return -1;
+}
+
+int Arduino::ReadData(std::string &sBuffer)
+{
+	if (m_pSerial && m_pSerial->IsConnected() && m_eState == ARDUINO_STATE::CONNECTED)
+	{
+		char buffer[1024];
+		int iRead = m_pSerial->ReadData(buffer, 1024);
+		sBuffer = buffer;
+		return iRead;
+	}
+
+	return -1;
+}
+
+char Arduino::ReadChar()
+{
+	if (m_pSerial && m_pSerial->IsConnected() && m_eState == ARDUINO_STATE::CONNECTED)
+	{
+		char buffer[2];
+		m_pSerial->ReadData(buffer, 1);
+		return buffer[0];
+	}
+
+	return '\0';
 }
 
 int Arduino::QueuedCharacters()

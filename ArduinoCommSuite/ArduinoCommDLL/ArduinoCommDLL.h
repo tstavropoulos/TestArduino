@@ -23,10 +23,18 @@ namespace SerialComm
 
 		static ARDUINOCOMMDLL_API bool Connect(int iPortNum);
 		static ARDUINOCOMMDLL_API bool SendChar(const char ccMessage);
-		static ARDUINOCOMMDLL_API bool SendString(const char *cszMessage, int iLength);
+		static ARDUINOCOMMDLL_API bool SendChars(const char *cszMessage, int iLength);
 		static ARDUINOCOMMDLL_API bool SendString(const std::string csMessage);
 
 		static ARDUINOCOMMDLL_API int GetCharAvailable();
+
+		static ARDUINOCOMMDLL_API char ReadChar();
+		static ARDUINOCOMMDLL_API void ReadChars(char *szMessage, int iNumChars);
+		static ARDUINOCOMMDLL_API void ReadString(std::string &sMessage);
+
+		static ARDUINOCOMMDLL_API char WaitForChar(int msTimeout);
+		static ARDUINOCOMMDLL_API int WaitForChars(char *szMessage, int iCharNum, int msTimeout);
+		static ARDUINOCOMMDLL_API int WaitForString(std::string &sMessage, int iCharNum, int msTimeout);
 
 		static ARDUINOCOMMDLL_API bool Disconnect();
 	protected:

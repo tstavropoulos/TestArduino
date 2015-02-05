@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "ArduinoCommDLL.h"
+#include "CoreFunctions.h"
 
 #define inittest() \
 	if (!m_bInitialized) \
@@ -14,7 +15,7 @@ namespace SerialComm
 {
 	Arduino ArduinoComm::m_sArduino;
 	bool ArduinoComm::m_bInitialized = false;
-	
+
 	bool ArduinoComm::Init()
 	{
 		m_bInitialized = true;
@@ -39,7 +40,7 @@ namespace SerialComm
 		return bConnected;
 	}
 
-	bool ArduinoComm::SendString(const char *cszMessage, int iLength)
+	bool ArduinoComm::SendChars(const char *cszMessage, int iLength)
 	{
 		inittest();
 		bool bConnected = m_sArduino.IsConnected();
@@ -78,6 +79,45 @@ namespace SerialComm
 	{
 		inittest();
 		return m_sArduino.disconnect();
+	}
+
+	char ArduinoComm::ReadChar()
+	{
+		inittest();
+		return m_sArduino.ReadChar();
+	}
+
+	void ArduinoComm::ReadChars(char *szMessage, int iNumChars)
+	{
+		inittest();
+		m_sArduino.ReadData(szMessage, iNumChars);
+	}
+
+	void ArduinoComm::ReadString(std::string &sMessage)
+	{
+		inittest();
+		m_sArduino.ReadData(sMessage);
+	}
+
+	char ArduinoComm::WaitForChar(int msTimeout)
+	{
+		inittest();
+		millisecond msProperTimeOut = msTimeout;
+		return m_sArduino.WaitReadChar(msProperTimeOut);
+	}
+
+	int ArduinoComm::WaitForChars(char *szMessage, int iCharNum, int msTimeout)
+	{
+		inittest();
+		millisecond msProperTimeOut = msTimeout;
+		return m_sArduino.WaitReadData(szMessage, iCharNum, msProperTimeOut);
+	}
+
+	int ArduinoComm::WaitForString(std::string &sMessage, int iCharNum, int msTimeout)
+	{
+		inittest();
+		millisecond msProperTimeOut = msTimeout;
+		return m_sArduino.WaitReadData(sMessage, iCharNum, msProperTimeOut);
 	}
 
 }
