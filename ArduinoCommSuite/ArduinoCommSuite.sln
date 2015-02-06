@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ArduinoCommDLL", "ArduinoCommDLL\ArduinoCommDLL.vcxproj", "{1D5F357B-2593-4317-A607-F9CDC2C94E7A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ArduinoCommTest", "ArduinoCommTest\ArduinoCommTest.vcxproj", "{E3CFD6F2-EBB0-46C0-A60B-38C8B3F26421}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1D5F357B-2593-4317-A607-F9CDC2C94E7A} = {1D5F357B-2593-4317-A607-F9CDC2C94E7A}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
