@@ -28,8 +28,8 @@ namespace SerialComm
 		//Initialize Serial communication with the given COM port
 		Serial(LPCWSTR portName);
 		//Close the connection
-		//NOTA: for some reason you can't connect again before exiting
-		//the program and running it again
+		//NOTE: for some reason you can't consistently connect again 
+		//before exiting the program and running it again
 		~Serial();
 		//Read data in a buffer, if nbChar is greater than the
 		//maximum number of bytes available, it will return only the

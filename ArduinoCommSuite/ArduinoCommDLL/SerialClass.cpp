@@ -61,6 +61,15 @@ Serial::Serial(LPCWSTR portName, bool bErrorSuppress) : m_bErrorSuppress(bErrorS
 			dcbSerialParams.StopBits = ONESTOPBIT;
 			dcbSerialParams.Parity = NOPARITY;
 
+			/*
+				Maybe we want to use:
+			dcbSerialParams.fDtrControl = DTR_CONTROL_ENABLE;
+				This will let us do this to reset it:
+			EscapeCommFunction(this->hSerial,SETDTR);
+			Sleep(0.5);
+			EscapeCommFunction(this->hSerial,CLRDTR);
+			*/
+
 			//Set the parameters and check for their proper application
 			if (!SetCommState(hSerial, &dcbSerialParams))
 			{
@@ -73,7 +82,7 @@ Serial::Serial(LPCWSTR portName, bool bErrorSuppress) : m_bErrorSuppress(bErrorS
 			{
 				//If everything went fine we're connected
 				this->connected = true;
-				FlushBuffer();
+				//FlushBuffer();
 				//We do not need to sleep here, as our first action will be to wait
 				// for communication from the Arduino.
 			}
@@ -142,7 +151,7 @@ int Serial::CharsInQueue()
 
 bool Serial::FlushBuffer()
 {
-	return (bool)PurgeComm(this->hSerial, PURGE_RXCLEAR | PURGE_TXCLEAR);
+	return (PurgeComm(this->hSerial, PURGE_RXCLEAR | PURGE_TXCLEAR) == TRUE);
 }
 
 bool Serial::WaitReadData(char *buffer, unsigned int nbChar, unsigned long long ullMaxWait)

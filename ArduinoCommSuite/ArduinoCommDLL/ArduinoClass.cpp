@@ -194,6 +194,7 @@ bool Arduino::confirmVersion(Serial &rSerial, bool bPrintErrors)
 	return false;
 }
 
+
 bool Arduino::disconnect()
 {
 	if (m_pSerial && m_pSerial->IsConnected())
@@ -295,6 +296,7 @@ bool Arduino::WaitReadData(char *buffer, unsigned int nbChar, unsigned long long
 		return m_pSerial->WaitReadData(buffer, nbChar, ullMaxWait);
 	}
 
+	buffer[0] = '\0';
 	return false;
 }
 
@@ -319,7 +321,8 @@ bool Arduino::WaitReadData(std::string &sBuffer, unsigned int nbChar, unsigned l
 		sBuffer = buffer;
 		return bStatus;
 	}
-
+	
+	sBuffer = "";
 	return false;
 }
 
@@ -330,6 +333,7 @@ int Arduino::ReadData(char *buffer, unsigned int nbChar)
 		return m_pSerial->ReadData(buffer, nbChar);
 	}
 
+	buffer[0] = '\0';
 	return -1;
 }
 
@@ -343,6 +347,7 @@ int Arduino::ReadData(std::string &sBuffer)
 		return iRead;
 	}
 
+	sBuffer = "";
 	return -1;
 }
 
