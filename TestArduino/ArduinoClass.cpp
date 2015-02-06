@@ -75,7 +75,7 @@ bool Arduino::tryPort(int iPortNum)
 	{
 		if (connect(testSerial, m_bDebug))
 		{
-			testSerial.WriteData(csRestartPhrase);
+			//testSerial.WriteData(csRestartPhrase);
 			return true;
 		}
 	}
@@ -196,7 +196,7 @@ bool Arduino::disconnect()
 {
 	if (m_pSerial && m_pSerial->IsConnected())
 	{
-		m_pSerial->WriteData(csRestartPhrase);
+		//m_pSerial->WriteData(csRestartPhrase);
 		m_pSerial.release();
 		m_pSerial = nullptr;
 	}

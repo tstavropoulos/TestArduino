@@ -10,7 +10,7 @@
 int _tmain(int argc, _TCHAR* argv[])
 {
 	SerialComm::ArduinoComm::Init();
-	/*
+	
 	int piArduinos[10] = {};
 	SerialComm::ArduinoComm::FindArduinos(piArduinos, 10);
 	if (piArduinos[0] != 0)
@@ -32,7 +32,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			std::cout << i << "  ";
 		}
 	}
-	*/
+	
 	int iPort;
 	std::cout << std::endl << "Connect to Port: ";
 	std::cin >> iPort;
@@ -47,14 +47,17 @@ int _tmain(int argc, _TCHAR* argv[])
 		return 0;
 	}
 
-	SerialComm::ArduinoComm::SendChar('A');
+	SerialComm::ArduinoComm::SendChar('Q');
 
 	char cReflChar = SerialComm::ArduinoComm::WaitForChar(5000);
 
 	std::cout << "Received Char: " << cReflChar << std::endl;
-	std::cout << "Results: " << ((cReflChar == 'A') ? "Success!" : "Failure!") << std::endl;
+	std::cout << "Results: " << ((cReflChar == 'Q') ? "Success!" : "Failure!") << std::endl;
 
 	SerialComm::ArduinoComm::Disconnect();
+
+	std::string sInput;
+	std::cin >> sInput;
 	return 0;
 }
 

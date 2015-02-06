@@ -58,6 +58,7 @@ Serial::Serial(LPCWSTR portName, bool bErrorSuppress) : m_bErrorSuppress(bErrorS
 			dcbSerialParams.ByteSize = 8;
 			dcbSerialParams.StopBits = ONESTOPBIT;
 			dcbSerialParams.Parity = NOPARITY;
+			dcbSerialParams.fDtrControl = DTR_CONTROL_ENABLE;
 
 			//Set the parameters and check for their proper application
 			if (!SetCommState(hSerial, &dcbSerialParams))
