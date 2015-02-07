@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "ArduinoCommDLL.h"
 #include "CoreFunctions.h"
+#include "ArduinoClass.h"
 
 #define inittest() \
 	if (!m_bInitialized) \
@@ -11,8 +12,10 @@
 		throw "ArduinoCommDLL used before initialization"; \
 	}
 
+#ifndef MATLAB
 namespace SerialComm
 {
+#endif
 	Arduino ArduinoComm::m_sArduino;
 	bool ArduinoComm::m_bInitialized = false;
 
@@ -84,18 +87,6 @@ namespace SerialComm
 		return bConnected;
 	}
 
-	bool ArduinoComm::SendString(const std::string csMessage)
-	{
-		inittest();
-		bool bConnected = m_sArduino.IsConnected();
-		if (bConnected)
-		{
-			m_sArduino.WriteString(csMessage);
-		}
-
-		return bConnected;
-	}
-
 	int ArduinoComm::GetCharAvailable()
 	{
 		inittest();
@@ -125,12 +116,6 @@ namespace SerialComm
 		return m_sArduino.ReadData(szMessage, iNumChars);
 	}
 
-	int ArduinoComm::ReadString(std::string &sMessage)
-	{
-		inittest();
-		return m_sArduino.ReadData(sMessage);
-	}
-
 	char ArduinoComm::WaitForChar(int msTimeout)
 	{
 		inittest();
@@ -145,11 +130,32 @@ namespace SerialComm
 		return m_sArduino.WaitReadData(szMessage, iCharNum, msProperTimeOut);
 	}
 
+
+#ifndef MATLAB
+	bool ArduinoComm::SendString(const std::string csMessage)
+	{
+		inittest();
+		bool bConnected = m_sArduino.IsConnected();
+		if (bConnected)
+		{
+			m_sArduino.WriteString(csMessage);
+		}
+
+		return bConnected;
+	}
+
+	int ArduinoComm::ReadString(std::string &sMessage)
+	{
+		inittest();
+		return m_sArduino.ReadData(sMessage);
+	}
+
 	bool ArduinoComm::WaitForString(std::string &sMessage, int iCharNum, int msTimeout)
 	{
 		inittest();
 		millisecond msProperTimeOut = msTimeout;
 		return m_sArduino.WaitReadData(sMessage, iCharNum, msProperTimeOut);
 	}
-
 }
+
+#endif

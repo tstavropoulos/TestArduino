@@ -9,12 +9,21 @@
 #define ARDUINOCOMMDLL_API __declspec(dllimport)
 #endif
 
-#include "ArduinoClass.h"
-#include <string>
 
+#ifndef MATLAB
+#include <string>
+#endif
+
+#ifndef MATLAB
 namespace SerialComm
 {
+#endif
 	class Arduino;
+
+#ifdef MATLAB
+extern "C" 
+{
+#endif
 
 	class ArduinoComm
 	{
@@ -54,10 +63,6 @@ namespace SerialComm
 		Returns success.
 		*/
 		static ARDUINOCOMMDLL_API bool SendChars(const char *cszMessage, int iLength);
-		/*  SendString(string) sends the full std::string to the Arduino.
-		Returns success.
-		*/
-		static ARDUINOCOMMDLL_API bool SendString(const std::string csMessage);
 
 
 		/*  GetCharAvailable() returns how many characters are currently in the Queue to be read.
@@ -77,12 +82,6 @@ namespace SerialComm
 		Returns -1 if not connected.
 		*/
 		static ARDUINOCOMMDLL_API int ReadChars(char *szMessage, int iNumChars);
-		/*  ReadChars(StringMessage) writes buffered messages to the supplied std::string.
-		Returns the number of characters read.
-		Writes an empty string if the buffer is empty or the Arduino is not connected.
-		Returns -1 if not connected.
-		*/
-		static ARDUINOCOMMDLL_API int ReadString(std::string &sMessage);
 
 
 		/*	WaitForChar(timeout) waits up to the indicated number of milliseconds for a character to arrive in the buffer.
@@ -98,6 +97,18 @@ namespace SerialComm
 		Returns success.
 		*/
 		static ARDUINOCOMMDLL_API bool WaitForChars(char *szMessage, int iCharNum, int msTimeout);
+
+#ifndef MATLAB
+		/*  SendString(string) sends the full std::string to the Arduino.
+		Returns success.
+		*/
+		static ARDUINOCOMMDLL_API bool SendString(const std::string csMessage);
+		/*  ReadChars(StringMessage) writes buffered messages to the supplied std::string.
+		Returns the number of characters read.
+		Writes an empty string if the buffer is empty or the Arduino is not connected.
+		Returns -1 if not connected.
+		*/
+		static ARDUINOCOMMDLL_API int ReadString(std::string &sMessage);
 		/*	WaitForChar(StringMessage,Length,timeout) waits up to the indicated number of milliseconds for the indicated number of character to be in the buffer.
 		Returns as soon as sufficient characters are buffered, or immediately if the condition is met.
 		If sufficient characters arrive, they are written to the string.
@@ -105,6 +116,7 @@ namespace SerialComm
 		Returns success.
 		*/
 		static ARDUINOCOMMDLL_API bool WaitForString(std::string &sMessage, int iCharNum, int msTimeout);
+#endif
 
 
 		/*  Disconnect() disconnects from the Arduino and destroys the serial information.

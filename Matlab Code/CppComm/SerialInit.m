@@ -66,8 +66,9 @@ function SerialInit(bRefl,bPair,bMaster)
 end
 
 function loadArduinoDLL()
-	mfilepath = fileparts(which(SerialInit.m));
-	addpath(fullfile(mfilepath,'..\..\ArduinoCommSuite\Release\'));
+	mfilepath = fileparts(which('SerialInit.m'));
+	addpath(fullfile(mfilepath,'..\..\ArduinoCommSuite\MATLAB\'));
+	addpath(fullfile(mfilepath,'..\..\ArduinoCommSuite\ArduinoCommDLL\'));
 	loadlibrary('ArduinoCommDLL','ArduinoCommDLL.h');
 	calllib('ArduinoCommDLL','Init');
 end

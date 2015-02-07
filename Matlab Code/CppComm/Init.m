@@ -59,10 +59,12 @@ function Init()
 	wSerialInitChar='C';
 	
 	%Number of milliseconds for a "WaitForMessage" call to timeout
-	global iWaitTimeOut = 5000;
+	global iWaitTimeOut;
+    iWaitTimeOut = 5000;
 	
 	%Default size of Serial read buffer.
-	global iReadBufferSize = 100;
+	global iReadBufferSize;
+    iReadBufferSize = 100;
 	
 	%Kick off the timer.
 	tic;

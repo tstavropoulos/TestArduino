@@ -6,8 +6,10 @@
 #include <mutex>
 #include <vector>
 
+#ifndef MATLAB
 namespace SerialComm
 {
+#endif
 	typedef uint64_t millisecond;
 	typedef uint64_t microsecond;
 
@@ -15,5 +17,7 @@ namespace SerialComm
 	microsecond microsecondsNow();
 
 	extern std::mutex mtxPrint;
+#ifndef MATLAB
 }
+#endif
 #endif

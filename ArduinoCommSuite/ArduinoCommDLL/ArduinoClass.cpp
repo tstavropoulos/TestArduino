@@ -4,10 +4,13 @@
 #include "SerialClass.h"
 
 #include <iostream>
+
+#ifndef MATLAB
 using namespace SerialComm;
 
 namespace SerialComm
 {
+#endif
 	const char csInitPhrase[] = "ARDUINO";
 	const char csVersionPhrase[] = "C";
 	const char csReflexivePhrase[] = "R";
@@ -17,7 +20,9 @@ namespace SerialComm
 	const char csFinishedPhrase[] = "F";
 	const char csAckPhrase[] = "A";
 	const char csRestartPhrase[] = "~";
+#ifndef MATLAB
 }
+#endif
 
 
 #define SENDPARAM(csSendPhrase,csParamName) \
@@ -77,7 +82,6 @@ bool Arduino::tryPort(int iPortNum)
 	{
 		if (connect(testSerial, m_bDebug))
 		{
-			//testSerial.WriteData(csRestartPhrase);
 			return true;
 		}
 	}

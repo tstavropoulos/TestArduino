@@ -3,8 +3,10 @@
 #include "CoreFunctions.h"
 #include <iostream>
 
+#ifndef MATLAB
 namespace SerialComm
 {
+#endif
 	std::mutex mtxPrint;
 
 	millisecond millisecondsNow() {
@@ -32,4 +34,6 @@ namespace SerialComm
 			return GetTickCount();
 		}
 	}
+#ifndef MATLAB
 }
+#endif
