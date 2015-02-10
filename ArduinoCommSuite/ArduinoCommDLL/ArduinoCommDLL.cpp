@@ -2,6 +2,9 @@
 //
 
 #include "stdafx.h"
+
+#ifndef MATLAB
+
 #include "ArduinoCommDLL.h"
 #include "CoreFunctions.h"
 #include "ArduinoClass.h"
@@ -154,3 +157,5 @@ namespace SerialComm
 		return m_sArduino.WaitReadData(sMessage, iCharNum, msProperTimeOut);
 	}
 }
+
+#endif

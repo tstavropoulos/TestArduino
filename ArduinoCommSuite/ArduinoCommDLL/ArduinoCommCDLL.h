@@ -3,6 +3,8 @@
 #ifndef ARDUINOCOMMDLL_H_
 #define ARDUINOCOMMDLL_H_
 
+#ifndef NOTMATLAB
+
 #ifdef ARDUINOCOMMDLL_EXPORTS
 #define ARDUINOCOMMDLL_API __declspec(dllexport)
 #else
@@ -93,6 +95,8 @@ extern "C"
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
 
 #endif

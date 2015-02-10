@@ -2,6 +2,9 @@
 //
 
 #include "stdafx.h"
+
+#ifndef NOTMATLAB
+
 #include "ArduinoCommCDLL.h"
 #include "CoreFunctions.h"
 #include "ArduinoClass.h"
@@ -138,3 +141,5 @@ bool WaitForChars(char *szMessage, int iCharNum, int msTimeout)
 	millisecond msProperTimeOut = msTimeout;
 	return m_sArduino.WaitReadData(szMessage, iCharNum, msProperTimeOut);
 }
+
+#endif

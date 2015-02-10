@@ -202,7 +202,8 @@ bool Serial::WriteData(std::string sData)
 	DWORD bytesSend;
 
 	//Try to write the buffer on the Serial port
-	if (!WriteFile(this->hSerial, (void *)(sData.c_str()), sData.size(), &bytesSend, 0))
+	//Each character is 1 byte, so we can just cast the string::size to a DWORD 
+	if (!WriteFile(this->hSerial, (void *)(sData.c_str()), DWORD(sData.size()), &bytesSend, 0))
 	{
 		//In case it don't work get comm error and return false
 		ClearCommError(this->hSerial, &this->errors, &this->status);

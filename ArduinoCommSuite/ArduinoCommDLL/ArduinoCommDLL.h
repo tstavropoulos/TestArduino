@@ -3,6 +3,8 @@
 #ifndef ARDUINOCOMMDLL_H_
 #define ARDUINOCOMMDLL_H_
 
+#ifndef MATLAB
+
 #ifdef ARDUINOCOMMDLL_EXPORTS
 #define ARDUINOCOMMDLL_API __declspec(dllexport)
 #else
@@ -122,5 +124,7 @@ namespace SerialComm
 	};
 
 }
+
+#endif
 
 #endif
