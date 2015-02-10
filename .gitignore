@@ -11,3 +11,6 @@
 /ArduinoCommSuite/ArduinoCommDLL/x86
 /ArduinoCommSuite/ArduinoCommDLL/x64
 /ArduinoCommSuite/ArduinoCommDLL/*.user
+/TestArduino/TestArduino/*.user
+/TestArduino/*.sdf
+/TestArduino/*.opensdf
