@@ -2,9 +2,7 @@
 #include "SerialClass.h"
 #include "CoreFunctions.h"
 
-#ifndef MATLAB
 using namespace SerialComm;
-#endif
 
 Serial::Serial(LPCWSTR portName) : Serial(portName, false)
 {

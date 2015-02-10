@@ -5,10 +5,8 @@
 #include <vector>
 #include <string>
 
-#ifndef MATLAB
 namespace SerialComm
 {
-#endif
 	class Serial;
 
 	enum ARDUINO_STATE
@@ -67,8 +65,6 @@ namespace SerialComm
 		bool confirmVersion(Serial &rSerial, bool bPrintErrors);
 		bool sendParameters(Serial &rSerial, bool bPrintErrors);
 	};
-#ifndef MATLAB
 }
-#endif
 
 #endif

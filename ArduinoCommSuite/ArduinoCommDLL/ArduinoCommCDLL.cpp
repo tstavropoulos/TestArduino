@@ -17,7 +17,7 @@
 		OutputDebugString(L"ArduinoCommDLL used before initialization"); \
 	}
 
-static Arduino m_sArduino;
+static SerialComm::Arduino m_sArduino;
 static bool m_bInitialized = false;
 
 bool Init()
@@ -131,14 +131,14 @@ int ReadChars(char *szMessage, int iNumChars)
 char WaitForChar(int msTimeout)
 {
 	inittest();
-	millisecond msProperTimeOut = msTimeout;
+	SerialComm::millisecond msProperTimeOut = msTimeout;
 	return m_sArduino.WaitReadChar(msProperTimeOut);
 }
 
 bool WaitForChars(char *szMessage, int iCharNum, int msTimeout)
 {
 	inittest();
-	millisecond msProperTimeOut = msTimeout;
+	SerialComm::millisecond msProperTimeOut = msTimeout;
 	return m_sArduino.WaitReadData(szMessage, iCharNum, msProperTimeOut);
 }
 

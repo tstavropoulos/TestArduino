@@ -5,12 +5,10 @@
 
 #include <iostream>
 
-#ifndef MATLAB
 using namespace SerialComm;
 
 namespace SerialComm
 {
-#endif
 	const char csInitPhrase[] = "ARDUINO";
 	const char csVersionPhrase[] = "C";
 	const char csReflexivePhrase[] = "R";
@@ -20,10 +18,7 @@ namespace SerialComm
 	const char csFinishedPhrase[] = "F";
 	const char csAckPhrase[] = "A";
 	const char csRestartPhrase[] = "~";
-#ifndef MATLAB
 }
-#endif
-
 
 #define SENDPARAM(csSendPhrase,csParamName) \
 	rSerial.WriteData(csSendPhrase); \
@@ -203,8 +198,6 @@ bool Arduino::disconnect()
 {
 	if (m_pSerial && m_pSerial->IsConnected())
 	{
-		//m_pSerial->WriteData(csRestartPhrase);
-		//m_pSerial.reset();
 		m_pSerial = nullptr;
 	}
 	m_eState = ARDUINO_STATE::UNCONNECTED;

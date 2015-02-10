@@ -5,10 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifndef MATLAB
 namespace SerialComm
 {
-#endif
 	class Serial
 	{
 	private:
@@ -55,8 +53,6 @@ namespace SerialComm
 		//Return the number of characters in the queue
 		int CharsInQueue();
 	};
-#ifndef MATLAB
 }
-#endif
 
 #endif // SERIALCLASS_H_INCLUDED

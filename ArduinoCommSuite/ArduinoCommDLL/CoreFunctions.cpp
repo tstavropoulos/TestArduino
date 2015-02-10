@@ -3,10 +3,11 @@
 #include "CoreFunctions.h"
 #include <iostream>
 
-#ifndef MATLAB
+#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+#include <windows.h>
+
 namespace SerialComm
 {
-#endif
 	std::mutex mtxPrint;
 
 	millisecond millisecondsNow() {
@@ -34,6 +35,4 @@ namespace SerialComm
 			return GetTickCount();
 		}
 	}
-#ifndef MATLAB
 }
-#endif
