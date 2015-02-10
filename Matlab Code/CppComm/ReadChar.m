@@ -11,5 +11,5 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function outChar = ReadChar()
-		outChar = calllib('ArduinoCommDLL','ReadChar');
+		outChar = char(calllib('ArduinoCommCDLL','ReadChar'));
 end

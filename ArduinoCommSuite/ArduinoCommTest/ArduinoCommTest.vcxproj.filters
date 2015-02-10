@@ -32,5 +32,8 @@
     <ClCompile Include="ArduinoCommTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\ArduinoCommDLL\CoreFunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

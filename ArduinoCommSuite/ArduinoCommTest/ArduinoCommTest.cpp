@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "../ArduinoCommDLL/ArduinoCommDLL.h"
+#include "../ArduinoCommDLL/CoreFunctions.h"
 
 #include <iostream>
 #include <string>
@@ -47,12 +48,30 @@ int _tmain(int argc, _TCHAR* argv[])
 		return 0;
 	}
 
+	SerialComm::millisecond msReadyTime = SerialComm::millisecondsNow() + 1000;
+
+	std::cout << std::endl;
+
+	if (SerialComm::ArduinoComm::GetCharAvailable())
+	{
+		while (SerialComm::millisecondsNow() < msReadyTime)
+		{
+			while (SerialComm::ArduinoComm::GetCharAvailable())
+			{
+				std::cout << SerialComm::ArduinoComm::ReadChar();
+			}
+		}
+	}
+	std::cout << std::endl;
+
 	SerialComm::ArduinoComm::SendChar('Q');
 
 	char cReflChar = SerialComm::ArduinoComm::WaitForChar(5000);
 
 	std::cout << "Received Char: " << cReflChar << std::endl;
 	std::cout << "Results: " << ((cReflChar == 'Q') ? "Success!" : "Failure!") << std::endl;
+	std::cout << "More Chars: ";
+	std::cout << std::endl;
 
 	SerialComm::ArduinoComm::Disconnect();
 

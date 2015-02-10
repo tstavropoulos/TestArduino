@@ -21,7 +21,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function SerialInit(bRefl,bPair,bMaster)
 	
-	if ( ~libisloaded('ArduinoCommDLL'))
+	if ( ~libisloaded('ArduinoCommCDLL'))
 		loadArduinoDLL()
 	end
 	
@@ -48,7 +48,7 @@ function SerialInit(bRefl,bPair,bMaster)
 	
 	iMaxPortNum = int32(10);
 	piBuffer = libpointer('int32Ptr',zeros(iMaxPortNum,1));
-	calllib('ArduinoCommDLL','FindArduinos',piBuffer,iMaxPortNum);
+	calllib('ArduinoCommCDLL','FindArduinos',piBuffer,iMaxPortNum);
 	arduinoPort = piBuffer.Value(1);
     
     try
@@ -56,7 +56,7 @@ function SerialInit(bRefl,bPair,bMaster)
 		setProperties(bRefl,bPair,bMaster);
 		
         % Connect to the serial port
-		calllib('ArduinoCommDLL','Connect',arduinoPort);
+		calllib('ArduinoCommCDLL','Connect',arduinoPort);
         
 		bCallback = true;
 		
@@ -67,10 +67,10 @@ end
 
 function loadArduinoDLL()
 	mfilepath = fileparts(which('SerialInit.m'));
-	addpath(fullfile(mfilepath,'..\..\ArduinoCommSuite\MATLAB\'));
+	addpath(fullfile(mfilepath,'..\..\ArduinoCommSuite\x64\Release\'));
 	addpath(fullfile(mfilepath,'..\..\ArduinoCommSuite\ArduinoCommDLL\'));
-	loadlibrary('ArduinoCommDLL','ArduinoCommDLL.h');
-	calllib('ArduinoCommDLL','Init');
+	loadlibrary('ArduinoCommCDLL','ArduinoCommCDLL.h');
+	calllib('ArduinoCommCDLL','Init');
 end
 
 % function setProperties(bRefl,bPair,bMaster)
@@ -85,5 +85,5 @@ function setProperties(bRefl,bPair,bMaster)
 	assert(islogical(bMaster),'SerialInit:setProperties:bMasterIncorrect',...
 		'bRefl, bPair, and bMaster must be true or false.');
 	
-	calllib('ArduinoCommDLL','SetProperties',bRefl,bPair,bMaster);
+	calllib('ArduinoCommCDLL','SetProperties',bRefl,bPair,bMaster);
 end

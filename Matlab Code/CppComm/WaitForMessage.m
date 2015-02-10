@@ -17,10 +17,10 @@ function message = WaitForMessage(bytes)
 	if nargin > 1
 		error('WaitForMessage:TooManyInputs','Supports only 0 or 1 inputs');
 	elseif nargin == 0
-		message = calllib('ArduinoCommDLL','WaitForChar',iWaitTimeOut);
+		message = calllib('ArduinoCommCDLL','WaitForChar',iWaitTimeOut);
 	else if nargin == 1
 		pcBuffer = libpointer('int8',zeros(iReadBufferSize,1));
-		calllib('ArduinoCommDLL','WaitForChars',pcBuffer,bytes,iWaitTimeOut);
+		calllib('ArduinoCommCDLL','WaitForChars',pcBuffer,bytes,iWaitTimeOut);
 		message = pcBuffer.Value';
 	end
 end

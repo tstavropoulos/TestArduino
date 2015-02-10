@@ -37,10 +37,16 @@ bCallback = false;
 
 deltat1=zeros(1,10000);
 
+while ( SerialDataAvail() )
+    display(ReadChar());
+end
+
 for i=1:10000
 	tmp1=toc;
     SendMessage('G');
-    WaitForMessage();
+    if ( WaitForMessage() ~= 'G')
+       display('Oh noes!'); 
+    end
     tmp2=toc;
 	deltat1(i)=tmp2-tmp1;
 end

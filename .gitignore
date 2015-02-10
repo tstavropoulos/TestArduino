@@ -22,3 +22,6 @@ Debug
 /ArduinoCommSuite/ipch/arduinocommdll-b06502c2/*.ipch
 /ArduinoCommSuite/MatLab
 MatLab
+/ArduinoCommSuite/ArduinoCommTest/*.user
+/ArduinoCommSuite/ipch/arduinocommcdll-7205208/*.ipch
+/ArduinoCommSuite/ArduinoCommCDLL/*.user

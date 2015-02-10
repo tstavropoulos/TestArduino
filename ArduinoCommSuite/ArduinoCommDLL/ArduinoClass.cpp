@@ -204,7 +204,7 @@ bool Arduino::disconnect()
 	if (m_pSerial && m_pSerial->IsConnected())
 	{
 		//m_pSerial->WriteData(csRestartPhrase);
-		m_pSerial.release();
+		//m_pSerial.reset();
 		m_pSerial = nullptr;
 	}
 	m_eState = ARDUINO_STATE::UNCONNECTED;

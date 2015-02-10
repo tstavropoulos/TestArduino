@@ -10,24 +10,36 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ArduinoCommTest", "ArduinoC
 		{1D5F357B-2593-4317-A607-F9CDC2C94E7A} = {1D5F357B-2593-4317-A607-F9CDC2C94E7A}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ArduinoCommCDLL", "ArduinoCommCDLL\ArduinoCommCDLL.vcxproj", "{6845C4F1-FDF8-4823-BB8A-76DF1B4E9F9B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
-		MatLab|Win32 = MatLab|Win32
+		Debug|x64 = Debug|x64
 		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{1D5F357B-2593-4317-A607-F9CDC2C94E7A}.Debug|Win32.ActiveCfg = Debug|Win32
 		{1D5F357B-2593-4317-A607-F9CDC2C94E7A}.Debug|Win32.Build.0 = Debug|Win32
-		{1D5F357B-2593-4317-A607-F9CDC2C94E7A}.MatLab|Win32.ActiveCfg = MatLab|Win32
-		{1D5F357B-2593-4317-A607-F9CDC2C94E7A}.MatLab|Win32.Build.0 = MatLab|Win32
+		{1D5F357B-2593-4317-A607-F9CDC2C94E7A}.Debug|x64.ActiveCfg = Debug|Win32
 		{1D5F357B-2593-4317-A607-F9CDC2C94E7A}.Release|Win32.ActiveCfg = Release|Win32
 		{1D5F357B-2593-4317-A607-F9CDC2C94E7A}.Release|Win32.Build.0 = Release|Win32
+		{1D5F357B-2593-4317-A607-F9CDC2C94E7A}.Release|x64.ActiveCfg = Release|Win32
 		{E3CFD6F2-EBB0-46C0-A60B-38C8B3F26421}.Debug|Win32.ActiveCfg = Debug|Win32
 		{E3CFD6F2-EBB0-46C0-A60B-38C8B3F26421}.Debug|Win32.Build.0 = Debug|Win32
-		{E3CFD6F2-EBB0-46C0-A60B-38C8B3F26421}.MatLab|Win32.ActiveCfg = MatLab|Win32
+		{E3CFD6F2-EBB0-46C0-A60B-38C8B3F26421}.Debug|x64.ActiveCfg = Debug|Win32
 		{E3CFD6F2-EBB0-46C0-A60B-38C8B3F26421}.Release|Win32.ActiveCfg = Release|Win32
 		{E3CFD6F2-EBB0-46C0-A60B-38C8B3F26421}.Release|Win32.Build.0 = Release|Win32
+		{E3CFD6F2-EBB0-46C0-A60B-38C8B3F26421}.Release|x64.ActiveCfg = Release|Win32
+		{6845C4F1-FDF8-4823-BB8A-76DF1B4E9F9B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6845C4F1-FDF8-4823-BB8A-76DF1B4E9F9B}.Debug|Win32.Build.0 = Debug|Win32
+		{6845C4F1-FDF8-4823-BB8A-76DF1B4E9F9B}.Debug|x64.ActiveCfg = Debug|x64
+		{6845C4F1-FDF8-4823-BB8A-76DF1B4E9F9B}.Debug|x64.Build.0 = Debug|x64
+		{6845C4F1-FDF8-4823-BB8A-76DF1B4E9F9B}.Release|Win32.ActiveCfg = Release|Win32
+		{6845C4F1-FDF8-4823-BB8A-76DF1B4E9F9B}.Release|Win32.Build.0 = Release|Win32
+		{6845C4F1-FDF8-4823-BB8A-76DF1B4E9F9B}.Release|x64.ActiveCfg = Release|x64
+		{6845C4F1-FDF8-4823-BB8A-76DF1B4E9F9B}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

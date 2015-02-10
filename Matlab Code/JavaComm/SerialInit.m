@@ -105,11 +105,11 @@ function outPort = findArduino(baudRate)
             set(ser,'Parity','none');
             set(ser,'Terminator','CR/LF');
             fopen(ser);
-			waitForConfirmation();
+			fscanf(ser,'%s',1);
+            fprintf(ser,'%s','C');
             ident = fscanf(ser,'%s',7);
             if strcmp(ident,'ARDUINO')
                outPort = port;
-			   SendMessage('~');
                fclose(ser);
                return;
             end

@@ -22,6 +22,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 global bCallback;
+global serialthing;
 
 %Prepare global variables
 Init();
@@ -39,6 +40,10 @@ SerialInit(bReflective,bPaired);
 bCallback = false;
 
 deltat1=zeros(1,10000);
+
+while(serialthing.BytesAvailable > 0)
+    display(WaitForMessage());
+end
 
 for i=1:10000
 	tmp1=toc;

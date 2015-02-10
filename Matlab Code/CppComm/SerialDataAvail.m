@@ -11,5 +11,5 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function bAvail = SerialDataAvail()
-		bAvail = (calllib('ArduinoCommDLL','GetCharAvailable') > 0);
+		bAvail = (calllib('ArduinoCommCDLL','GetCharAvailable') > 0);
 end
