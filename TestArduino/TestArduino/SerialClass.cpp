@@ -133,7 +133,7 @@ int Serial::ReadData(char *buffer, unsigned int nbChar)
 
 bool Serial::FlushBuffer()
 {
-	return (bool)PurgeComm(this->hSerial, PURGE_RXCLEAR | PURGE_TXCLEAR);
+	return (PurgeComm(this->hSerial, PURGE_RXCLEAR | PURGE_TXCLEAR) == TRUE );
 }
 
 bool Serial::WaitReadData(char *buffer, unsigned int nbChar, unsigned long long ullMaxWait)
@@ -189,7 +189,7 @@ bool Serial::WriteData(std::string sData)
 	DWORD bytesSend;
 
 	//Try to write the buffer on the Serial port
-	if (!WriteFile(this->hSerial, (void *)(sData.c_str()), sData.size(), &bytesSend, 0))
+	if (!WriteFile(this->hSerial, (void *)(sData.c_str()), DWORD(sData.size()), &bytesSend, 0))
 	{
 		//In case it don't work get comm error and return false
 		ClearCommError(this->hSerial, &this->errors, &this->status);

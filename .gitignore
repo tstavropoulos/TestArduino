@@ -1,5 +1,3 @@
-/*.sdf
-/*.suo
 /ArduinoCommSuite/x86
 /ArduinoCommSuite/ipch
 /ArduinoCommSuite/x64
@@ -11,6 +9,9 @@
 /ArduinoCommSuite/ArduinoCommDLL/x86
 /ArduinoCommSuite/ArduinoCommDLL/x64
 /ArduinoCommSuite/ArduinoCommDLL/*.user
+/TestArduino/Output
 /TestArduino/TestArduino/*.user
+/TestArduino/TestArduino/Intermediate
 /TestArduino/*.sdf
 /TestArduino/*.opensdf
+/TestArduino/*.suo
