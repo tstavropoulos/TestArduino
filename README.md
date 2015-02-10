@@ -19,8 +19,6 @@ The Arduino connects to the PC via USB cable.  The design has been tested succes
 
 The original usecase is an interactive psychology experiment (explaining some of the quirks of the naming conventions in the Arduino sketch).
 
-Matlab-Arduino interface (via COM port, not the widely available (and slow) MatLab sketch) is also in development.
-
 ##Install
 
 The C++ software was developed on a Windows 8.1 machine with Visual Studio 2013.  Outside of this platform, your mileage may vary.  No special API needed, as far as I am aware, outside of the default installs.  Probably WinAPI or something of the sort.
@@ -42,18 +40,18 @@ For this task, using an Arduino Due, the C++ program had a response with these c
 * Max Response Time:                    4.181 ms
 
 The same hardware and software communicating with MatLab, however saw these characteristics:
-* Average Response Time:                4.000 ms  !!UPDATE!!
-* Standard Deviation of Response Time:  3.000 ms  !!UPDATE!!
-* Max Response Time:                   22.000 ms  !!UPDATE!!
+* Average Response Time:                9.497 ms
+* Standard Deviation of Response Time:  1.852 ms
+* Max Response Time:                   66.540 ms
 
-The likely cuplrit in MatLab's case is likey Garbage Collection [update: perhaps not].  In an attempt to improve performance, the C++ application has been ported to a static library that MatLab can import.  Now we can let MatLab run the task and let C++ handle the Computer<->Arduino communication.
-
+Now, communicating with MatLab through the C++ Shared Library:
+* Average Response Time:                4.093 ms
+* Standard Deviation of Response Time:  0.295 ms
+* Max Response Time:                    5.049 ms
 
 ##Known Issues
 
-* The Arduino devices occasionally don't reset properly between connections, leading to inconsistent behavior.
 
 ##To Do
 
 * Create a Unix platform option.  Current Windows dependenices exist only in Serial.h, Serial.cpp, and CoreFunctions.cpp.
-* Test the MatLab-DLL communication option.  Yes, it is currently entirely untested.
