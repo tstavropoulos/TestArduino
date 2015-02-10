@@ -27,6 +27,16 @@ The Arduino sketches can be flashed to any Arduino-compatible device with the Ar
 
 Any MatLab scripts can be run with MatLab.  Modifications would be required to be compatible with Octave.  MatLab scripts developed on R2014a, but it should not be specifically required.
 
+##What do I need?
+
+Well, for starters you will probably need a recent release of Visual Studio.  If *free* is in your price range, and you're developing in a Windows environment, you might want to check out [Microsoft Visual Studio - Community 2013](http://www.visualstudio.com/downloads/).  If you're not developing in Windows, you better know what you're doing, because the libraries are currently heavily dependent on the Windows API.
+
+I'm going to try to keep reasonably recent builds of the library files uploaded in the BuiltLibs folder, so it won't be strictly necessary to have the IDE installed.
+
+You will also need any version of the Arduino IDE that works with your Arduino.  The Arduino IDE is available from [The Official Arduino Website](http://arduino.cc/en/main/software).  Speaking of which, you will probably need an Arduino.
+
+If you wish to utilize the MatLab scripts, you'll need a version of MatLab that supports the loading of external libraries.  I doubt that is a new feature, any distro of MatLab released in the last 5 years is probably sufficient.  I am going to investigate getting the libraries to build and link with Octave (an opensource MatLab alternative), but that's on the To Do list for now.
+
 ##Latency Details
 
 When paired with the collection of Neural data, it is important to get latency as low and consistent as possible.  Unfortunately, in this respect, MatLab fairs poorly.  It appears that for comparable tasks, the MatLab Serial functionality (derived from Java) is noticeably more variable.
@@ -55,3 +65,4 @@ Now, communicating with MatLab through the C++ Shared Library:
 ##To Do
 
 * Create a Unix platform option.  Current Windows dependenices exist only in Serial.h, Serial.cpp, and CoreFunctions.cpp.
+* Explore portability to Octave.  Will require changes to project build.
