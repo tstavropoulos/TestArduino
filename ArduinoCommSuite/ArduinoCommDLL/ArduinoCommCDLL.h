@@ -1,9 +1,9 @@
 // ArduinoCommCDLL.h : Defines the exported functions for the DLL application.
 //
-#ifndef ARDUINOCOMMCDLL_H_
-#define ARDUINOCOMMCDLL_H_
+#ifndef ARDUINOCOMMDLL_H_
+#define ARDUINOCOMMDLL_H_
 
-#ifdef ARDUINOCOMMCDLL_EXPORTS
+#ifdef ARDUINOCOMMDLL_EXPORTS
 #define ARDUINOCOMMDLL_API __declspec(dllexport)
 #else
 #define ARDUINOCOMMDLL_API __declspec(dllimport)

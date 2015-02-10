@@ -10,20 +10,11 @@
 #endif
 
 
-#ifndef MATLAB
 #include <string>
-#endif
 
-#ifndef MATLAB
 namespace SerialComm
 {
-#endif
 	class Arduino;
-
-#ifdef MATLAB
-extern "C" 
-{
-#endif
 
 	class ArduinoComm
 	{
@@ -98,7 +89,6 @@ extern "C"
 		*/
 		static ARDUINOCOMMDLL_API bool WaitForChars(char *szMessage, int iCharNum, int msTimeout);
 
-#ifndef MATLAB
 		/*  SendString(string) sends the full std::string to the Arduino.
 		Returns success.
 		*/
@@ -116,7 +106,6 @@ extern "C"
 		Returns success.
 		*/
 		static ARDUINOCOMMDLL_API bool WaitForString(std::string &sMessage, int iCharNum, int msTimeout);
-#endif
 
 
 		/*  Disconnect() disconnects from the Arduino and destroys the serial information.

@@ -12,10 +12,8 @@
 		throw "ArduinoCommDLL used before initialization"; \
 	}
 
-#ifndef MATLAB
 namespace SerialComm
 {
-#endif
 	Arduino ArduinoComm::m_sArduino;
 	bool ArduinoComm::m_bInitialized = false;
 
@@ -131,7 +129,6 @@ namespace SerialComm
 	}
 
 
-#ifndef MATLAB
 	bool ArduinoComm::SendString(const std::string csMessage)
 	{
 		inittest();
@@ -157,5 +154,3 @@ namespace SerialComm
 		return m_sArduino.WaitReadData(sMessage, iCharNum, msProperTimeOut);
 	}
 }
-
-#endif

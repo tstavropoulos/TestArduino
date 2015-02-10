@@ -6,11 +6,13 @@
 #include "CoreFunctions.h"
 #include "ArduinoClass.h"
 
+#define TMPDEBUG
+
 #define inittest() \
 	if (!m_bInitialized) \
-		{\
-		throw "ArduinoCommDLL used before initialization"; \
-		}
+	{\
+		OutputDebugString(L"ArduinoCommDLL used before initialization"); \
+	}
 
 static Arduino m_sArduino;
 static bool m_bInitialized = false;
@@ -19,6 +21,14 @@ bool Init()
 {
 	m_bInitialized = true;
 	return m_bInitialized;
+}
+
+bool SetRefl(bool bRefl)
+{
+	inittest();
+	m_sArduino.setReflexivity(bRefl);
+
+	return true;
 }
 
 bool SetProperties(bool bRefl, bool bPaired, bool bMaster)
@@ -54,6 +64,9 @@ void FindArduinos(int *piArduinos, int iMaxPortNum)
 	for (int i : vValidPorts)
 	{
 		piArduinos[index++] = i;
+#ifdef TMPDEBUG
+		OutputDebugString(L"Found a Valid Arduino!");
+#endif
 	}
 
 	return;
