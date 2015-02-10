@@ -9,8 +9,8 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function SerialCleanup()
-	if ( libisloaded('ArduinoCommCDLL'))
-        calllib('ArduinoCommCDLL','Disconnect');
-        unloadlibrary('ArduinoCommCDLL');
+	if ( libisloaded('ArduinoCommDLL'))
+        calllib('ArduinoCommDLL','Disconnect');
+        unloadlibrary('ArduinoCommDLL');
 	end
 end

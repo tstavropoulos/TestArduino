@@ -21,7 +21,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function SerialInit(bRefl,bPair,bMaster)
 	
-	if ( ~libisloaded('ArduinoCommCDLL'))
+	if ( ~libisloaded('ArduinoCommDLL'))
 		loadArduinoDLL()
 	end
 	
@@ -48,7 +48,7 @@ function SerialInit(bRefl,bPair,bMaster)
 	
 	iMaxPortNum = int32(10);
 	piBuffer = libpointer('int32Ptr',zeros(iMaxPortNum,1));
-	calllib('ArduinoCommCDLL','FindArduinos',piBuffer,iMaxPortNum);
+	calllib('ArduinoCommDLL','FindArduinos',piBuffer,iMaxPortNum);
 	arduinoPort = piBuffer.Value(1);
     
     try
@@ -56,7 +56,7 @@ function SerialInit(bRefl,bPair,bMaster)
 		setProperties(bRefl,bPair,bMaster);
 		
         % Connect to the serial port
-		calllib('ArduinoCommCDLL','Connect',arduinoPort);
+		calllib('ArduinoCommDLL','Connect',arduinoPort);
         
 		bCallback = true;
 		
@@ -67,10 +67,10 @@ end
 
 function loadArduinoDLL()
 	mfilepath = fileparts(which('SerialInit.m'));
-	addpath(fullfile(mfilepath,'..\..\ArduinoCommSuite\x64\Release\'));
-	addpath(fullfile(mfilepath,'..\..\ArduinoCommSuite\ArduinoCommDLL\'));
-	loadlibrary('ArduinoCommCDLL','ArduinoCommCDLL.h');
-	calllib('ArduinoCommCDLL','Init');
+	addpath(fullfile(mfilepath,'..\..\BuiltLibs\x64\'));
+	addpath(fullfile(mfilepath,'..\..\BuiltLibs\'));
+	loadlibrary('ArduinoCommDLL','ArduinoCommCDLL.h');
+	calllib('ArduinoCommDLL','Init');
 end
 
 % function setProperties(bRefl,bPair,bMaster)
@@ -85,5 +85,5 @@ function setProperties(bRefl,bPair,bMaster)
 	assert(islogical(bMaster),'SerialInit:setProperties:bMasterIncorrect',...
 		'bRefl, bPair, and bMaster must be true or false.');
 	
-	calllib('ArduinoCommCDLL','SetProperties',bRefl,bPair,bMaster);
+	calllib('ArduinoCommDLL','SetProperties',bRefl,bPair,bMaster);
 end

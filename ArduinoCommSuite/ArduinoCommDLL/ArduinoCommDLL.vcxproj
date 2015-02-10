@@ -193,6 +193,18 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <CustomBuildStep>
+      <Message>
+      </Message>
+    </CustomBuildStep>
+    <PostBuildEvent>
+      <Command>xcopy /y $(OutputPath)$(TargetName).lib $(SolutionDir)..\BuiltLibs\$(PlatformShortName)
+xcopy /y $(OutputPath)$(TargetName).dll $(SolutionDir)..\BuiltLibs\$(PlatformShortName)
+xcopy /y $(ProjectDir)ArduinoCommCDLL.h $(SolutionDir)..\BuiltLibs</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copying Files to Library Folder</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MatLab|x64'">
     <ClCompile>
@@ -210,6 +222,18 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <CustomBuildStep>
+      <Message>
+      </Message>
+    </CustomBuildStep>
+    <PostBuildEvent>
+      <Command>xcopy /y $(OutputPath)$(TargetName).lib $(SolutionDir)..\BuiltLibs\$(PlatformShortName)
+xcopy /y $(OutputPath)$(TargetName).dll $(SolutionDir)..\BuiltLibs\$(PlatformShortName)
+xcopy /y $(ProjectDir)ArduinoCommCDLL.h $(SolutionDir)..\BuiltLibs</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Copying Files to Library Folder</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />

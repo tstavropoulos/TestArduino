@@ -9,5 +9,5 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function SendMessage( message )
-	calllib('ArduinoCommCDLL','SendChars', message, length(message));
+	calllib('ArduinoCommDLL','SendChars', message, length(message));
 end
