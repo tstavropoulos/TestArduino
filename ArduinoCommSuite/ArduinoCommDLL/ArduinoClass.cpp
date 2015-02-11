@@ -1,9 +1,11 @@
 #include "stdafx.h"
+
 #include "CoreFunctions.h"
 #include "ArduinoClass.h"
 #include "SerialClass.h"
+#include "Logging.h"
 
-#include <iostream>
+#include <mutex>
 
 using namespace SerialComm;
 
@@ -24,18 +26,19 @@ namespace SerialComm
 	rSerial.WriteData(csSendPhrase); \
 	rSerial.WaitReadData(szBuffer,1,4000); \
 	if (strcmp(szBuffer,csAckPhrase) != 0 ) \
-		{ \
+			{ \
 		bOut = false; \
 		if ( bPrintErrors ) \
-		{ \
+				{ \
 			std::wstring wsPortName; \
 			rSerial.GetPortName(wsPortName); \
 			\
-			std::lock_guard<std::mutex> lock(mtxPrint); \
-			std::wcout << "Unrecognized param message for " << csParamName << " with " << wsPortName << std::endl; \
-			std::cout << " Sent param message: \"" << csSendPhrase << "\"" << std::endl; \
-			std::cout << " Expected ack message: \"" << csAckPhrase << "\"" << std::endl; \
-			std::cout << " Received ack message: \"" << szBuffer << "\"" << std::endl << std::endl; \
+			std::wstringstream wss; \
+			wss << L"Unrecognized param message for " << csParamName << L" with " << wsPortName << std::endl; \
+			wss << L" Sent param message: \"" << csSendPhrase << L"\"" << std::endl; \
+			wss << L" Expected ack message: \"" << csAckPhrase << L"\"" << std::endl; \
+			wss << L" Received ack message: \"" << szBuffer << L"\""; \
+			PrintDebugError(wss.str()); \
 		} \
 	} 
 
@@ -148,10 +151,11 @@ bool Arduino::connect(Serial &rSerial, bool bPrintErrors)
 			std::wstring wsPortName;
 			rSerial.GetPortName(wsPortName);
 
-			std::lock_guard<std::mutex> lock(mtxPrint);
-			std::wcout << "Unsuccessful communication attempt with " << wsPortName << std::endl;
-			std::cout << " Expected initialization message: \"" << csInitPhrase << "\"" << std::endl;
-			std::cout << " Received initialization message: \"" << incomingData << "\"" << std::endl << std::endl;
+			std::wstringstream wss;
+			wss << L"Unsuccessful communication attempt with " << wsPortName << std::endl;
+			wss << L" Expected initialization message: \"" << csInitPhrase << L"\"" << std::endl;
+			wss << L" Received initialization message: \"" << incomingData << L"\"" << std::endl << std::endl;
+			PrintDebugError(wss.str());
 		}
 	}
 	else if (bPrintErrors)
@@ -159,8 +163,9 @@ bool Arduino::connect(Serial &rSerial, bool bPrintErrors)
 		std::wstring wsPortName;
 		rSerial.GetPortName(wsPortName);
 
-		std::lock_guard<std::mutex> lock(mtxPrint);
-		std::wcout << "Unsuccessful connection with " << wsPortName << std::endl << std::endl;
+		std::wstringstream wss;
+		wss << L"Unsuccessful connection with " << wsPortName << std::endl << std::endl;
+		PrintDebugError(wss.str());
 	}
 
 	return false;
@@ -183,10 +188,11 @@ bool Arduino::confirmVersion(Serial &rSerial, bool bPrintErrors)
 			std::wstring wsPortName;
 			rSerial.GetPortName(wsPortName);
 
-			std::lock_guard<std::mutex> lock(mtxPrint);
-			std::wcout << "Incompatible version with " << wsPortName << std::endl;
-			std::cout << " Expected version message: \"" << csVersionPhrase << "\"" << std::endl;
-			std::cout << " Received version message: \"" << szBuffer << "\"" << std::endl << std::endl;
+
+			std::wstringstream wss;
+			wss << L"Incompatible version with " << wsPortName << std::endl;
+			wss << L" Expected version message: \"" << csVersionPhrase << L"\"" << std::endl;
+			wss << L" Received version message: \"" << szBuffer << L"\"" << std::endl << std::endl;
 		}
 	}
 

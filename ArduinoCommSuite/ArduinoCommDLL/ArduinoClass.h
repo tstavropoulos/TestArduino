@@ -1,10 +1,6 @@
 #ifndef ARDUINO_CLASS_H_
 #define ARDUINO_CLASS_H_
 
-#include <memory>
-#include <vector>
-#include <string>
-
 namespace SerialComm
 {
 	class Serial;
@@ -47,8 +43,6 @@ namespace SerialComm
 		bool WaitReadData(char *buffer, unsigned int nbChar, unsigned long long ullMaxWait);
 		char WaitReadChar(unsigned long long ullMaxWait);
 		bool WaitReadData(std::string &sBuffer, unsigned int nbChar, unsigned long long ullMaxWait);
-
-
 
 		int QueuedCharacters();
 

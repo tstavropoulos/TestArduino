@@ -1,12 +1,14 @@
 #include "stdafx.h"
+
 #include "SerialClass.h"
 #include "CoreFunctions.h"
+#include "Logging.h"
 
 using namespace SerialComm;
 
 Serial::Serial(LPCWSTR portName) : Serial(portName, false)
 {
-
+	//Uses other constructor
 }
 
 Serial::Serial(LPCWSTR portName, bool bErrorSuppress) : m_bErrorSuppress(bErrorSuppress)
@@ -27,17 +29,21 @@ Serial::Serial(LPCWSTR portName, bool bErrorSuppress) : m_bErrorSuppress(bErrorS
 	if (this->hSerial == INVALID_HANDLE_VALUE)
 	{
 		//If not success full display an Error
-		if (GetLastError() == ERROR_FILE_NOT_FOUND){
-
+		if (GetLastError() == ERROR_FILE_NOT_FOUND)
+		{
 			//Print Error if neccessary
 			if (!m_bErrorSuppress)
 			{
-				printf("ERROR: Handle was not attached. Reason: %s not available.\n", portName);
+				std::wstringstream wss;
+				wss << L"Handle was not attached. Port: " << portName << L"  Reason: Not Available.";
+				PrintDebugError(wss.str());
 			}
 		}
 		else if ( !m_bErrorSuppress )
 		{
-			printf("ERROR!!!");
+			std::wstringstream wss;
+			wss << L"Handle was not attached.  Port: " << portName << L"  Reason: Unknown.";
+			PrintDebugError(wss.str());
 		}
 	}
 	else
@@ -51,7 +57,9 @@ Serial::Serial(LPCWSTR portName, bool bErrorSuppress) : m_bErrorSuppress(bErrorS
 			//If impossible, show an error
 			if (!m_bErrorSuppress)
 			{
-				printf("failed to get current serial parameters!");
+				std::wstringstream wss;
+				wss << L"Failed to get Serial Parameters.  Port: " << portName;
+				PrintDebugError(wss.str());
 			}
 		}
 		else
@@ -68,16 +76,15 @@ Serial::Serial(LPCWSTR portName, bool bErrorSuppress) : m_bErrorSuppress(bErrorS
 			{
 				if (!m_bErrorSuppress)
 				{
-					printf("ALERT: Could not set Serial Port parameters");
+					std::wstringstream wss;
+					wss << L"Failed to set Serial Parameters.  Port: " << portName;
+					PrintDebugError(wss.str());
 				}
 			}
 			else
 			{
-				//If everything went fine we're connected
 				this->connected = true;
 				FlushBuffer();
-				//We do not need to sleep here, as our first action will be to wait
-				// for communication from the Arduino.
 			}
 		}
 	}

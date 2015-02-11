@@ -210,9 +210,9 @@
       </Message>
     </CustomBuildStep>
     <PostBuildEvent>
-      <Command>xcopy /y $(OutputPath)$(TargetName).lib $(SolutionDir)..\BuiltLibs\$(PlatformShortName)
-xcopy /y $(OutputPath)$(TargetName).dll $(SolutionDir)..\BuiltLibs\$(PlatformShortName)
-xcopy /y $(ProjectDir)ArduinoCommCDLL.h $(SolutionDir)..\BuiltLibs</Command>
+      <Command>xcopy /y $(OutputPath)$(TargetName).lib $(SolutionDir)..\BuiltLibs\OutputCopy\$(PlatformShortName)\
+xcopy /y $(OutputPath)$(TargetName).dll $(SolutionDir)..\BuiltLibs\OutputCopy\$(PlatformShortName)\
+xcopy /y $(ProjectDir)ArduinoCommCDLL.h $(SolutionDir)..\BuiltLibs\OutputCopy\</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copying Files to Library Folder</Message>
@@ -239,9 +239,9 @@ xcopy /y $(ProjectDir)ArduinoCommCDLL.h $(SolutionDir)..\BuiltLibs</Command>
       </Message>
     </CustomBuildStep>
     <PostBuildEvent>
-      <Command>xcopy /y $(OutputPath)$(TargetName).lib $(SolutionDir)..\BuiltLibs\$(PlatformShortName)
-xcopy /y $(OutputPath)$(TargetName).dll $(SolutionDir)..\BuiltLibs\$(PlatformShortName)
-xcopy /y $(ProjectDir)ArduinoCommCDLL.h $(SolutionDir)..\BuiltLibs</Command>
+      <Command>xcopy /y $(OutputPath)$(TargetName).lib $(SolutionDir)..\BuiltLibs\OutputCopy\$(PlatformShortName)\
+xcopy /y $(OutputPath)$(TargetName).dll $(SolutionDir)..\BuiltLibs\OutputCopy\$(PlatformShortName)\
+xcopy /y $(ProjectDir)ArduinoCommCDLL.h $(SolutionDir)..\BuiltLibs\OutputCopy\</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copying Files to Library Folder</Message>
@@ -269,6 +269,7 @@ xcopy /y $(ProjectDir)ArduinoCommCDLL.h $(SolutionDir)..\BuiltLibs</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="CoreFunctions.h" />
+    <ClInclude Include="Logging.h" />
     <ClInclude Include="SerialClass.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -312,6 +313,7 @@ xcopy /y $(ProjectDir)ArduinoCommCDLL.h $(SolutionDir)..\BuiltLibs</Command>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='MatLab|x64'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Logging.cpp" />
     <ClCompile Include="SerialClass.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

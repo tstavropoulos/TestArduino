@@ -2,11 +2,10 @@
 //
 
 #include "stdafx.h"
+
 #include "../ArduinoCommDLL/ArduinoCommDLL.h"
 #include "../ArduinoCommDLL/CoreFunctions.h"
 
-#include <iostream>
-#include <string>
 
 int _tmain(int argc, _TCHAR* argv[])
 {

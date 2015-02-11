@@ -1,10 +1,6 @@
 #ifndef COREFUNCTIONS_H_
 #define COREFUNCTIONS_H_
 
-#include <cstdint>
-#include <mutex>
-#include <vector>
-
 namespace SerialComm
 {
 	typedef unsigned long long millisecond;
@@ -12,7 +8,5 @@ namespace SerialComm
 
 	millisecond millisecondsNow();
 	microsecond microsecondsNow();
-
-	extern std::mutex mtxPrint;
 }
 #endif

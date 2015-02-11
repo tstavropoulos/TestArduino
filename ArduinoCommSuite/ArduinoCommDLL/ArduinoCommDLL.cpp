@@ -8,11 +8,18 @@
 #include "ArduinoCommDLL.h"
 #include "CoreFunctions.h"
 #include "ArduinoClass.h"
+#include "Logging.h"
 
-#define inittest() \
+const char macroString[] = "ArduinoCommDLL uninitialized: ";
+
+#define inittest(stage,returnValue) \
 	if (!m_bInitialized) \
 	{\
-		throw "ArduinoCommDLL used before initialization"; \
+		std::string sMacroErrorMessage;\
+		sMacroErrorMessage = std::string(macroString,sizeof(macroString)+sizeof(stage)+1);\
+		sMacroErrorMessage += stage; \
+		PrintDebugError(sMacroErrorMessage); \
+		return returnValue; \
 	}
 
 namespace SerialComm
@@ -28,7 +35,7 @@ namespace SerialComm
 
 	bool ArduinoComm::SetProperties(bool bRefl, bool bPaired, bool bMaster)
 	{
-		inittest();
+		inittest("SetProperties",false);
 		m_sArduino.setReflexivity(bRefl);
 
 		if (bPaired)
@@ -41,19 +48,28 @@ namespace SerialComm
 
 	bool ArduinoComm::IsConnected()
 	{
-		inittest();
+		inittest("IsConnected",false);
 		return m_sArduino.IsConnected();
 	}
 
 	bool ArduinoComm::Connect(int iPortNum)
 	{
-		inittest();
+		//inittest("Connect",false);
+		if (!m_bInitialized) 
+		{
+			std::string sMacroErrorMessage; 
+			sMacroErrorMessage = std::string(macroString, sizeof(macroString) + sizeof("Connect") + 1);
+			sMacroErrorMessage += "Connect";
+			PrintDebugError(sMacroErrorMessage);
+			return false; 
+		}
+
 		return m_sArduino.connectPort(iPortNum);
 	}
 
 	void ArduinoComm::FindArduinos(int *piArduinos, int iMaxPortNum)
 	{
-		inittest();
+		inittest("FindArduinos",);
 		std::vector<int> vValidPorts = m_sArduino.tryAllPorts(iMaxPortNum);
 		int index = 0;
 		for (int i : vValidPorts)
@@ -66,7 +82,7 @@ namespace SerialComm
 
 	bool ArduinoComm::SendChar(const char ccMessage)
 	{
-		inittest();
+		inittest("SendChar",false);
 		bool bConnected = m_sArduino.IsConnected();
 		if (bConnected)
 		{
@@ -78,7 +94,7 @@ namespace SerialComm
 
 	bool ArduinoComm::SendChars(const char *cszMessage, int iLength)
 	{
-		inittest();
+		inittest("SendChars",false);
 		bool bConnected = m_sArduino.IsConnected();
 		if (bConnected)
 		{
@@ -90,7 +106,7 @@ namespace SerialComm
 
 	int ArduinoComm::GetCharAvailable()
 	{
-		inittest();
+		inittest("GetCharAvailable",-1);
 		if (m_sArduino.IsConnected())
 		{
 			return m_sArduino.QueuedCharacters();
@@ -101,32 +117,34 @@ namespace SerialComm
 
 	bool ArduinoComm::Disconnect()
 	{
-		inittest();
+		inittest("Disconnect",false);
 		return m_sArduino.disconnect();
 	}
 
 	char ArduinoComm::ReadChar()
 	{
-		inittest();
+		inittest("ReadChar",'\0');
 		return m_sArduino.ReadChar();
 	}
 
 	int ArduinoComm::ReadChars(char *szMessage, int iNumChars)
 	{
-		inittest();
+		szMessage[0] = '\0';
+		inittest("ReadChars",-1);
 		return m_sArduino.ReadData(szMessage, iNumChars);
 	}
 
 	char ArduinoComm::WaitForChar(int msTimeout)
 	{
-		inittest();
+		inittest("WaitForChar",'\0');
 		millisecond msProperTimeOut = msTimeout;
 		return m_sArduino.WaitReadChar(msProperTimeOut);
 	}
 
 	bool ArduinoComm::WaitForChars(char *szMessage, int iCharNum, int msTimeout)
 	{
-		inittest();
+		szMessage[0] = '\0';
+		inittest("WaitForChars",false);
 		millisecond msProperTimeOut = msTimeout;
 		return m_sArduino.WaitReadData(szMessage, iCharNum, msProperTimeOut);
 	}
@@ -134,7 +152,7 @@ namespace SerialComm
 
 	bool ArduinoComm::SendString(const std::string csMessage)
 	{
-		inittest();
+		inittest("SendString", false);
 		bool bConnected = m_sArduino.IsConnected();
 		if (bConnected)
 		{
@@ -146,13 +164,15 @@ namespace SerialComm
 
 	int ArduinoComm::ReadString(std::string &sMessage)
 	{
-		inittest();
+		sMessage = "";
+		inittest("ReadString",-1);
 		return m_sArduino.ReadData(sMessage);
 	}
 
 	bool ArduinoComm::WaitForString(std::string &sMessage, int iCharNum, int msTimeout)
 	{
-		inittest();
+		sMessage = "";
+		inittest("WaitForString",false);
 		millisecond msProperTimeOut = msTimeout;
 		return m_sArduino.WaitReadData(sMessage, iCharNum, msProperTimeOut);
 	}
