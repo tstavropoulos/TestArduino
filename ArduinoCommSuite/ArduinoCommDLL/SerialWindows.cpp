@@ -1,23 +1,28 @@
 #include "stdafx.h"
 
-#include "SerialClass.h"
+#ifdef _WINDOWS
+
+#include "SerialGeneric.h"
+#include "SerialWindows.h"
 #include "CoreFunctions.h"
 #include "Logging.h"
 
 using namespace SerialComm;
 
-Serial::Serial(LPCWSTR portName) : Serial(portName, false)
+SerialWindows::SerialWindows(const std::wstring wsPortName)
+	: SerialWindows(wsPortName, false)
 {
 	//Uses other constructor
 }
 
-Serial::Serial(LPCWSTR portName, bool bErrorSuppress) : m_bErrorSuppress(bErrorSuppress)
+SerialWindows::SerialWindows(const std::wstring wsPortName, bool bErrorSuppress)
+	: SerialGeneric(wsPortName, bErrorSuppress)
 {
 	//We're not yet connected
 	this->connected = false;
 
 	//Try to connect to the given port throuh CreateFile
-	this->hSerial = CreateFile(portName,
+	this->hSerial = CreateFile(wsPortName.c_str(),
 		GENERIC_READ | GENERIC_WRITE,
 		0,
 		NULL,
@@ -35,14 +40,14 @@ Serial::Serial(LPCWSTR portName, bool bErrorSuppress) : m_bErrorSuppress(bErrorS
 			if (!m_bErrorSuppress)
 			{
 				std::wstringstream wss;
-				wss << L"Handle was not attached. Port: " << portName << L"  Reason: Not Available.";
+				wss << L"Handle was not attached. Port: " << wsPortName << L"  Reason: Not Available.";
 				PrintDebugError(wss.str());
 			}
 		}
 		else if ( !m_bErrorSuppress )
 		{
 			std::wstringstream wss;
-			wss << L"Handle was not attached.  Port: " << portName << L"  Reason: Unknown.";
+			wss << L"Handle was not attached.  Port: " << wsPortName << L"  Reason: Unknown.";
 			PrintDebugError(wss.str());
 		}
 	}
@@ -58,7 +63,7 @@ Serial::Serial(LPCWSTR portName, bool bErrorSuppress) : m_bErrorSuppress(bErrorS
 			if (!m_bErrorSuppress)
 			{
 				std::wstringstream wss;
-				wss << L"Failed to get Serial Parameters.  Port: " << portName;
+				wss << L"Failed to get Serial Parameters.  Port: " << wsPortName;
 				PrintDebugError(wss.str());
 			}
 		}
@@ -77,7 +82,7 @@ Serial::Serial(LPCWSTR portName, bool bErrorSuppress) : m_bErrorSuppress(bErrorS
 				if (!m_bErrorSuppress)
 				{
 					std::wstringstream wss;
-					wss << L"Failed to set Serial Parameters.  Port: " << portName;
+					wss << L"Failed to set Serial Parameters.  Port: " << wsPortName;
 					PrintDebugError(wss.str());
 				}
 			}
@@ -88,11 +93,9 @@ Serial::Serial(LPCWSTR portName, bool bErrorSuppress) : m_bErrorSuppress(bErrorS
 			}
 		}
 	}
-
-	wcscpy_s(m_wszPortName, portName);
 }
 
-Serial::~Serial()
+SerialWindows::~SerialWindows()
 {
 	//Check if we are connected before trying to disconnect
 	if (this->connected)
@@ -104,7 +107,7 @@ Serial::~Serial()
 	}
 }
 
-int Serial::ReadData(char *buffer, unsigned int nbChar)
+int SerialWindows::ReadData(char *buffer, unsigned int nbChar)
 {
 	//Number of bytes we'll have read
 	DWORD bytesRead;
@@ -141,7 +144,7 @@ int Serial::ReadData(char *buffer, unsigned int nbChar)
 	return -1;
 }
 
-int Serial::CharsInQueue()
+int SerialWindows::CharsInQueue()
 {
 	//Use the ClearCommError function to get status info on the Serial port
 	ClearCommError(this->hSerial, &this->errors, &this->status);
@@ -149,12 +152,12 @@ int Serial::CharsInQueue()
 	return this->status.cbInQue;
 }
 
-bool Serial::FlushBuffer()
+bool SerialWindows::FlushBuffer()
 {
 	return (PurgeComm(this->hSerial, PURGE_RXCLEAR | PURGE_TXCLEAR) == TRUE);
 }
 
-bool Serial::WaitReadData(char *buffer, unsigned int nbChar, unsigned long long ullMaxWait)
+bool SerialWindows::WaitReadData(char *buffer, unsigned int nbChar, unsigned long long ullMaxWait)
 {
 	//Number of bytes we'll have read
 	DWORD bytesRead;
@@ -184,7 +187,7 @@ bool Serial::WaitReadData(char *buffer, unsigned int nbChar, unsigned long long 
 }
 
 
-bool Serial::WriteData(const char *buffer, unsigned int nbChar)
+bool SerialWindows::WriteData(const char *buffer, unsigned int nbChar)
 {
 	DWORD bytesSend;
 
@@ -202,7 +205,7 @@ bool Serial::WriteData(const char *buffer, unsigned int nbChar)
 	}
 }
 
-bool Serial::WriteData(std::string sData)
+bool SerialWindows::WriteData(std::string sData)
 {
 	DWORD bytesSend;
 
@@ -222,13 +225,10 @@ bool Serial::WriteData(std::string sData)
 }
 
 
-bool Serial::IsConnected()
+bool SerialWindows::IsConnected()
 {
 	//Simply return the connection status
 	return this->connected;
 }
 
-void Serial::GetPortName(std::wstring &sName)
-{
-	sName = (m_wszPortName);
-}
+#endif

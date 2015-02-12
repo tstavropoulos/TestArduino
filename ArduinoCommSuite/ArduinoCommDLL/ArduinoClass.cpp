@@ -2,12 +2,23 @@
 
 #include "CoreFunctions.h"
 #include "ArduinoClass.h"
-#include "SerialClass.h"
+#include "SerialGeneric.h"
+#include "SerialWindows.h"
+#include "SerialUnix.h"
 #include "Logging.h"
+
+using namespace SerialComm;
+
+#ifdef _WINDOWS
+typedef SerialWindows Serial;
+#endif
+
+#ifdef _UNIX
+typedef SerialUnix Serial;
+#endif
 
 #include <mutex>
 
-using namespace SerialComm;
 
 namespace SerialComm
 {
@@ -23,15 +34,15 @@ namespace SerialComm
 }
 
 #define SENDPARAM(csSendPhrase,csParamName) \
-	rSerial.WriteData(csSendPhrase); \
-	rSerial.WaitReadData(szBuffer,1,4000); \
+	pSerial->WriteData(csSendPhrase); \
+	pSerial->WaitReadData(szBuffer,1,4000); \
 	if (strcmp(szBuffer,csAckPhrase) != 0 ) \
 			{ \
 		bOut = false; \
 		if ( bPrintErrors ) \
 				{ \
 			std::wstring wsPortName; \
-			rSerial.GetPortName(wsPortName); \
+			pSerial->GetPortName(wsPortName); \
 			\
 			std::wstringstream wss; \
 			wss << L"Unrecognized param message for " << csParamName << L" with " << wsPortName << std::endl; \
@@ -43,21 +54,23 @@ namespace SerialComm
 	} 
 
 
-Arduino::Arduino() :	m_bDebug(false),
-						m_bReflexive(false),
-						m_bPaired(false),
-						m_bMaster(true),
-						m_bPrintAll(true),
-						m_eState(ARDUINO_STATE::UNCONNECTED)
+Arduino::Arduino()
+	:	m_bDebug(false),
+		m_bReflexive(false),
+		m_bPaired(false),
+		m_bMaster(true),
+		m_bPrintAll(true),
+		m_eState(ARDUINO_STATE::UNCONNECTED)
 {
 }
 
-Arduino::Arduino(bool bDebug) : m_bDebug(bDebug),
-								m_bReflexive(false),
-								m_bPaired(false),
-								m_bMaster(true),
-								m_bPrintAll(true),
-								m_eState(ARDUINO_STATE::UNCONNECTED)
+Arduino::Arduino(bool bDebug)
+	:	m_bDebug(bDebug),
+		m_bReflexive(false),
+		m_bPaired(false),
+		m_bMaster(true),
+		m_bPrintAll(true),
+		m_eState(ARDUINO_STATE::UNCONNECTED)
 {
 }
 
@@ -72,13 +85,13 @@ Arduino::~Arduino()
 
 bool Arduino::tryPort(int iPortNum)
 {
-	wchar_t wszPortName[26] = {};
-	wsprintf(wszPortName, L"\\\\.\\COM%u", iPortNum);
+	std::wstringstream wss;
+	wss << "\\\\.\\COM" << iPortNum;
 
-	Serial testSerial(wszPortName, true);
-	if (confirmVersion(testSerial, false))
+	Serial testSerial(wss.str(), true);
+	if (confirmVersion(&testSerial, false))
 	{
-		if (connect(testSerial, m_bDebug))
+		if (connect(&testSerial, m_bDebug))
 		{
 			return true;
 		}
@@ -117,14 +130,14 @@ std::vector<int> Arduino::tryAllPorts(int iPortMax)
 
 bool Arduino::connectPort(int iPortNum)
 {
-	wchar_t wszPortName[26] = {};
-	wsprintf(wszPortName, L"\\\\.\\COM%u", iPortNum);
+	std::wstringstream wss;
+	wss << "\\\\.\\COM" << iPortNum;
 
-	m_pSerial = std::make_unique<Serial>(wszPortName);
+	m_pSerial = std::make_unique<Serial>(wss.str());
 
-	if (!confirmVersion(*(m_pSerial), true) || 
-		!connect(*(m_pSerial), true) ||
-		!sendParameters(*(m_pSerial), true))
+	if (!confirmVersion(m_pSerial.get(), true) || 
+		!connect(m_pSerial.get(), true) ||
+		!sendParameters(m_pSerial.get(), true))
 	{
 		disconnect();
 		return false;
@@ -133,13 +146,13 @@ bool Arduino::connectPort(int iPortNum)
 	return true;
 }
 
-bool Arduino::connect(Serial &rSerial, bool bPrintErrors)
+bool Arduino::connect(SerialGeneric *pSerial, bool bPrintErrors)
 {
-	if (rSerial.IsConnected())
+	if (pSerial->IsConnected())
 	{
 		char incomingData[256] = "";
 
-		rSerial.WaitReadData(incomingData, 7, 1000);
+		pSerial->WaitReadData(incomingData, 7, 1000);
 
 		if (strcmp(incomingData, csInitPhrase) == 0)
 		{
@@ -149,7 +162,7 @@ bool Arduino::connect(Serial &rSerial, bool bPrintErrors)
 		else if (bPrintErrors)
 		{
 			std::wstring wsPortName;
-			rSerial.GetPortName(wsPortName);
+			pSerial->GetPortName(wsPortName);
 
 			std::wstringstream wss;
 			wss << L"Unsuccessful communication attempt with " << wsPortName << std::endl;
@@ -161,7 +174,7 @@ bool Arduino::connect(Serial &rSerial, bool bPrintErrors)
 	else if (bPrintErrors)
 	{
 		std::wstring wsPortName;
-		rSerial.GetPortName(wsPortName);
+		pSerial->GetPortName(wsPortName);
 
 		std::wstringstream wss;
 		wss << L"Unsuccessful connection with " << wsPortName << std::endl << std::endl;
@@ -171,23 +184,22 @@ bool Arduino::connect(Serial &rSerial, bool bPrintErrors)
 	return false;
 }
 
-bool Arduino::confirmVersion(Serial &rSerial, bool bPrintErrors)
+bool Arduino::confirmVersion(SerialGeneric *pSerial, bool bPrintErrors)
 {
-	if (rSerial.IsConnected())
+	if (pSerial->IsConnected())
 	{
 		char szBuffer[2] = "";
-		rSerial.WaitReadData(szBuffer, 1, 6000);
+		pSerial->WaitReadData(szBuffer, 1, 6000);
 		if (strcmp(szBuffer, csVersionPhrase) == 0)
 		{
-			rSerial.WriteData(csVersionPhrase);
+			pSerial->WriteData(csVersionPhrase);
 			m_eState = ARDUINO_STATE::CONFIRM_VERSION;
 			return true;
 		}
 		else if (bPrintErrors)
 		{
 			std::wstring wsPortName;
-			rSerial.GetPortName(wsPortName);
-
+			pSerial->GetPortName(wsPortName);
 
 			std::wstringstream wss;
 			wss << L"Incompatible version with " << wsPortName << std::endl;
@@ -212,13 +224,13 @@ bool Arduino::disconnect()
 }
 
 
-bool Arduino::sendParameters(Serial &rSerial, bool bPrintErrors)
+bool Arduino::sendParameters(SerialGeneric *pSerial, bool bPrintErrors)
 {
 	bool bOut = true;
 
 	char szBuffer[256] = "";
 
-	rSerial.FlushBuffer();
+	pSerial->FlushBuffer();
 
 	if (m_bReflexive && bOut)
 	{

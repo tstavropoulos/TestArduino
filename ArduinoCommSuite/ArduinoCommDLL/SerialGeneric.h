@@ -1,68 +1,65 @@
-#ifndef SERIALCLASS_H_INCLUDED
-#define SERIALCLASS_H_INCLUDED
+#ifndef SERIALGENERIC_H_INCLUDED
+#define SERIALGENERIC_H_INCLUDED
+
 
 namespace SerialComm
 {
-	class Serial
+	class SerialGeneric
 	{
-	private:
-		//Serial comm handle
-		HANDLE hSerial;
-
-		//Connection status
-		bool connected;
-
-		//Get various information about the connection
-		COMSTAT status;
-
-		//Keep track of last error
-		DWORD errors;
-
+	protected:
 		//Keeps track of the port name
-		wchar_t m_wszPortName[256];
+		std::wstring m_wsPortName;
 
 		//Suppresses error messages
 		bool m_bErrorSuppress;
 
 	public:
 		//Initialize Serial communication with the given COM port
-		Serial(LPCWSTR portName, bool bErrorSuppress);
+		SerialGeneric(const std::wstring wsPortName, bool bErrorSuppress);
 
 		//Initialize Serial communication with the given COM port
-		Serial(LPCWSTR portName);
+		SerialGeneric(const std::wstring wsPortName);
 
 		//Close the connection
-		~Serial();
+		virtual ~SerialGeneric();
+
+		//Find out the port name
+		void GetPortName(std::wstring &wsName);
+
+		/****************************
+		**                         **
+		**   Function Prototypes   **
+		**                         **
+		****************************/
+
 
 		//Read data in a buffer, if nbChar is greater than the
 		//maximum number of bytes available, it will return only the
 		//bytes available. The function return -1 when nothing could
 		//be read, the number of bytes actually read.
-		int ReadData(char *buffer, unsigned int nbChar);
+		virtual int ReadData(char *buffer, unsigned int nbChar) = 0;
 
 		//Waits up to the specified max wait time to fully read the 
 		//specified number of characters.  Returns indicating success.
-		bool WaitReadData(char *buffer, unsigned int nbChar, unsigned long long ullMaxWait);
+		virtual bool WaitReadData(char *buffer, unsigned int nbChar, unsigned long long ullMaxWait) = 0;
 
 		//Writes data from a buffer through the Serial connection
 		//return true on success.
-		bool WriteData(const char *buffer, unsigned int nbChar);
+		virtual bool WriteData(const char *buffer, unsigned int nbChar) = 0;
 
 		//Writes the whole character string.
-		bool WriteData(std::string sData);
+		virtual bool WriteData(std::string sData) = 0;
 
 		//Check if we are actually connected
-		bool IsConnected();
+		virtual bool IsConnected() = 0;
 
 		//Flush any contents of the buffer
-		bool FlushBuffer();
-
-		//Find out the port name
-		void GetPortName(std::wstring &sName);
+		virtual bool FlushBuffer() = 0;
 
 		//Return the number of characters in the queue
-		int CharsInQueue();
+		virtual int CharsInQueue() = 0;
 	};
 }
 
-#endif // SERIALCLASS_H_INCLUDED
+
+#endif

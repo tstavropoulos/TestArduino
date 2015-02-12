@@ -1,10 +1,10 @@
 #ifndef ARDUINO_CLASS_H_
 #define ARDUINO_CLASS_H_
 
+#include "SerialGeneric.h"
+
 namespace SerialComm
 {
-	class Serial;
-
 	enum ARDUINO_STATE
 	{
 		UNCONNECTED = 0,
@@ -47,7 +47,7 @@ namespace SerialComm
 		int QueuedCharacters();
 
 	protected:
-		std::unique_ptr<Serial> m_pSerial;
+		std::unique_ptr<SerialGeneric> m_pSerial;
 		bool m_bDebug;
 		bool m_bReflexive;
 		bool m_bPaired;
@@ -55,9 +55,9 @@ namespace SerialComm
 		bool m_bPrintAll;
 		ARDUINO_STATE m_eState;
 
-		bool connect(Serial &rSerial, bool bPrintErrors);
-		bool confirmVersion(Serial &rSerial, bool bPrintErrors);
-		bool sendParameters(Serial &rSerial, bool bPrintErrors);
+		bool connect(SerialGeneric *pSerial, bool bPrintErrors);
+		bool confirmVersion(SerialGeneric *pSerial, bool bPrintErrors);
+		bool sendParameters(SerialGeneric *pSerial, bool bPrintErrors);
 	};
 }
 
