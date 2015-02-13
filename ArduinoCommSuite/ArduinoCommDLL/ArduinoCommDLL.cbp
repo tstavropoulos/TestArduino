@@ -17,6 +17,7 @@
 					<Add option="-std=c++11" />
 					<Add option="-m32" />
 					<Add option="-fPIC" />
+					<Add option="-Winvalid-pch" />
 					<Add option="-Dx86" />
 					<Add option="-DNDEBUG" />
 					<Add option="-DNOTMATLAB" />
@@ -38,6 +39,7 @@
 					<Add option="-std=c++11" />
 					<Add option="-fPIC" />
 					<Add option="-m64" />
+					<Add option="-Winvalid-pch" />
 					<Add option="-Dx64" />
 					<Add option="-DNDEBUG" />
 					<Add option="-DNOTMATLAB" />
@@ -56,6 +58,7 @@
 					<Add option="-std=c++11" />
 					<Add option="-fPIC" />
 					<Add option="-m64" />
+					<Add option="-Winvalid-pch" />
 					<Add option="-Dx64" />
 					<Add option="-DMATLAB" />
 					<Add option="-DNDEBUG" />
@@ -73,6 +76,7 @@
 				<Compiler>
 					<Add option="-std=c++11" />
 					<Add option="-fPIC" />
+					<Add option="-Winvalid-pch" />
 					<Add option="-Dx86" />
 					<Add option="-DMATLAB" />
 					<Add option="-DNDEBUG" />
@@ -80,9 +84,6 @@
 					<Add option="-D_USRDLL" />
 					<Add option="-DARDUINOCOMMDLL_EXPORTS" />
 				</Compiler>
-				<Linker>
-					<Add option="-m elf_i386" />
-				</Linker>
 			</Target>
 		</Build>
 		<Unit filename="ArduinoClass.cpp">
@@ -258,6 +259,8 @@
 			<Option target="Matlab Unix x86" />
 		</Unit>
 		<Unit filename="stdafx.cpp">
+			<Option compile="0" />
+			<Option link="0" />
 			<Option target="Unix x86" />
 			<Option target="Debug Win32" />
 			<Option target="Debug x64" />
@@ -268,6 +271,8 @@
 			<Option target="Matlab Unix x86" />
 		</Unit>
 		<Unit filename="stdafx.h">
+			<Option compile="1" />
+			<Option weight="0" />
 			<Option target="Unix x86" />
 			<Option target="Debug Win32" />
 			<Option target="Debug x64" />
