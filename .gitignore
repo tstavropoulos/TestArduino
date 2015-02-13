@@ -15,6 +15,7 @@
 /ArduinoCommSuite/ArduinoCommDLL/*.so
 /ArduinoCommSuite/ArduinoCommDLL/*.layout
 /ArduinoCommSuite/ArduinoCommDLL/*.depend
+/ArduinoCommSuite/ArduinoCommDLL/*.gch
 /PrototypeCommTest/*.sdf
 /PrototypeCommTest/*.opensdf
 /PrototypeCommTest/*.suo
