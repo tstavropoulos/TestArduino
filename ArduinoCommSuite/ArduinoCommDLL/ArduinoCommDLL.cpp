@@ -54,16 +54,7 @@ namespace SerialComm
 
 	bool ArduinoComm::Connect(int iPortNum)
 	{
-		//inittest("Connect",false);
-		if (!m_bInitialized) 
-		{
-			std::string sMacroErrorMessage; 
-			sMacroErrorMessage = std::string(macroString, sizeof(macroString) + sizeof("Connect") + 1);
-			sMacroErrorMessage += "Connect";
-			PrintDebugError(sMacroErrorMessage);
-			return false; 
-		}
-
+		inittest("Connect",false);
 		return m_sArduino.connectPort(iPortNum);
 	}
 
