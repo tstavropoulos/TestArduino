@@ -5,13 +5,21 @@
 
 #pragma once
 
+#ifdef _WINDOWS
+
 #include "targetver.h"
 
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 // Windows Header Files:
 #include <windows.h>
 
+#endif // _WINDOWS
 
+#ifdef _UNIX
+#include <sys/time.h>
+#endif // _UNIX
+
+#include <cstring>
 #include <math.h>
 #include <string>
 #include <sstream>

@@ -29,6 +29,8 @@ Any MatLab scripts can be run with MatLab.  Modifications would be required to b
 
 ##What do I need?
 
+###Windows
+
 Well, for starters you will probably need a recent release of Visual Studio.  If *free* is in your price range, and you're developing in a Windows environment, you might want to check out [Microsoft Visual Studio - Community 2013](http://www.visualstudio.com/downloads/).  If you're not developing in Windows, you better know what you're doing, because the libraries are currently heavily dependent on the Windows API.
 
 I'm going to try to keep reasonably recent builds of the library files uploaded in the BuiltLibs folder, so it won't be strictly necessary to have the IDE installed.
@@ -36,6 +38,15 @@ I'm going to try to keep reasonably recent builds of the library files uploaded 
 You will also need any version of the Arduino IDE that works with your Arduino.  The Arduino IDE is available from [The Official Arduino Website](http://arduino.cc/en/main/software).  Speaking of which, you will probably need an Arduino.
 
 If you wish to utilize the MatLab scripts, you'll need a version of MatLab that supports the loading of external libraries.  I doubt that is a new feature, any distro of MatLab released in the last 5 years is probably sufficient.  I am going to investigate getting the libraries to build and link with Octave (an opensource MatLab alternative), but that's on the To Do list for now.
+
+###Unix
+
+If you are developing in Unix, you will need:
+
+* g++ version 4.*
+* g++ multilib
+* libc6-dev-i386
+
 
 ##Latency Details
 

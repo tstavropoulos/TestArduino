@@ -6,6 +6,7 @@
 #ifndef MATLAB
 
 #include "ArduinoCommDLL.h"
+#include "ArduinoCommSO.h"
 #include "CoreFunctions.h"
 #include "ArduinoClass.h"
 #include "Logging.h"
@@ -169,4 +170,4 @@ namespace SerialComm
 	}
 }
 
-#endif
+#endif // MATLAB

@@ -51,7 +51,7 @@ namespace SerialComm
 			wss << L" Received ack message: \"" << szBuffer << L"\""; \
 			PrintDebugError(wss.str()); \
 		} \
-	} 
+	}
 
 
 Arduino::Arduino()
@@ -133,9 +133,13 @@ bool Arduino::connectPort(int iPortNum)
 	std::wstringstream wss;
 	wss << "\\\\.\\COM" << iPortNum;
 
+#ifdef _WINDOWS
 	m_pSerial = std::make_unique<Serial>(wss.str());
+#else
+	m_pSerial = std::unique_ptr<SerialGeneric>(new Serial(wss.str()));
+#endif // _WINDOWS
 
-	if (!confirmVersion(m_pSerial.get(), true) || 
+	if (!confirmVersion(m_pSerial.get(), true) ||
 		!connect(m_pSerial.get(), true) ||
 		!sendParameters(m_pSerial.get(), true))
 	{
@@ -336,7 +340,7 @@ bool Arduino::WaitReadData(std::string &sBuffer, unsigned int nbChar, unsigned l
 		sBuffer = buffer;
 		return bStatus;
 	}
-	
+
 	sBuffer = "";
 	return false;
 }

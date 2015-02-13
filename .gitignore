@@ -7,6 +7,8 @@
 /ArduinoCommSuite/ArduinoCommTest/*.user
 /ArduinoCommSuite/ArduinoCommDLL/Intermediate
 /ArduinoCommSuite/ArduinoCommDLL/*.user
+/ArduinoCommSuite/ArduinoCommDLL/.objs
+/ArduinoCommSuite/ArduinoCommDLL/*.so
 /PrototypeCommTest/*.sdf
 /PrototypeCommTest/*.opensdf
 /PrototypeCommTest/*.suo

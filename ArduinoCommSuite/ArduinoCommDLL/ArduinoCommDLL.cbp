@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="ArduinoCommDLL" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Unix x86">
+				<Option output="ArduinoCommDLL" prefix_auto="1" extension_auto="1" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Option projectLinkerOptionsRelation="2" />
+				<Compiler>
+					<Add option="-std=c++11" />
+					<Add option="-m32" />
+					<Add option="-fPIC" />
+					<Add option="-Dx86" />
+					<Add option="-DNDEBUG" />
+					<Add option="-DNOTMATLAB" />
+					<Add option="-D_UNIX" />
+					<Add option="-D_USRDLL" />
+					<Add option="-DARDUINOCOMMDLL_EXPORTS" />
+				</Compiler>
+				<Linker>
+					<Add option="-m32" />
+				</Linker>
+			</Target>
+			<Target title="Unix x64">
+				<Option output="ArduinoCommDLL" prefix_auto="1" extension_auto="1" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-std=c++11" />
+					<Add option="-fPIC" />
+					<Add option="-m64" />
+					<Add option="-Dx64" />
+					<Add option="-DNDEBUG" />
+					<Add option="-DNOTMATLAB" />
+					<Add option="-D_UNIX" />
+					<Add option="-D_USRDLL" />
+					<Add option="-DARDUINOCOMMDLL_EXPORTS" />
+				</Compiler>
+			</Target>
+			<Target title="Matlab Unix x64">
+				<Option output="ArduinoCommDLL" prefix_auto="1" extension_auto="1" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-std=c++11" />
+					<Add option="-fPIC" />
+					<Add option="-m64" />
+					<Add option="-Dx64" />
+					<Add option="-DMATLAB" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_UNIX" />
+					<Add option="-D_USRDLL" />
+					<Add option="-DARDUINOCOMMDLL_EXPORTS" />
+				</Compiler>
+			</Target>
+			<Target title="Matlab Unix x86">
+				<Option output="ArduinoCommDLL" prefix_auto="1" extension_auto="1" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-std=c++11" />
+					<Add option="-fPIC" />
+					<Add option="-Dx86" />
+					<Add option="-DMATLAB" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_UNIX" />
+					<Add option="-D_USRDLL" />
+					<Add option="-DARDUINOCOMMDLL_EXPORTS" />
+				</Compiler>
+				<Linker>
+					<Add option="-m elf_i386" />
+				</Linker>
+			</Target>
+		</Build>
+		<Unit filename="ArduinoClass.cpp">
+			<Option target="Unix x86" />
+			<Option target="Debug Win32" />
+			<Option target="Debug x64" />
+			<Option target="Unix x64" />
+			<Option target="Release Win32" />
+			<Option target="Release x64" />
+			<Option target="Matlab Unix x64" />
+			<Option target="Matlab Unix x86" />
+		</Unit>
+		<Unit filename="ArduinoClass.h">
+			<Option target="Unix x86" />
+			<Option target="Debug Win32" />
+			<Option target="Debug x64" />
+			<Option target="Unix x64" />
+			<Option target="Release Win32" />
+			<Option target="Release x64" />
+			<Option target="Matlab Unix x64" />
+			<Option target="Matlab Unix x86" />
+		</Unit>
+		<Unit filename="ArduinoCommCDLL.cpp">
+			<Option target="Unix x86" />
+			<Option target="Debug Win32" />
+			<Option target="Debug x64" />
+			<Option target="Unix x64" />
+			<Option target="Release Win32" />
+			<Option target="Release x64" />
+			<Option target="Matlab Unix x64" />
+			<Option target="Matlab Unix x86" />
+		</Unit>
+		<Unit filename="ArduinoCommCDLL.h">
+			<Option target="Unix x86" />
+			<Option target="Debug Win32" />
+			<Option target="Debug x64" />
+			<Option target="Unix x64" />
+			<Option target="Release Win32" />
+			<Option target="Release x64" />
+			<Option target="Matlab Unix x64" />
+			<Option target="Matlab Unix x86" />
+		</Unit>
+		<Unit filename="ArduinoCommCSO.h" />
+		<Unit filename="ArduinoCommDLL.cpp">
+			<Option target="Unix x86" />
+			<Option target="Debug Win32" />
+			<Option target="Debug x64" />
+			<Option target="Unix x64" />
+			<Option target="Release Win32" />
+			<Option target="Release x64" />
+			<Option target="Matlab Unix x64" />
+			<Option target="Matlab Unix x86" />
+		</Unit>
+		<Unit filename="ArduinoCommDLL.h">
+			<Option target="Unix x86" />
+			<Option target="Debug Win32" />
+			<Option target="Debug x64" />
+			<Option target="Unix x64" />
+			<Option target="Release Win32" />
+			<Option target="Release x64" />
+			<Option target="Matlab Unix x64" />
+			<Option target="Matlab Unix x86" />
+		</Unit>
+		<Unit filename="ArduinoCommSO.h" />
+		<Unit filename="CoreFunctions.cpp">
+			<Option target="Unix x86" />
+			<Option target="Debug Win32" />
+			<Option target="Debug x64" />
+			<Option target="Unix x64" />
+			<Option target="Release Win32" />
+			<Option target="Release x64" />
+			<Option target="Matlab Unix x64" />
+			<Option target="Matlab Unix x86" />
+		</Unit>
+		<Unit filename="CoreFunctions.h">
+			<Option target="Unix x86" />
+			<Option target="Debug Win32" />
+			<Option target="Debug x64" />
+			<Option target="Unix x64" />
+			<Option target="Release Win32" />
+			<Option target="Release x64" />
+			<Option target="Matlab Unix x64" />
+			<Option target="Matlab Unix x86" />
+		</Unit>
+		<Unit filename="Logging.cpp">
+			<Option target="Unix x86" />
+			<Option target="Debug Win32" />
+			<Option target="Debug x64" />
+			<Option target="Unix x64" />
+			<Option target="Release Win32" />
+			<Option target="Release x64" />
+			<Option target="Matlab Unix x64" />
+			<Option target="Matlab Unix x86" />
+		</Unit>
+		<Unit filename="Logging.h">
+			<Option target="Unix x86" />
+			<Option target="Debug Win32" />
+			<Option target="Debug x64" />
+			<Option target="Unix x64" />
+			<Option target="Release Win32" />
+			<Option target="Release x64" />
+			<Option target="Matlab Unix x64" />
+			<Option target="Matlab Unix x86" />
+		</Unit>
+		<Unit filename="SerialGeneric.cpp">
+			<Option target="Unix x86" />
+			<Option target="Debug Win32" />
+			<Option target="Debug x64" />
+			<Option target="Unix x64" />
+			<Option target="Release Win32" />
+			<Option target="Release x64" />
+			<Option target="Matlab Unix x64" />
+			<Option target="Matlab Unix x86" />
+		</Unit>
+		<Unit filename="SerialGeneric.h">
+			<Option target="Unix x86" />
+			<Option target="Debug Win32" />
+			<Option target="Debug x64" />
+			<Option target="Unix x64" />
+			<Option target="Release Win32" />
+			<Option target="Release x64" />
+			<Option target="Matlab Unix x64" />
+			<Option target="Matlab Unix x86" />
+		</Unit>
+		<Unit filename="SerialUnix.cpp">
+			<Option target="Unix x86" />
+			<Option target="Debug Win32" />
+			<Option target="Debug x64" />
+			<Option target="Unix x64" />
+			<Option target="Release Win32" />
+			<Option target="Release x64" />
+			<Option target="Matlab Unix x64" />
+			<Option target="Matlab Unix x86" />
+		</Unit>
+		<Unit filename="SerialUnix.h">
+			<Option target="Unix x86" />
+			<Option target="Debug Win32" />
+			<Option target="Debug x64" />
+			<Option target="Unix x64" />
+			<Option target="Release Win32" />
+			<Option target="Release x64" />
+			<Option target="Matlab Unix x64" />
+			<Option target="Matlab Unix x86" />
+		</Unit>
+		<Unit filename="SerialWindows.cpp">
+			<Option target="Unix x86" />
+			<Option target="Debug Win32" />
+			<Option target="Debug x64" />
+			<Option target="Unix x64" />
+			<Option target="Release Win32" />
+			<Option target="Release x64" />
+			<Option target="Matlab Unix x64" />
+			<Option target="Matlab Unix x86" />
+		</Unit>
+		<Unit filename="SerialWindows.h">
+			<Option target="Unix x86" />
+			<Option target="Debug Win32" />
+			<Option target="Debug x64" />
+			<Option target="Unix x64" />
+			<Option target="Release Win32" />
+			<Option target="Release x64" />
+			<Option target="Matlab Unix x64" />
+			<Option target="Matlab Unix x86" />
+		</Unit>
+		<Unit filename="dllmain.cpp">
+			<Option target="Unix x86" />
+			<Option target="Debug Win32" />
+			<Option target="Debug x64" />
+			<Option target="Unix x64" />
+			<Option target="Release Win32" />
+			<Option target="Release x64" />
+			<Option target="Matlab Unix x64" />
+			<Option target="Matlab Unix x86" />
+		</Unit>
+		<Unit filename="stdafx.cpp">
+			<Option target="Unix x86" />
+			<Option target="Debug Win32" />
+			<Option target="Debug x64" />
+			<Option target="Unix x64" />
+			<Option target="Release Win32" />
+			<Option target="Release x64" />
+			<Option target="Matlab Unix x64" />
+			<Option target="Matlab Unix x86" />
+		</Unit>
+		<Unit filename="stdafx.h">
+			<Option target="Unix x86" />
+			<Option target="Debug Win32" />
+			<Option target="Debug x64" />
+			<Option target="Unix x64" />
+			<Option target="Release Win32" />
+			<Option target="Release x64" />
+			<Option target="Matlab Unix x64" />
+			<Option target="Matlab Unix x86" />
+		</Unit>
+		<Unit filename="targetver.h">
+			<Option target="Unix x86" />
+			<Option target="Debug Win32" />
+			<Option target="Debug x64" />
+			<Option target="Unix x64" />
+			<Option target="Release Win32" />
+			<Option target="Release x64" />
+			<Option target="Matlab Unix x64" />
+			<Option target="Matlab Unix x86" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

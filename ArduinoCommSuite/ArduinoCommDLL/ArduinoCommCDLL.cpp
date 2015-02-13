@@ -6,6 +6,7 @@
 #ifndef NOTMATLAB
 
 #include "ArduinoCommCDLL.h"
+#include "ArduinoCommCSO.h"
 #include "CoreFunctions.h"
 #include "ArduinoClass.h"
 #include "Logging.h"
@@ -148,4 +149,5 @@ bool WaitForChars(char *szMessage, int iCharNum, int msTimeout)
 	return m_sArduino.WaitReadData(szMessage, iCharNum, msProperTimeOut);
 }
 
-#endif
+#endif // NOTMATLAB
+

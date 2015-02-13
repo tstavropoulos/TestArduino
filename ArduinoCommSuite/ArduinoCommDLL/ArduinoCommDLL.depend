@@ -1,0 +1,101 @@
+# depslib dependency file v1.0
+1423852003 source:/home/tstavrop/Documents/Projects/CommArduino/ArduinoCommSuite/ArduinoCommDLL/ArduinoClass.cpp
+	"stdafx.h"
+	"CoreFunctions.h"
+	"ArduinoClass.h"
+	"SerialGeneric.h"
+	"SerialWindows.h"
+	"SerialUnix.h"
+	"Logging.h"
+	<mutex>
+
+1423855956 /home/tstavrop/Documents/Projects/CommArduino/ArduinoCommSuite/ArduinoCommDLL/stdafx.h
+	"targetver.h"
+	<windows.h>
+	<sys/time.h>
+	<cstring>
+	<math.h>
+	<string>
+	<sstream>
+	<algorithm>
+	<vector>
+	<stdexcept>
+	<thread>
+	<memory>
+
+1423847743 /home/tstavrop/Documents/Projects/CommArduino/ArduinoCommSuite/ArduinoCommDLL/targetver.h
+	<SDKDDKVer.h>
+
+1423847743 /home/tstavrop/Documents/Projects/CommArduino/ArduinoCommSuite/ArduinoCommDLL/CoreFunctions.h
+
+1423847743 /home/tstavrop/Documents/Projects/CommArduino/ArduinoCommSuite/ArduinoCommDLL/ArduinoClass.h
+	"SerialGeneric.h"
+
+1423847743 /home/tstavrop/Documents/Projects/CommArduino/ArduinoCommSuite/ArduinoCommDLL/SerialGeneric.h
+
+1423847743 /home/tstavrop/Documents/Projects/CommArduino/ArduinoCommSuite/ArduinoCommDLL/SerialWindows.h
+
+1423847743 /home/tstavrop/Documents/Projects/CommArduino/ArduinoCommSuite/ArduinoCommDLL/SerialUnix.h
+
+1423847743 /home/tstavrop/Documents/Projects/CommArduino/ArduinoCommSuite/ArduinoCommDLL/Logging.h
+
+1423853614 source:/home/tstavrop/Documents/Projects/CommArduino/ArduinoCommSuite/ArduinoCommDLL/ArduinoCommCDLL.cpp
+	"stdafx.h"
+	"ArduinoCommCDLL.h"
+	"ArduinoCommCSO.h"
+	"CoreFunctions.h"
+	"ArduinoClass.h"
+	"Logging.h"
+
+1423853823 /home/tstavrop/Documents/Projects/CommArduino/ArduinoCommSuite/ArduinoCommDLL/ArduinoCommCDLL.h
+
+1423853984 /home/tstavrop/Documents/Projects/CommArduino/ArduinoCommSuite/ArduinoCommDLL/ArduinoCommCSO.h
+
+1423853627 source:/home/tstavrop/Documents/Projects/CommArduino/ArduinoCommSuite/ArduinoCommDLL/ArduinoCommDLL.cpp
+	"stdafx.h"
+	"ArduinoCommDLL.h"
+	"ArduinoCommSO.h"
+	"CoreFunctions.h"
+	"ArduinoClass.h"
+	"Logging.h"
+
+1423853940 /home/tstavrop/Documents/Projects/CommArduino/ArduinoCommSuite/ArduinoCommDLL/ArduinoCommDLL.h
+	<string>
+
+1423853882 /home/tstavrop/Documents/Projects/CommArduino/ArduinoCommSuite/ArduinoCommDLL/ArduinoCommSO.h
+	<string>
+
+1423856210 source:/home/tstavrop/Documents/Projects/CommArduino/ArduinoCommSuite/ArduinoCommDLL/CoreFunctions.cpp
+	"stdafx.h"
+	"CoreFunctions.h"
+
+1423856246 source:/home/tstavrop/Documents/Projects/CommArduino/ArduinoCommSuite/ArduinoCommDLL/dllmain.cpp
+	"stdafx.h"
+
+1423847743 source:/home/tstavrop/Documents/Projects/CommArduino/ArduinoCommSuite/ArduinoCommDLL/Logging.cpp
+	"stdafx.h"
+	"Logging.h"
+	<mutex>
+	<iostream>
+
+1423847743 source:/home/tstavrop/Documents/Projects/CommArduino/ArduinoCommSuite/ArduinoCommDLL/SerialGeneric.cpp
+	"stdafx.h"
+	"SerialGeneric.h"
+
+1423847743 source:/home/tstavrop/Documents/Projects/CommArduino/ArduinoCommSuite/ArduinoCommDLL/SerialUnix.cpp
+	"stdafx.h"
+	"SerialGeneric.h"
+	"SerialUnix.h"
+	"CoreFunctions.h"
+	"Logging.h"
+
+1423847743 source:/home/tstavrop/Documents/Projects/CommArduino/ArduinoCommSuite/ArduinoCommDLL/SerialWindows.cpp
+	"stdafx.h"
+	"SerialGeneric.h"
+	"SerialWindows.h"
+	"CoreFunctions.h"
+	"Logging.h"
+
+1423847743 source:/home/tstavrop/Documents/Projects/CommArduino/ArduinoCommSuite/ArduinoCommDLL/stdafx.cpp
+	"stdafx.h"
+
