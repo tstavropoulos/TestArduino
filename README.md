@@ -43,10 +43,11 @@ If you wish to utilize the MatLab scripts, you'll need a version of MatLab that 
 
 If you are developing in Unix, you will need:
 
-* g++ version 4.*
+* g++ version 4.8+
 * g++ multilib
 * libc6-dev-i386
-
+* Code::Blocks or familiarity with compiling source code
+* ARM, x86, or x64 processor
 
 ##Latency Details
 
@@ -75,5 +76,6 @@ Now, communicating with MatLab through the C++ Shared Library:
 
 ##To Do
 
-* Create a Unix platform option.  Current Windows dependenices exist only in Serial.h, Serial.cpp, and CoreFunctions.cpp.
+* Test Unix port.
 * Explore portability to Octave.  Will require changes to project build.
+* Test response time with RS232 communication.
