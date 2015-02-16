@@ -2,15 +2,23 @@
 //
 
 #include "stdafx.h"
-
+#ifdef _WINDOWS
 #include "../ArduinoCommDLL/ArduinoCommDLL.h"
+#endif // _WINDOWS
+
+#ifdef _UNIX
+#include "../ArduinoCommDLL/ArduinoCommSO.h"
+#define _tmain main
+#define _TCHAR char
+#endif // _UNIX
+
 #include "../ArduinoCommDLL/CoreFunctions.h"
 
 
 int _tmain(int argc, _TCHAR* argv[])
 {
 	SerialComm::ArduinoComm::Init();
-	
+
 	int piArduinos[10] = {};
 	SerialComm::ArduinoComm::FindArduinos(piArduinos, 10);
 	if (piArduinos[0] != 0)
@@ -32,7 +40,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			std::cout << i << "  ";
 		}
 	}
-	
+
 	int iPort;
 	std::cout << std::endl << "Connect to Port: ";
 	std::cin >> iPort;

@@ -5,7 +5,73 @@
 		<Option title="ArduinoCommTest" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
-		<Build />
+		<Build>
+			<Target title="Unix_x86">
+				<Option output="../Output/x86/Unix/ArduinoCommTest" prefix_auto="1" extension_auto="1" />
+				<Option object_output="Intermediate/x86/Unix" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
+				<Compiler>
+					<Add option="-std=c++11" />
+					<Add option="-m32" />
+					<Add option="-L$(PROJECT_DIR)$(TARGET_OUTPUT_DIR)" />
+					<Add option="-lArduinoCommDLL" />
+					<Add option="-D_UNIX" />
+				</Compiler>
+				<Linker>
+					<Add option="-m32" />
+					<Add option="-L$(PROJECT_DIR)$(TARGET_OUTPUT_DIR)" />
+					<Add library="ArduinoCommDLL" />
+				</Linker>
+			</Target>
+			<Target title="Unix_x64">
+				<Option output="../Output/x64/Unix/ArduinoCommTest" prefix_auto="1" extension_auto="1" />
+				<Option object_output="Intermediate/x64/Unix" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
+				<Compiler>
+					<Add option="-std=c++11" />
+					<Add option="-m64" />
+					<Add option="-L$(PROJECT_DIR)$(TARGET_OUTPUT_DIR)" />
+					<Add option="-lArduinoCommDLL" />
+					<Add option="-D_UNIX" />
+				</Compiler>
+				<Linker>
+					<Add option="-L$(PROJECT_DIR)$(TARGET_OUTPUT_DIR)" />
+					<Add library="ArduinoCommDLL" />
+				</Linker>
+			</Target>
+			<Target title="Unix_ARM">
+				<Option output="../Output/ARM/Unix/ArduinoCommTest" prefix_auto="1" extension_auto="1" />
+				<Option object_output="Intermediate/ARM/Unix" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
+				<Compiler>
+					<Add option="-std=c++11" />
+					<Add option="-marm" />
+					<Add option="-L$(PROJECT_DIR)$(TARGET_OUTPUT_DIR)" />
+					<Add option="-lArduinoCommDLL" />
+					<Add option="-D_UNIX" />
+				</Compiler>
+				<Linker>
+					<Add option="-L$(PROJECT_DIR)$(TARGET_OUTPUT_DIR)" />
+					<Add library="ArduinoCommDLL" />
+				</Linker>
+			</Target>
+		</Build>
+		<Unit filename="ArduinoCommTest.cpp" />
+		<Unit filename="stdafx.cpp">
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
+		<Unit filename="stdafx.h">
+			<Option compile="1" />
+			<Option weight="0" />
+		</Unit>
+		<Unit filename="targetver.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />

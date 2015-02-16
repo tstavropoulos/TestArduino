@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_workspace_file>
 	<Workspace title="ArduinoComm">
-		<Project filename="ArduinoCommDLL/ArduinoCommDLL.cbp" active="1" />
+		<Project filename="ArduinoCommDLL/ArduinoCommDLL.cbp" />
+		<Project filename="ArduinoCommTest/ArduinoCommTest.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>
