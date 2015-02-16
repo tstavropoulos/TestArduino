@@ -8,11 +8,9 @@
 /ArduinoCommSuite/ArduinoCommTest/*.user
 /ArduinoCommSuite/ArduinoCommTest/*.layout
 /ArduinoCommSuite/ArduinoCommTest/*.depend
-/ArduinoCommSuite/ArduinoCommTest/.objs
+/ArduinoCommSuite/ArduinoCommTest/*.gch
 /ArduinoCommSuite/ArduinoCommDLL/Intermediate
 /ArduinoCommSuite/ArduinoCommDLL/*.user
-/ArduinoCommSuite/ArduinoCommDLL/.objs
-/ArduinoCommSuite/ArduinoCommDLL/*.so
 /ArduinoCommSuite/ArduinoCommDLL/*.layout
 /ArduinoCommSuite/ArduinoCommDLL/*.depend
 /ArduinoCommSuite/ArduinoCommDLL/*.gch
