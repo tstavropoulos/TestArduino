@@ -1,5 +1,5 @@
 #include "stdafx.h"
-
+#define _UNIX
 #ifdef _UNIX
 
 #include "SerialGeneric.h"
@@ -8,6 +8,33 @@
 #include "Logging.h"
 
 using namespace SerialComm;
+
+#define GETATTR(sSetting) \
+	if (tcgetattr(mFileDescriptor, &term_setting) == -1) \
+	{ \
+		if (!m_bErrorSuppress) \
+		{ \
+			std::wstringstream wss; \
+			wss << L"Failed to get term settings for " << sSetting << L".  Port: " << m_sPortName.c_str(); \
+			PrintDebugError(wss.str()); \
+		} \
+		  \
+		return; \
+	}
+
+#define SETATTR(sSetting) \
+	if (tcsetattr(mFileDescriptor, TCSANOW, &term_setting) == -1) \
+	{ \
+		if (!m_bErrorSuppress) \
+		{ \
+			std::wstringstream wss; \
+			wss << L"Failed to set term settings for " << sSetting << ".  Port: " << m_sPortName.c_str(); \
+			PrintDebugError(wss.str()); \
+		} \
+		  \
+		return; \
+	}
+
 
 SerialUnix::SerialUnix(const std::string sPortName)
 	: SerialUnix(sPortName, false)
@@ -78,49 +105,35 @@ void SerialUnix::InitializeSerialPort()
 
 	//Get Term Settings
 	struct termios term_setting;
-	if (tcgetattr(mFileDescriptor, &term_setting) == -1)
-	{
-		if ( !m_bErrorSuppress )
-		{
-			std::wstringstream wss;
-			wss << L"Failed to get term settings.  Port: " << m_sPortName.c_str();
-			PrintDebugError(wss.str());
-		}
-
-		return;
-	}
 
 	//Set Baud Rate - 115200 Baud
+	GETATTR("Baud Rate");
 	cfsetispeed ( &term_setting, B115200 );
 	cfsetospeed ( &term_setting, B115200 );
+	SETATTR("Baud Rate");
 
 	//Set Char Size - 8 bits
+	GETATTR("Char Size");
 	term_setting.c_iflag &= ~ISTRIP;
 	term_setting.c_cflag &= ~CSIZE;
 	term_setting.c_cflag |= CS8;
+	SETATTR("Char Size");
 
 	//Set Stop Bits - One Stop Bit
-	term_setting.c_cflag &= ~CSTOPB ;
+	GETATTR("Stop Bit");
+	term_setting.c_cflag &= ~CSTOPB;
+	SETATTR("Stop Bit");
 
 	//Set Parity - No Parity
-	term_setting.c_cflag &= ~PARENB ;
+	GETATTR("Parity");
+	term_setting.c_cflag &= ~PARENB;
+	SETATTR("Parity");
 
 	//Set Flow Control - None
+	GETATTR("Flow Control");
 	term_setting.c_iflag &= ~(IXON|IXOFF);
 	term_setting.c_cflag &= ~CRTSCTS;
-
-
-	if (tcsetattr(mFileDescriptor, TCSANOW, &term_setting) == -1)
-	{
-		if ( !m_bErrorSuppress )
-		{
-			std::wstringstream wss;
-			wss << L"Failed to set term settings.  Port: " << m_sPortName.c_str();
-			PrintDebugError(wss.str());
-		}
-
-		return;
-	}
+	SETATTR("Flow Control");
 
 	//Return to blocking mode
 	flags = fcntl(mFileDescriptor, F_GETFL, 0);
