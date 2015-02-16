@@ -43,7 +43,7 @@ If you wish to utilize the MatLab scripts, you'll need a version of MatLab that 
 
 If you are developing in Unix, you will need:
 
-* g++ version 4.*
+* g++ version 4.8+
 * g++ multilib
 * libc6-dev-i386
 * Code::Blocks or familiarity with compiling source code
