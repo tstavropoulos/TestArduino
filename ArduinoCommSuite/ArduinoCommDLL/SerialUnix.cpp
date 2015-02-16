@@ -3,13 +3,6 @@
 #ifdef _UNIX
 
 //Stuff for headers
-#include <queue>
-#include <fcntl.h>
-#include <cstdio>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <limits.h>
-#include <unistd.h>
 //End stuff for headers
 
 #include "SerialGeneric.h"
@@ -30,7 +23,7 @@ SerialUnix::SerialUnix(const std::wstring wsPortName, bool bErrorSuppress)
 {
 	mFileDescriptor = -1;
 
-	mFileDescriptor = ::open(wsPortName.c_str(), O_RDWR | O_NOCTTY );
+	mFileDescriptor = ::open(wsPortName.str(), O_RDWR | O_NOCTTY );
 
 	if ( mFileDescriptor == -1 )
 	{
@@ -116,7 +109,7 @@ void SerialUnix::InitializeSerialPort()
 	term_setting.c_cflag &= ~PARENB ;
 
 	//Set Flow Control - None
-	term_setting.c_iflag &= ~(IXON|IXOFF);        
+	term_setting.c_iflag &= ~(IXON|IXOFF);
 	term_setting.c_cflag &= ~CRTSCTS;
 
 
