@@ -234,4 +234,9 @@ bool SerialWindows::IsConnected()
 	return this->connected;
 }
 
+const char *SerialWindows::GetPortTemplate()
+{
+	return "\\\\.\\COM";
+}
+
 #endif

@@ -239,5 +239,10 @@ int SerialUnix::CharsInQueue()
 	return mqBufferedChars.size();
 }
 
+const char *SerialUnix::GetPortTemplate()
+{
+	return "/dev/ttyUSB";
+}
+
 
 #endif

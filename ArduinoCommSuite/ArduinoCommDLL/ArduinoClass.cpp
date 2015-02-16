@@ -131,7 +131,7 @@ std::vector<int> Arduino::tryAllPorts(int iPortMax)
 bool Arduino::connectPort(int iPortNum)
 {
 	std::stringstream ss;
-	ss << "\\\\.\\COM" << iPortNum;
+	ss << Serial::GetPortTemplate() << iPortNum;
 
 #ifdef _WINDOWS
 	m_pSerial = std::make_unique<Serial>(ss.str());

@@ -35,6 +35,8 @@ namespace SerialComm
 		virtual bool IsConnected();
 		virtual bool FlushBuffer();
 		virtual int CharsInQueue();
+
+		static const char *GetPortTemplate();
 	};
 }
 
