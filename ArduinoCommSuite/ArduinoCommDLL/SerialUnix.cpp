@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#define _UNIX
+
 #ifdef _UNIX
 
 #include "SerialGeneric.h"
