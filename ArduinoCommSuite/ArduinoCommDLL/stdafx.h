@@ -15,7 +15,14 @@
 #endif // _WINDOWS
 
 #ifdef _UNIX
-#include <sys/time.h>
+    #include <sys/time.h>
+    #include <queue>
+    #include <fcntl.h>
+    #include <cstdio>
+    #include <sys/types.h>
+    #include <sys/stat.h>
+    #include <limits.h>
+    #include <unistd.h>
 #endif // _UNIX
 
 #include <cstring>
