@@ -2,9 +2,6 @@
 
 #ifdef _UNIX
 
-//Stuff for headers
-//End stuff for headers
-
 #include "SerialGeneric.h"
 #include "SerialUnix.h"
 #include "CoreFunctions.h"
@@ -12,25 +9,25 @@
 
 using namespace SerialComm;
 
-SerialUnix::SerialUnix(const std::wstring wsPortName)
-	: SerialUnix(wsPortName, false)
+SerialUnix::SerialUnix(const std::string sPortName)
+	: SerialUnix(sPortName, false)
 {
 
 }
 
-SerialUnix::SerialUnix(const std::wstring wsPortName, bool bErrorSuppress)
-	: SerialGeneric(wsPortName, bErrorSuppress)
+SerialUnix::SerialUnix(const std::string sPortName, bool bErrorSuppress)
+	: SerialGeneric(sPortName, bErrorSuppress)
 {
 	mFileDescriptor = -1;
 
-	mFileDescriptor = ::open(wsPortName.str(), O_RDWR | O_NOCTTY );
+	mFileDescriptor = ::open(sPortName.c_str(), O_RDWR | O_NOCTTY );
 
 	if ( mFileDescriptor == -1 )
 	{
 		if ( !m_bErrorSuppress )
 		{
 			std::wstringstream wss;
-			wss << L"Failed to open Serial Port.  Port: " << wsPortName;
+			wss << L"Failed to open Serial Port.  Port: " << sPortName.c_str();
 			PrintDebugError(wss.str());
 		}
 	}
@@ -59,7 +56,7 @@ void SerialUnix::InitializeSerialPort()
 		if ( !m_bErrorSuppress )
 		{
 			std::wstringstream wss;
-			wss << L"Failed to set Serial Port to Non-Blocking mode.  Port: " << m_wsPortName;
+			wss << L"Failed to set Serial Port to Non-Blocking mode.  Port: " << m_sPortName.c_str();
 			PrintDebugError(wss.str());
 		}
 
@@ -72,7 +69,7 @@ void SerialUnix::InitializeSerialPort()
 		if ( !m_bErrorSuppress )
 		{
 			std::wstringstream wss;
-			wss << L"Failed to flush serial buffer.  Port: " << m_wsPortName;
+			wss << L"Failed to flush serial buffer.  Port: " << m_sPortName.c_str();
 			PrintDebugError(wss.str());
 		}
 
@@ -86,7 +83,7 @@ void SerialUnix::InitializeSerialPort()
 		if ( !m_bErrorSuppress )
 		{
 			std::wstringstream wss;
-			wss << L"Failed to get term settings.  Port: " << m_wsPortName;
+			wss << L"Failed to get term settings.  Port: " << m_sPortName.c_str();
 			PrintDebugError(wss.str());
 		}
 
@@ -118,7 +115,7 @@ void SerialUnix::InitializeSerialPort()
 		if ( !m_bErrorSuppress )
 		{
 			std::wstringstream wss;
-			wss << L"Failed to set term settings.  Port: " << m_wsPortName;
+			wss << L"Failed to set term settings.  Port: " << m_sPortName.c_str();
 			PrintDebugError(wss.str());
 		}
 
@@ -132,7 +129,7 @@ void SerialUnix::InitializeSerialPort()
 		if ( !m_bErrorSuppress )
 		{
 			std::wstringstream wss;
-			wss << L"Failed to set Serial Port to Blocking mode.  Port: " << m_wsPortName;
+			wss << L"Failed to set Serial Port to Blocking mode.  Port: " << m_sPortName.c_str();
 			PrintDebugError(wss.str());
 		}
 
@@ -196,7 +193,7 @@ bool SerialUnix::WriteData(const char *buffer, unsigned int nbChar)
 
 bool SerialUnix::WriteData(std::string sData)
 {
-	return ( ::write(mFileDescriptor, sData.c_str(), DWORD(sData.size())) > 0 );
+	return ( ::write(mFileDescriptor, sData.c_str(), sData.size()) > 0 );
 }
 
 bool SerialUnix::IsConnected()
@@ -216,7 +213,7 @@ bool SerialUnix::FlushBuffer()
 		if ( !m_bErrorSuppress )
 		{
 			std::wstringstream wss;
-			wss << L"Failed to flush serial buffer.  Port: " << m_wsPortName;
+			wss << L"Failed to flush serial buffer.  Port: " << m_sPortName.c_str();
 			PrintDebugError(wss.str());
 		}
 

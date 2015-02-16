@@ -22,8 +22,8 @@ namespace SerialComm
 		void InitializeSerialPort();
 		std::queue<char> mqBufferedChars;
 	public:
-		SerialUnix(const std::wstring wsPortName, bool bErrorSuppress);
-		SerialUnix(const std::wstring wsPortName);
+		SerialUnix(const std::string sPortName, bool bErrorSuppress);
+		SerialUnix(const std::string sPortName);
 		virtual ~SerialUnix();
 
 		virtual int ReadData(char *buffer, unsigned int nbChar);

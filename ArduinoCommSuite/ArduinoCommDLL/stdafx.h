@@ -23,6 +23,7 @@
     #include <sys/stat.h>
     #include <limits.h>
     #include <unistd.h>
+    #include <termios.h>
 #endif // _UNIX
 
 #include <cstring>
