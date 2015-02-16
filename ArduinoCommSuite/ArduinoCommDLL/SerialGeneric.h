@@ -8,23 +8,23 @@ namespace SerialComm
 	{
 	protected:
 		//Keeps track of the port name
-		std::wstring m_wsPortName;
+		std::string m_sPortName;
 
 		//Suppresses error messages
 		bool m_bErrorSuppress;
 
 	public:
 		//Initialize Serial communication with the given COM port
-		SerialGeneric(const std::wstring wsPortName, bool bErrorSuppress);
+		SerialGeneric(const std::string sPortName, bool bErrorSuppress);
 
 		//Initialize Serial communication with the given COM port
-		SerialGeneric(const std::wstring wsPortName);
+		SerialGeneric(const std::string sPortName);
 
 		//Close the connection
 		virtual ~SerialGeneric();
 
 		//Find out the port name
-		void GetPortName(std::wstring &wsName);
+		void GetPortName(std::string &sName);
 
 		/****************************
 		**                         **

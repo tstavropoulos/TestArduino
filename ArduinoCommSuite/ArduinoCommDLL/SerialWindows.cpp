@@ -9,20 +9,23 @@
 
 using namespace SerialComm;
 
-SerialWindows::SerialWindows(const std::wstring wsPortName)
-	: SerialWindows(wsPortName, false)
+SerialWindows::SerialWindows(const std::string sPortName)
+	: SerialWindows(sPortName, false)
 {
 	//Uses other constructor
 }
 
-SerialWindows::SerialWindows(const std::wstring wsPortName, bool bErrorSuppress)
-	: SerialGeneric(wsPortName, bErrorSuppress)
+SerialWindows::SerialWindows(const std::string sPortName, bool bErrorSuppress)
+	: SerialGeneric(sPortName, bErrorSuppress)
 {
 	//We're not yet connected
 	this->connected = false;
 
+	std::wstringstream wss;
+	wss << sPortName.c_str();
+
 	//Try to connect to the given port throuh CreateFile
-	this->hSerial = CreateFile(wsPortName.c_str(),
+	this->hSerial = CreateFile(wss.str().c_str(),
 		GENERIC_READ | GENERIC_WRITE,
 		0,
 		NULL,
@@ -40,14 +43,14 @@ SerialWindows::SerialWindows(const std::wstring wsPortName, bool bErrorSuppress)
 			if (!m_bErrorSuppress)
 			{
 				std::wstringstream wss;
-				wss << L"Handle was not attached. Port: " << wsPortName << L"  Reason: Not Available.";
+				wss << L"Handle was not attached. Port: " << sPortName.c_str() << L"  Reason: Not Available.";
 				PrintDebugError(wss.str());
 			}
 		}
 		else if ( !m_bErrorSuppress )
 		{
 			std::wstringstream wss;
-			wss << L"Handle was not attached.  Port: " << wsPortName << L"  Reason: Unknown.";
+			wss << L"Handle was not attached.  Port: " << sPortName.c_str() << L"  Reason: Unknown.";
 			PrintDebugError(wss.str());
 		}
 	}
@@ -63,7 +66,7 @@ SerialWindows::SerialWindows(const std::wstring wsPortName, bool bErrorSuppress)
 			if (!m_bErrorSuppress)
 			{
 				std::wstringstream wss;
-				wss << L"Failed to get Serial Parameters.  Port: " << wsPortName;
+				wss << L"Failed to get Serial Parameters.  Port: " << sPortName.c_str();
 				PrintDebugError(wss.str());
 			}
 		}
@@ -82,7 +85,7 @@ SerialWindows::SerialWindows(const std::wstring wsPortName, bool bErrorSuppress)
 				if (!m_bErrorSuppress)
 				{
 					std::wstringstream wss;
-					wss << L"Failed to set Serial Parameters.  Port: " << wsPortName;
+					wss << L"Failed to set Serial Parameters.  Port: " << sPortName.c_str();
 					PrintDebugError(wss.str());
 				}
 			}

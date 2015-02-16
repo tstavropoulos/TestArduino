@@ -4,13 +4,13 @@
 
 using namespace SerialComm;
 
-SerialGeneric::SerialGeneric(const std::wstring wsPortName, bool bErrorSuppress)
-	: m_wsPortName(wsPortName), m_bErrorSuppress(bErrorSuppress)
+SerialGeneric::SerialGeneric(const std::string sPortName, bool bErrorSuppress)
+	: m_sPortName(sPortName), m_bErrorSuppress(bErrorSuppress)
 {
 }
 
-SerialGeneric::SerialGeneric(const std::wstring wsPortName)
-	: SerialGeneric(wsPortName, false)
+SerialGeneric::SerialGeneric(const std::string sPortName)
+	: SerialGeneric(sPortName, false)
 {
 }
 
@@ -18,7 +18,7 @@ SerialGeneric::~SerialGeneric()
 {
 }
 
-void SerialGeneric::GetPortName(std::wstring &wsName)
+void SerialGeneric::GetPortName(std::string &sName)
 {
-	wsName = m_wsPortName;
+	sName = m_sPortName;
 }

@@ -33,8 +33,8 @@ namespace SerialComm
 		//Keep track of last error
 		DWORD errors;
 	public:
-		SerialWindows(const std::wstring wsPortName, bool bErrorSuppress);
-		SerialWindows(const std::wstring wsPortName);
+		SerialWindows(const std::string sPortName, bool bErrorSuppress);
+		SerialWindows(const std::string sPortName);
 		virtual ~SerialWindows();
 
 		virtual int ReadData(char *buffer, unsigned int nbChar);
