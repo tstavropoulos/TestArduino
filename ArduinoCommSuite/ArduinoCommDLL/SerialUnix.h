@@ -18,7 +18,9 @@ namespace SerialComm
 	class SerialUnix : public SerialGeneric
 	{
 	private:
-		std::unique_ptr<std::iostream> pIOStream;
+		int mFileDescriptor;
+		void InitializeSerialPort();
+		std::queue<char> mqBufferedChars;
 	public:
 		SerialUnix(const std::wstring wsPortName, bool bErrorSuppress);
 		SerialUnix(const std::wstring wsPortName);
