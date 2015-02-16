@@ -1,3 +1,13 @@
+/*************************************
+**  Serial Unix
+**
+**  A good chunk of this implementation was initially plagarized off of the
+**  excellent libserial software, available here:
+**
+**  http://libserial.sourceforge.net/
+**
+********************************/
+
 #ifdef _UNIX
 #ifndef SERIALUNIX_H_INCLUDED
 #define SERIALUNIX_H_INCLUDED
@@ -8,7 +18,7 @@ namespace SerialComm
 	class SerialUnix : public SerialGeneric
 	{
 	private:
-		//Private Stuff
+		std::unique_ptr<std::iostream> pIOStream;
 	public:
 		SerialUnix(const std::wstring wsPortName, bool bErrorSuppress);
 		SerialUnix(const std::wstring wsPortName);

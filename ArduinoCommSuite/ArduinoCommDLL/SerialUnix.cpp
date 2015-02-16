@@ -12,7 +12,7 @@ using namespace SerialComm;
 SerialUnix::SerialUnix(const std::wstring wsPortName)
 	: SerialUnix(wsPortName, false)
 {
-	
+    //pIOStream
 }
 
 SerialUnix::SerialUnix(const std::wstring wsPortName, bool bErrorSuppress)

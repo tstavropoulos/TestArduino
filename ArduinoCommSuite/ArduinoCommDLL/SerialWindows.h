@@ -1,3 +1,16 @@
+/*************************************
+**  Serial Windows
+**
+**  A good chunk of this implementation was initially plagarized off of the
+**  Arduino-C++ interface page of the Arduino CC Playground, located here:
+**
+**  http://playground.arduino.cc/Interfacing/CPPWindows
+**
+**  However, I identified several bugs associated with the implementation,
+**  and have fixed them and uploaded the changes to the above link.
+**
+********************************/
+
 #ifdef _WINDOWS
 #ifndef SERIALCLASS_H_INCLUDED
 #define SERIALCLASS_H_INCLUDED
@@ -36,5 +49,5 @@ namespace SerialComm
 	};
 }
 
-#endif 
+#endif
 #endif
