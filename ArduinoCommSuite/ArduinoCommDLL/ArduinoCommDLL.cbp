@@ -21,12 +21,6 @@
 				<Linker>
 					<Add option="-m32" />
 				</Linker>
-				<ExtraCommands>
-					<Add after="ln -sf $(PROJECT_DIR)$(TARGET_OUTPUT_FILE) $(PROJECT_DIR)$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).so.1.0" />
-					<Add after="ln -sf $(PROJECT_DIR)$(TARGET_OUTPUT_FILE) $(PROJECT_DIR)$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).so.1" />
-					<Add after="ldconfig -n $(PROJECT_DIR)$(TARGET_OUTPUT_DIR)" />
-					<Mode after="always" />
-				</ExtraCommands>
 			</Target>
 			<Target title="Unix_x64">
 				<Option output="../Output/x64/Unix/ArduinoCommDLLx64" prefix_auto="1" extension_auto="1" />
@@ -43,12 +37,6 @@
 				<Linker>
 					<Add option="-m64" />
 				</Linker>
-				<ExtraCommands>
-					<Add after="ln -sf $(PROJECT_DIR)$(TARGET_OUTPUT_FILE) $(PROJECT_DIR)$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).so.1.0" />
-					<Add after="ln -sf $(PROJECT_DIR)$(TARGET_OUTPUT_FILE) $(PROJECT_DIR)$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).so.1" />
-					<Add after="ldconfig -n $(PROJECT_DIR)$(TARGET_OUTPUT_DIR)" />
-					<Mode after="always" />
-				</ExtraCommands>
 			</Target>
 			<Target title="Unix_ARM">
 				<Option output="../Output/ARM/Unix/ArduinoCommDLLARM" prefix_auto="1" extension_auto="1" />
@@ -65,12 +53,6 @@
 				<Linker>
 					<Add option="-marm" />
 				</Linker>
-				<ExtraCommands>
-					<Add after="ln -sf $(PROJECT_DIR)$(TARGET_OUTPUT_FILE) $(PROJECT_DIR)$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).so.1.0" />
-					<Add after="ln -sf $(PROJECT_DIR)$(TARGET_OUTPUT_FILE) $(PROJECT_DIR)$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).so.1" />
-					<Add after="ldconfig -n $(PROJECT_DIR)$(TARGET_OUTPUT_DIR)" />
-					<Mode after="always" />
-				</ExtraCommands>
 			</Target>
 			<Target title="Matlab_Unix_x86">
 				<Option output="../Output/x86/MatLab_Unix/ArduinoCommDLL" prefix_auto="1" extension_auto="1" />
@@ -105,7 +87,7 @@
 				</Linker>
 			</Target>
 			<Target title="Matlab_Unix_ARM">
-				<Option output="../Output/ARM/MatLab_Unix/libArduinoCommDLL" prefix_auto="1" extension_auto="1" />
+				<Option output="../Output/ARM/MatLab_Unix/ArduinoCommDLL" prefix_auto="1" extension_auto="1" />
 				<Option object_output="Intermediate/ARM/MatLab_Unix/" />
 				<Option type="3" />
 				<Option compiler="gnu_gcc_49_compiler" />
