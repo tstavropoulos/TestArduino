@@ -3,7 +3,6 @@
 	<FileVersion major="1" minor="6" />
 	<Project>
 		<Option title="ArduinoCommDLL" />
-		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Unix_x86">
@@ -15,76 +14,62 @@
 				<Option createStaticLib="1" />
 				<Option projectLinkerOptionsRelation="2" />
 				<Compiler>
-					<Add option="-std=c++11" />
 					<Add option="-m32" />
-					<Add option="-fPIC" />
-					<Add option="-Winvalid-pch" />
-					<Add option="-pthread" />
 					<Add option="-Dx86" />
 					<Add option="-DNOTMATLAB" />
-					<Add option="-D_UNIX" />
 				</Compiler>
 				<Linker>
 					<Add option="-m32" />
-					<Add option="-pthread" />
 				</Linker>
 				<ExtraCommands>
-					<Add after="mv $(TARGET_OUTPUT_FILE) $(TARGET_OUTPUT_FILE).1.0" />
-					<Add after="ln -sf $(TARGET_OUTPUT_BASENAME).so.1.0 $(TARGET_OUTPUT_FILE).1" />
-					<Add after="ln -sf $(TARGET_OUTPUT_BASENAME).so.1.0 $(TARGET_OUTPUT_FILE)" />
+					<Add after="ln -sf $(TARGET_OUTPUT_FILE) ../Output/$(TARGET_OUTPUT_BASENAME).so.1.0" />
+					<Add after="ln -sf $(TARGET_OUTPUT_FILE) ../Output/$(TARGET_OUTPUT_BASENAME).so.1" />
+					<Add after="ln -sf $(TARGET_OUTPUT_FILE) ../Output/$(TARGET_OUTPUT_BASENAME).so" />
+					<Add after="ldconfig -n ../Output" />
 				</ExtraCommands>
 			</Target>
 			<Target title="Unix_x64">
 				<Option output="../Output/x64/Unix/ArduinoCommDLL" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="../Output/x64/Unix" />
 				<Option object_output="Intermediate/x64/Unix/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
 				<Option createStaticLib="1" />
 				<Compiler>
-					<Add option="-std=c++11" />
-					<Add option="-fPIC" />
 					<Add option="-m64" />
-					<Add option="-Winvalid-pch" />
-					<Add option="-pthread" />
 					<Add option="-Dx64" />
 					<Add option="-DNOTMATLAB" />
-					<Add option="-D_UNIX" />
 				</Compiler>
 				<Linker>
-					<Add option="-pthread" />
+					<Add option="-m64" />
 				</Linker>
 				<ExtraCommands>
-					<Add after="mv $(TARGET_OUTPUT_FILE) $(TARGET_OUTPUT_FILE).1.0" />
-					<Add after="ln -sf $(TARGET_OUTPUT_BASENAME).so.1.0 $(TARGET_OUTPUT_FILE).1" />
-					<Add after="ln -sf $(TARGET_OUTPUT_BASENAME).so.1.0 $(TARGET_OUTPUT_FILE)" />
+					<Add after="ln -sf $(TARGET_OUTPUT_FILE) ../Output/$(TARGET_OUTPUT_BASENAME).so.1.0" />
+					<Add after="ln -sf $(TARGET_OUTPUT_FILE) ../Output/$(TARGET_OUTPUT_BASENAME).so.1" />
+					<Add after="ln -sf $(TARGET_OUTPUT_FILE) ../Output/$(TARGET_OUTPUT_BASENAME).so" />
+					<Add after="ldconfig -n ../Output" />
 				</ExtraCommands>
 			</Target>
 			<Target title="Unix_ARM">
 				<Option output="../Output/ARM/Unix/ArduinoCommDLL" prefix_auto="1" extension_auto="1" />
 				<Option object_output="Intermediate/ARM/Unix/" />
 				<Option type="3" />
-				<Option compiler="gcc" />
+				<Option compiler="gnu_gcc_49_compiler" />
 				<Option createDefFile="1" />
 				<Option createStaticLib="1" />
 				<Compiler>
-					<Add option="-std=c++11" />
 					<Add option="-marm" />
-					<Add option="-fPIC" />
-					<Add option="-Winvalid-pch" />
-					<Add option="-pthread" />
 					<Add option="-DARM" />
 					<Add option="-DNOTMATLAB" />
-					<Add option="-D_UNIX" />
 				</Compiler>
 				<Linker>
-					<Add option="-pthread" />
+					<Add option="-marm" />
 				</Linker>
 				<ExtraCommands>
-					<Add after="mv $(TARGET_OUTPUT_FILE) $(TARGET_OUTPUT_FILE).1.0" />
-					<Add after="ln -sf $(TARGET_OUTPUT_BASENAME).so.1.0 $(TARGET_OUTPUT_FILE).1" />
-					<Add after="ln -sf $(TARGET_OUTPUT_BASENAME).so.1.0 $(TARGET_OUTPUT_FILE)" />
+					<Add after="ln -sf $(TARGET_OUTPUT_FILE) $(PROJECT_DIR)$(TARGET_OUTPUT_DIR)lib$(TARGET_OUTPUT_BASENAME).so.1.0" />
+					<Add after="ln -sf $(TARGET_OUTPUT_FILE) $(PROJECT_DIR)$(TARGET_OUTPUT_DIR)lib$(TARGET_OUTPUT_BASENAME).so.1" />
+					<Add after="ldconfig -n $(PROJECT_DIR)$(TARGET_OUTPUT_DIR)" />
+					<Mode after="always" />
 				</ExtraCommands>
 			</Target>
 			<Target title="Matlab_Unix_x86">
@@ -95,18 +80,12 @@
 				<Option createDefFile="1" />
 				<Option createStaticLib="1" />
 				<Compiler>
-					<Add option="-std=c++11" />
 					<Add option="-m32" />
-					<Add option="-fPIC" />
-					<Add option="-Winvalid-pch" />
-					<Add option="-pthread" />
 					<Add option="-Dx86" />
 					<Add option="-DMATLAB" />
-					<Add option="-D_UNIX" />
 				</Compiler>
 				<Linker>
 					<Add option="-m32" />
-					<Add option="-pthread" />
 				</Linker>
 			</Target>
 			<Target title="Matlab_Unix_x64">
@@ -117,41 +96,41 @@
 				<Option createDefFile="1" />
 				<Option createStaticLib="1" />
 				<Compiler>
-					<Add option="-std=c++11" />
-					<Add option="-fPIC" />
 					<Add option="-m64" />
-					<Add option="-Winvalid-pch" />
-					<Add option="-pthread" />
 					<Add option="-Dx64" />
 					<Add option="-DMATLAB" />
-					<Add option="-D_UNIX" />
 				</Compiler>
 				<Linker>
-					<Add option="-pthread" />
+					<Add option="-m64" />
 				</Linker>
 			</Target>
 			<Target title="Matlab_Unix_ARM">
 				<Option output="../Output/ARM/MatLab_Unix/ArduinoCommDLL" prefix_auto="1" extension_auto="1" />
 				<Option object_output="Intermediate/ARM/MatLab_Unix/" />
 				<Option type="3" />
-				<Option compiler="gcc" />
+				<Option compiler="gnu_gcc_49_compiler" />
 				<Option createDefFile="1" />
 				<Option createStaticLib="1" />
 				<Compiler>
-					<Add option="-std=c++11" />
-					<Add option="-fPIC" />
 					<Add option="-marm" />
-					<Add option="-Winvalid-pch" />
-					<Add option="-pthread" />
 					<Add option="-DARM" />
 					<Add option="-DMATLAB" />
-					<Add option="-D_UNIX" />
 				</Compiler>
 				<Linker>
-					<Add option="-pthread" />
+					<Add option="-marm" />
 				</Linker>
 			</Target>
 		</Build>
+		<Compiler>
+			<Add option="-std=c++11" />
+			<Add option="-fPIC" />
+			<Add option="-Winvalid-pch" />
+			<Add option="-pthread" />
+			<Add option="-D_UNIX" />
+		</Compiler>
+		<Linker>
+			<Add option="-pthread" />
+		</Linker>
 		<Unit filename="ArduinoClass.cpp">
 			<Option target="Unix_x86" />
 			<Option target="Debug Win32" />

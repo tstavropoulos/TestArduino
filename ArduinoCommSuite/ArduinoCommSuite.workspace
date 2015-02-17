@@ -2,6 +2,6 @@
 <CodeBlocks_workspace_file>
 	<Workspace title="ArduinoComm">
 		<Project filename="ArduinoCommDLL/ArduinoCommDLL.cbp" />
-		<Project filename="ArduinoCommTest/ArduinoCommTest.cbp" />
+		<Project filename="ArduinoCommTest/ArduinoCommTest.cbp" active="1" />
 	</Workspace>
 </CodeBlocks_workspace_file>
