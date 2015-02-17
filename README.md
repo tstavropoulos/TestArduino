@@ -49,6 +49,12 @@ If you are developing in Unix, you will need:
 * Code::Blocks or familiarity with compiling source code
 * ARM, x86, or x64 processor
 
+There may be a better way, but you should create a link to the compiled librarys in your /usr/lib directory, so that you always use the latest version.
+
+    sudo ln -sf libArduinoCommDLLx86.so /usr/lib/libArduinoCommDLLx86.so
+    sudo ln -sf libArduinoCommDLLx64.so /usr/lib/libArduinoCommDLLx64.so
+    sudo ln -sf libArduinoCommDLLARM.so /usr/lib/libArduinoCommDLLARM.so
+
 ##Latency Details
 
 When paired with the collection of Neural data, it is important to get latency as low and consistent as possible.  Unfortunately, in this respect, MatLab fairs poorly.  It appears that for comparable tasks, the MatLab Serial functionality (derived from Java) is noticeably more variable.
