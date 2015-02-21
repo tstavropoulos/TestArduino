@@ -95,4 +95,3 @@ Communicating with MatLab through the C++ Shared Library and a PCIe RS232 Card t
 
 * Test Unix port.
 * Explore portability to Octave.  Will require changes to project build.
-* Test response time with RS232 communication.
