@@ -68,10 +68,10 @@ When paired with the collection of Neural data, it is important to get latency a
 ###A simple Serial Reflection task for profiling:
   Send a character, have the Arduino send that character back, but embed this logic in the middle of its experiment monitoring routines to create a realistic profile of response time.  Repeat 10,000 times.
 
-For this task, using an Arduino Due, the C++ program had a response with these characteristics:
-* Average Response Time:                4.096 ms
-* Standard Deviation of Response Time:  0.016 ms
-* Max Response Time:                    4.181 ms
+For this task, using an Arduino Uno R3, the C++ program had a response with these characteristics:
+* Average Response Time:                4.093 ms
+* Standard Deviation of Response Time:  0.294 ms
+* Max Response Time:                    5.048 ms
 
 The same hardware and software communicating with MatLab, however saw these characteristics:
 * Average Response Time:                9.497 ms
