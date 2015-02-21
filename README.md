@@ -39,6 +39,12 @@ You will also need any version of the Arduino IDE that works with your Arduino. 
 
 If you wish to utilize the MatLab scripts, you'll need a version of MatLab that supports the loading of external libraries.  I doubt that is a new feature, any distro of MatLab released in the last 5 years is probably sufficient.  I am going to investigate getting the libraries to build and link with Octave (an opensource MatLab alternative), but that's on the To Do list for now.
 
+For very low latency, I recommend getting:
+    * [An Arduino RS232 Shield](https://www.sparkfun.com/products/13029)
+        * [I modified mine thusly](https://imgur.com/a/rPBKA#0)
+        * [Or Build your own](http://arduino.cc/en/Tutorial/ArduinoSoftwareRS232)
+    * [A PCIe card with a RS232 Port](http://www.newegg.com/Product/Product.aspx?Item=N82E16815124084)
+
 ###Unix
 
 If you are developing in Unix, you will need:
@@ -72,10 +78,15 @@ The same hardware and software communicating with MatLab, however saw these char
 * Standard Deviation of Response Time:  1.852 ms
 * Max Response Time:                   66.540 ms
 
-Now, communicating with MatLab through the C++ Shared Library:
+Communicating with MatLab through the C++ Shared Library:
 * Average Response Time:                4.093 ms
 * Standard Deviation of Response Time:  0.295 ms
 * Max Response Time:                    5.049 ms
+
+Communicating with MatLab through the C++ Shared Library and a PCIe RS232 Card to the RS232 Arduino Shield:
+* Average Response Time:                0.7139 ms
+* Standard Deviation of Response Time:  0.0055 ms
+* Max Response Time:                    0.7923 ms
 
 ##Known Issues
 
