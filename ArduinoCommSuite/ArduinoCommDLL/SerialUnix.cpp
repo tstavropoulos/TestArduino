@@ -43,7 +43,7 @@ SerialUnix::SerialUnix(const std::string sPortName)
 }
 
 SerialUnix::SerialUnix(const std::string sPortName, bool bErrorSuppress)
-	: SerialGeneric(sPortName, bErrorSuppress)
+	: SerialGenericCOM(sPortName, bErrorSuppress)
 {
 	mFileDescriptor = -1;
 

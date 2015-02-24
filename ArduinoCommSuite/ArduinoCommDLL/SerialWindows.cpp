@@ -16,7 +16,7 @@ SerialWindows::SerialWindows(const std::string sPortName)
 }
 
 SerialWindows::SerialWindows(const std::string sPortName, bool bErrorSuppress)
-	: SerialGeneric(sPortName, bErrorSuppress)
+	: SerialGenericCOM(sPortName, bErrorSuppress)
 {
 	//We're not yet connected
 	this->connected = false;

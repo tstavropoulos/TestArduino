@@ -25,8 +25,12 @@ namespace SerialComm
 		void setPairedness(bool bPaired, bool bMaster);
 		void setPrintAll(bool bPrintAll);
 
+		// Tries connecting to the specified port
 		bool tryPort(int iPortNum);
+		// Doesn't actually try all ports.  Just searches from COM0 to COM${iPortMax} 
 		std::vector<int> tryAllPorts(int iPortMax);
+
+		std::vector<rawhid_t> findAllHID();
 
 		bool connectPort(int iPortNum);
 		bool disconnect();

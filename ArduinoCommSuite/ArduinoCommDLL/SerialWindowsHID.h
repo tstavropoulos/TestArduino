@@ -1,30 +1,28 @@
 /*************************************
-**  Serial Unix
+**  Serial Windows HID
 **
 **  A good chunk of this implementation was initially plagarized off of the
-**  excellent libserial software, available here:
+**  Teensy HID listener code located here:
 **
-**  http://libserial.sourceforge.net/
+**  http://www.pjrc.com/teensy/hid_listen.html
 **
 ********************************/
 
-#ifdef _UNIX
-#ifndef SERIALUNIX_H_INCLUDED
-#define SERIALUNIX_H_INCLUDED
+#ifdef _WINDOWS
+#ifndef SERIALWINDOWSHID_H_INCLUDED
+#define SERIALWINDOWSHID_H_INCLUDED
 
 namespace SerialComm
 {
-	//Class meant to handle Serial communication in Unix
-	class SerialUnix : public SerialGenericCOM
+	//Class meant to handle Serial communication in Windows
+	class SerialWindowsHID : public SerialGenericHID
 	{
 	private:
-		int mFileDescriptor;
-		void InitializeSerialPort();
-		std::queue<char> mqBufferedChars;
+
 	public:
-		SerialUnix(const std::string sPortName, bool bErrorSuppress);
-		SerialUnix(const std::string sPortName);
-		virtual ~SerialUnix();
+		SerialWindowsHID(const std::string sPortName, bool bErrorSuppress);
+		SerialWindowsHID(const std::string sPortName);
+		virtual ~SerialWindowsHID();
 
 		virtual int ReadData(char *buffer, unsigned int nbChar);
 
@@ -36,7 +34,7 @@ namespace SerialComm
 		virtual bool FlushBuffer();
 		virtual int CharsInQueue();
 
-		static const char *GetPortTemplate();
+		virtual std::vector<rawhid_t*> findAllHID();
 	};
 }
 

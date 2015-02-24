@@ -5,19 +5,22 @@
 #include "SerialGeneric.h"
 #include "SerialWindows.h"
 #include "SerialUnix.h"
+#include "SerialWindowsHID.h"
 #include "Logging.h"
+#include <mutex>
 
 using namespace SerialComm;
 
 #ifdef _WINDOWS
 typedef SerialWindows Serial;
+typedef SerialWindowsHID SerialHID;
 #endif
 
 #ifdef _UNIX
 typedef SerialUnix Serial;
+typedef SerialUnixHID SerialHID;
 #endif
 
-#include <mutex>
 
 
 namespace SerialComm
@@ -127,6 +130,11 @@ std::vector<int> Arduino::tryAllPorts(int iPortMax)
 	return vSuccessList;
 }
 
+
+std::vector<rawhid_t> Arduino::findAllHID()
+{
+
+}
 
 bool Arduino::connectPort(int iPortNum)
 {

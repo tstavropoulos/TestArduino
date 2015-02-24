@@ -2,6 +2,8 @@
 #define SERIALGENERIC_H_INCLUDED
 
 
+typedef void rawhid_t;
+
 namespace SerialComm
 {
 	class SerialGeneric
@@ -12,26 +14,20 @@ namespace SerialComm
 
 		//Suppresses error messages
 		bool m_bErrorSuppress;
-
 	public:
+		//Initialize Serial communication with the given COM port
+		SerialGeneric(const std::string sPortName);
 		//Initialize Serial communication with the given COM port
 		SerialGeneric(const std::string sPortName, bool bErrorSuppress);
 
-		//Initialize Serial communication with the given COM port
-		SerialGeneric(const std::string sPortName);
-
 		//Close the connection
 		virtual ~SerialGeneric();
-
-		//Find out the port name
-		void GetPortName(std::string &sName);
 
 		/****************************
 		**                         **
 		**   Function Prototypes   **
 		**                         **
 		****************************/
-
 
 		//Read data in a buffer, if nbChar is greater than the
 		//maximum number of bytes available, it will return only the
@@ -58,6 +54,31 @@ namespace SerialComm
 
 		//Return the number of characters in the queue
 		virtual int CharsInQueue() = 0;
+
+		//Find out the port name
+		void GetPortName(std::string &sName);
+	};
+
+	class SerialGenericHID : public SerialGeneric
+	{
+	protected:
+	public:
+		SerialGenericHID(const std::string sPortName);
+		SerialGenericHID(const std::string sPortName, bool bErrorSuppress);
+		virtual ~SerialGenericHID();
+
+		virtual std::vector<rawhid_t*> findAllHID();
+	};
+
+	class SerialGenericCOM : public SerialGeneric
+	{
+	protected:
+	public:
+		SerialGenericCOM(const std::string sPortName);
+		SerialGenericCOM(const std::string sPortName, bool bErrorSuppress);
+
+		virtual ~SerialGenericCOM();
+
 	};
 }
 

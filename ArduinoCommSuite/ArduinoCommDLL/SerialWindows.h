@@ -12,13 +12,13 @@
 ********************************/
 
 #ifdef _WINDOWS
-#ifndef SERIALCLASS_H_INCLUDED
-#define SERIALCLASS_H_INCLUDED
+#ifndef SERIALWINDOWS_H_INCLUDED
+#define SERIALWINDOWS_H_INCLUDED
 
 namespace SerialComm
 {
 	//Class meant to handle Serial communication in Windows
-	class SerialWindows : public SerialGeneric
+	class SerialWindows : public SerialGenericCOM
 	{
 	private:
 		//Serial comm handle
