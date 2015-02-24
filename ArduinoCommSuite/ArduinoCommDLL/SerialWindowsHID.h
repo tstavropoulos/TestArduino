@@ -18,10 +18,10 @@ namespace SerialComm
 	class SerialWindowsHID : public SerialGenericHID
 	{
 	private:
-
+		std::shared_ptr<RawWinHID> m_upCurrentHID;
 	public:
-		SerialWindowsHID(const std::string sPortName, bool bErrorSuppress);
-		SerialWindowsHID(const std::string sPortName);
+		SerialWindowsHID(bool bErrorSuppress);
+		SerialWindowsHID();
 		virtual ~SerialWindowsHID();
 
 		virtual int ReadData(char *buffer, unsigned int nbChar);
@@ -34,7 +34,15 @@ namespace SerialComm
 		virtual bool FlushBuffer();
 		virtual int CharsInQueue();
 
-		virtual std::vector<rawhid_t*> findAllHID();
+		virtual std::vector<std::shared_ptr<RawHID>> findAllHID();
+		virtual bool PickConnection(std::shared_ptr<RawHID> &upRawHID);
+	};
+
+	struct RawWinHID : public RawHID
+	{
+		RawWinHID();
+		virtual ~RawWinHID();
+		HANDLE Handle;
 	};
 }
 

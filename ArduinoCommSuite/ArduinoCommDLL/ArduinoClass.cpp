@@ -12,12 +12,12 @@
 using namespace SerialComm;
 
 #ifdef _WINDOWS
-typedef SerialWindows Serial;
+typedef SerialWindows SerialCOM;
 typedef SerialWindowsHID SerialHID;
 #endif
 
 #ifdef _UNIX
-typedef SerialUnix Serial;
+typedef SerialUnix SerialCOM;
 typedef SerialUnixHID SerialHID;
 #endif
 
@@ -45,7 +45,7 @@ namespace SerialComm
 		if ( bPrintErrors ) \
 				{ \
 			std::string sPortName; \
-			pSerial->GetPortName(sPortName); \
+			pSerial->GetConnectionName(sPortName); \
 			\
 			std::wstringstream wss; \
 			wss << L"Unrecognized param message for " << csParamName << L" with " << sPortName.c_str() << std::endl; \
@@ -81,17 +81,18 @@ Arduino::~Arduino()
 {
 	if (m_pSerial)
 	{
-		m_pSerial.release();
-		m_pSerial = nullptr;
+		m_pSerial.reset();
 	}
 }
 
-bool Arduino::tryPort(int iPortNum)
+bool Arduino::tryCOMPort(int iPortNum)
 {
 	std::stringstream ss;
 	ss << "\\\\.\\COM" << iPortNum;
 
-	Serial testSerial(ss.str(), true);
+	SerialCOM testSerial(true);
+	testSerial.SetPortName(ss.str());
+	testSerial.Connect();
 	if (confirmVersion(&testSerial, false))
 	{
 		if (connect(&testSerial, m_bDebug))
@@ -103,7 +104,7 @@ bool Arduino::tryPort(int iPortNum)
 	return false;
 }
 
-std::vector<int> Arduino::tryAllPorts(int iPortMax)
+std::vector<int> Arduino::findAllComPorts(int iPortMax)
 {
 	std::vector<int> vSuccessList;
 	std::vector<std::thread> vThreads;
@@ -112,7 +113,7 @@ std::vector<int> Arduino::tryAllPorts(int iPortMax)
 	for (int i = 0; i <= iPortMax; i++)
 	{
 		vThreads.push_back(std::thread([&,i](){
-			if (this->tryPort(i))
+			if (this->tryCOMPort(i))
 			{
 				std::lock_guard<std::mutex> lock(mtxVector);
 				vSuccessList.push_back(i);
@@ -131,23 +132,34 @@ std::vector<int> Arduino::tryAllPorts(int iPortMax)
 }
 
 
-std::vector<rawhid_t> Arduino::findAllHID()
+std::vector<RawHID> Arduino::findAllHID()
 {
 
 }
 
-bool Arduino::connectPort(int iPortNum)
+bool Arduino::connectCOMPort(int iPortNum)
 {
-	std::stringstream ss;
-	ss << Serial::GetPortTemplate() << iPortNum;
 
+	std::unique_ptr<SerialCOM> pTmp;
 #ifdef _WINDOWS
-	m_pSerial = std::make_unique<Serial>(ss.str());
+	pTmp = std::make_unique<SerialCOM>();
 #else
-	m_pSerial = std::unique_ptr<SerialGeneric>(new Serial(ss.str()));
+	pTmp = std::unique_ptr<SerialGeneric>(new SerialCOM());
 #endif // _WINDOWS
 
-	if (!confirmVersion(m_pSerial.get(), true) ||
+	std::stringstream ss;
+	ss << SerialCOM::GetPortTemplate() << iPortNum;
+	pTmp->SetPortName(ss.str());
+
+	if (m_pSerial)
+	{
+		m_pSerial.reset();
+	}
+
+	m_pSerial = std::unique_ptr<SerialGeneric>(std::move(pTmp));
+
+	if (!m_pSerial->Connect() ||
+		!confirmVersion(m_pSerial.get(), true) ||
 		!connect(m_pSerial.get(), true) ||
 		!sendParameters(m_pSerial.get(), true))
 	{
@@ -174,7 +186,7 @@ bool Arduino::connect(SerialGeneric *pSerial, bool bPrintErrors)
 		else if (bPrintErrors)
 		{
 			std::string sPortName;
-			pSerial->GetPortName(sPortName);
+			pSerial->GetConnectionName(sPortName);
 
 			std::wstringstream wss;
 			wss << L"Unsuccessful communication attempt with " << sPortName.c_str() << std::endl;
@@ -186,7 +198,7 @@ bool Arduino::connect(SerialGeneric *pSerial, bool bPrintErrors)
 	else if (bPrintErrors)
 	{
 		std::string sPortName;
-		pSerial->GetPortName(sPortName);
+		pSerial->GetConnectionName(sPortName);
 
 		std::wstringstream wss;
 		wss << L"Unsuccessful connection with " << sPortName.c_str() << std::endl << std::endl;
@@ -211,7 +223,7 @@ bool Arduino::confirmVersion(SerialGeneric *pSerial, bool bPrintErrors)
 		else if (bPrintErrors)
 		{
 			std::string sPortName;
-			pSerial->GetPortName(sPortName);
+			pSerial->GetConnectionName(sPortName);
 
 			std::wstringstream wss;
 			wss << L"Incompatible version with " << sPortName.c_str() << std::endl;
@@ -228,7 +240,7 @@ bool Arduino::disconnect()
 {
 	if (m_pSerial && m_pSerial->IsConnected())
 	{
-		m_pSerial = nullptr;
+		m_pSerial.reset();
 	}
 	m_eState = ARDUINO_STATE::UNCONNECTED;
 

@@ -56,13 +56,13 @@ namespace SerialComm
 	bool ArduinoComm::Connect(int iPortNum)
 	{
 		inittest("Connect",false);
-		return m_sArduino.connectPort(iPortNum);
+		return m_sArduino.connectCOMPort(iPortNum);
 	}
 
 	void ArduinoComm::FindArduinos(int *piArduinos, int iMaxPortNum)
 	{
 		inittest("FindArduinos",);
-		std::vector<int> vValidPorts = m_sArduino.tryAllPorts(iMaxPortNum);
+		std::vector<int> vValidPorts = m_sArduino.findAllComPorts(iMaxPortNum);
 		int index = 0;
 		for (int i : vValidPorts)
 		{

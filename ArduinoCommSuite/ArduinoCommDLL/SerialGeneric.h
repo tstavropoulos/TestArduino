@@ -9,16 +9,11 @@ namespace SerialComm
 	class SerialGeneric
 	{
 	protected:
-		//Keeps track of the port name
-		std::string m_sPortName;
-
 		//Suppresses error messages
 		bool m_bErrorSuppress;
 	public:
-		//Initialize Serial communication with the given COM port
-		SerialGeneric(const std::string sPortName);
-		//Initialize Serial communication with the given COM port
-		SerialGeneric(const std::string sPortName, bool bErrorSuppress);
+		SerialGeneric();
+		SerialGeneric(bool bErrorSuppress);
 
 		//Close the connection
 		virtual ~SerialGeneric();
@@ -28,6 +23,9 @@ namespace SerialComm
 		**   Function Prototypes   **
 		**                         **
 		****************************/
+
+		//Initiates the connection to the previously set 
+		virtual bool Connect() = 0;
 
 		//Read data in a buffer, if nbChar is greater than the
 		//maximum number of bytes available, it will return only the
@@ -55,27 +53,52 @@ namespace SerialComm
 		//Return the number of characters in the queue
 		virtual int CharsInQueue() = 0;
 
-		//Find out the port name
-		void GetPortName(std::string &sName);
+		//Get a pretty-printing of the connection name
+		virtual void GetConnectionName(std::string &sName);
+	};
+
+	struct RawHID
+	{
+		RawHID();
+		virtual ~RawHID();
+		int m_iPID;
+		int m_iVID;
 	};
 
 	class SerialGenericHID : public SerialGeneric
 	{
 	protected:
+		int m_iTargetPID;
+		int m_iTargetVID;
+		int m_iUsagePage;
+		int m_iUsage;
 	public:
-		SerialGenericHID(const std::string sPortName);
-		SerialGenericHID(const std::string sPortName, bool bErrorSuppress);
+		SerialGenericHID();
+		SerialGenericHID(bool bErrorSuppress);
+
+		void SetTargetHID(int iTargetVID, int iTargetPID);
+		void SetTargetUsage(int iUsagePage, int iUsage);
 		virtual ~SerialGenericHID();
 
-		virtual std::vector<rawhid_t*> findAllHID();
+		virtual std::vector<std::shared_ptr<RawHID>> findAllHID() = 0;
+		virtual bool PickConnection(std::shared_ptr<RawHID> &upRawHID) = 0;
 	};
 
 	class SerialGenericCOM : public SerialGeneric
 	{
 	protected:
+		//Keeps track of the port name
+		std::string m_sPortName;
 	public:
-		SerialGenericCOM(const std::string sPortName);
-		SerialGenericCOM(const std::string sPortName, bool bErrorSuppress);
+		SerialGenericCOM();
+		SerialGenericCOM(bool bErrorSuppress);
+
+		//Set path to COM port
+		void SetPortName(const std::string sPortName);
+		//Get path to COM port
+		void GetPortName(std::string &sPortName);
+
+		virtual void GetConnectionName(std::string &sName);
 
 		virtual ~SerialGenericCOM();
 

@@ -9,20 +9,30 @@
 
 using namespace SerialComm;
 
-SerialWindows::SerialWindows(const std::string sPortName)
-	: SerialWindows(sPortName, false)
+SerialWindows::SerialWindows()
+	: SerialWindows(false)
 {
 	//Uses other constructor
 }
 
-SerialWindows::SerialWindows(const std::string sPortName, bool bErrorSuppress)
-	: SerialGenericCOM(sPortName, bErrorSuppress)
+SerialWindows::SerialWindows(bool bErrorSuppress)
+	: SerialGenericCOM(bErrorSuppress)
 {
 	//We're not yet connected
 	this->connected = false;
+}
+	
+
+bool SerialWindows::Connect()
+{
+	if (m_sPortName.compare("") == 0)
+	{
+		PrintDebugError(L"Port name not set.  Set port name before connecting.");
+	}
+
 
 	std::wstringstream wss;
-	wss << sPortName.c_str();
+	wss << m_sPortName.c_str();
 
 	//Try to connect to the given port throuh CreateFile
 	this->hSerial = CreateFile(wss.str().c_str(),
@@ -43,59 +53,58 @@ SerialWindows::SerialWindows(const std::string sPortName, bool bErrorSuppress)
 			if (!m_bErrorSuppress)
 			{
 				std::wstringstream wss;
-				wss << L"Handle was not attached. Port: " << sPortName.c_str() << L"  Reason: Not Available.";
+				wss << L"Handle was not attached. Port: " << m_sPortName.c_str() << L"  Reason: Not Available.";
 				PrintDebugError(wss.str());
 			}
 		}
 		else if ( !m_bErrorSuppress )
 		{
 			std::wstringstream wss;
-			wss << L"Handle was not attached.  Port: " << sPortName.c_str() << L"  Reason: Unknown.";
+			wss << L"Handle was not attached.  Port: " << m_sPortName.c_str() << L"  Reason: Unknown.";
 			PrintDebugError(wss.str());
 		}
+		return false;
 	}
-	else
+
+	//If connected we try to set the comm parameters
+	DCB dcbSerialParams = { 0 };
+
+	//Try to get the current
+	if (!GetCommState(this->hSerial, &dcbSerialParams))
 	{
-		//If connected we try to set the comm parameters
-		DCB dcbSerialParams = { 0 };
-
-		//Try to get the current
-		if (!GetCommState(this->hSerial, &dcbSerialParams))
+		//If impossible, show an error
+		if (!m_bErrorSuppress)
 		{
-			//If impossible, show an error
-			if (!m_bErrorSuppress)
-			{
-				std::wstringstream wss;
-				wss << L"Failed to get Serial Parameters.  Port: " << sPortName.c_str();
-				PrintDebugError(wss.str());
-			}
+			std::wstringstream wss;
+			wss << L"Failed to get Serial Parameters.  Port: " << m_sPortName.c_str();
+			PrintDebugError(wss.str());
 		}
-		else
-		{
-			//Define serial connection parameters for the arduino board
-			dcbSerialParams.BaudRate = CBR_115200;
-			dcbSerialParams.ByteSize = 8;
-			dcbSerialParams.StopBits = ONESTOPBIT;
-			dcbSerialParams.Parity = NOPARITY;
-			dcbSerialParams.fDtrControl = DTR_CONTROL_ENABLE;
-
-			//Set the parameters and check for their proper application
-			if (!SetCommState(hSerial, &dcbSerialParams))
-			{
-				if (!m_bErrorSuppress)
-				{
-					std::wstringstream wss;
-					wss << L"Failed to set Serial Parameters.  Port: " << sPortName.c_str();
-					PrintDebugError(wss.str());
-				}
-			}
-			else
-			{
-				this->connected = true;
-				FlushBuffer();
-			}
-		}
+		return false;
 	}
+
+	//Define serial connection parameters for the arduino board
+	dcbSerialParams.BaudRate = CBR_115200;
+	dcbSerialParams.ByteSize = 8;
+	dcbSerialParams.StopBits = ONESTOPBIT;
+	dcbSerialParams.Parity = NOPARITY;
+	dcbSerialParams.fDtrControl = DTR_CONTROL_ENABLE;
+
+	//Set the parameters and check for their proper application
+	if (!SetCommState(hSerial, &dcbSerialParams))
+	{
+		if (!m_bErrorSuppress)
+		{
+			std::wstringstream wss;
+			wss << L"Failed to set Serial Parameters.  Port: " << m_sPortName.c_str();
+			PrintDebugError(wss.str());
+		}
+		return false;
+	}
+
+	this->connected = true;
+	FlushBuffer();
+
+	return true;
 }
 
 SerialWindows::~SerialWindows()
