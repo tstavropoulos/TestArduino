@@ -48,7 +48,9 @@ end
 for i=1:10000
 	tmp1=toc;
     SendMessage('G');
-    WaitForMessage();
+    while (WaitForMessage() ~= 'G' )
+       display('oh, noes!'); 
+    end
     tmp2=toc;
 	deltat1(i)=tmp2-tmp1;
 end

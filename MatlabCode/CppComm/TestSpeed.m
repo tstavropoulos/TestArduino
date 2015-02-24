@@ -41,10 +41,19 @@ while ( SerialDataAvail() )
     display(ReadChar());
 end
 
+tmp1=toc;
+SendMessage('G');
+while ( WaitForMessage() ~= 'G')
+       display('Oh noes!'); 
+end
+tmp2=toc;
+display(1000*(tmp2-tmp1));
+
+
 for i=1:10000
 	tmp1=toc;
     SendMessage('G');
-    if ( WaitForMessage() ~= 'G')
+    while ( WaitForMessage() ~= 'G')
        display('Oh noes!'); 
     end
     tmp2=toc;
