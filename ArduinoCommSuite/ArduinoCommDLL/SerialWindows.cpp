@@ -151,8 +151,14 @@ int SerialWindows::ReadData(char *buffer, unsigned int nbChar)
 		}
 
 	}
+	else if (this->status.cbInQue == 0)
+	{
+		//If nothing has been read, return 0
+		return 0;
 
-	//If nothing has been read, or that an error was detected return -1
+	}
+
+	//There was an error, return -1
 	return -1;
 }
 
@@ -217,7 +223,7 @@ bool SerialWindows::WriteData(const char *buffer, unsigned int nbChar)
 	}
 }
 
-bool SerialWindows::WriteData(std::string sData)
+bool SerialWindows::WriteData(const std::string &sData)
 {
 	DWORD bytesSend;
 

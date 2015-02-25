@@ -114,6 +114,8 @@ namespace SerialComm
 		/*  Disconnect() disconnects from the Arduino and destroys the serial information.
 		*/
 		static ARDUINOCOMMDLL_API bool Disconnect();
+
+		static ARDUINOCOMMDLL_API bool ConnectToFirstHID();
 	protected:
 		/*  m_bInitialized tracks whether or not the DLL has been initialized.
 		*/

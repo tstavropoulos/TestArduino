@@ -7,7 +7,6 @@
 #include "SerialUnix.h"
 #include "SerialWindowsHID.h"
 #include "Logging.h"
-#include <mutex>
 
 using namespace SerialComm;
 
@@ -79,10 +78,7 @@ Arduino::Arduino(bool bDebug)
 
 Arduino::~Arduino()
 {
-	if (m_pSerial)
-	{
-		m_pSerial.reset();
-	}
+	disconnect();
 }
 
 bool Arduino::tryCOMPort(int iPortNum)
@@ -93,12 +89,10 @@ bool Arduino::tryCOMPort(int iPortNum)
 	SerialCOM testSerial(true);
 	testSerial.SetPortName(ss.str());
 	testSerial.Connect();
-	if (confirmVersion(&testSerial, false))
+	if (confirmVersion(&testSerial, false) &&
+		readSignature(&testSerial, m_bDebug))
 	{
-		if (connect(&testSerial, m_bDebug))
-		{
-			return true;
-		}
+		return true;
 	}
 
 	return false;
@@ -132,9 +126,44 @@ std::vector<int> Arduino::findAllComPorts(int iPortMax)
 }
 
 
-std::vector<RawHID> Arduino::findAllHID()
+bool Arduino::findAllHID()
+{
+	std::unique_ptr<SerialHID> upSerialHID = std::make_unique<SerialHID>(false);
+	upSerialHID->SetTargetUsage(0xFFAB, 0x0200);
+
+	m_vAllHIDs = upSerialHID->findAllHID();
+
+	return !m_vAllHIDs.empty();
+}
+
+bool Arduino::connectHID(int iHIDnum)
 {
 
+	std::unique_ptr<SerialHID> pTmp;
+#ifdef _WINDOWS
+	pTmp = std::make_unique<SerialHID>(true);
+#else
+	pTmp = std::unique_ptr<SerialHID>(new SerialHID(true));
+#endif // _WINDOWS
+
+	pTmp->PickConnection(m_vAllHIDs[iHIDnum]);
+
+	m_pSerial = std::unique_ptr<SerialGeneric>(std::move(pTmp));
+
+	return genericConnect();
+}
+
+bool Arduino::genericConnect()
+{
+	if (!m_pSerial->Connect() ||
+		!confirmVersion(m_pSerial.get(), true) ||
+		!readSignature(m_pSerial.get(), true) ||
+		!sendParameters(m_pSerial.get(), true))
+	{
+		disconnect();
+		return false;
+	}
+	return true;
 }
 
 bool Arduino::connectCOMPort(int iPortNum)
@@ -144,7 +173,7 @@ bool Arduino::connectCOMPort(int iPortNum)
 #ifdef _WINDOWS
 	pTmp = std::make_unique<SerialCOM>();
 #else
-	pTmp = std::unique_ptr<SerialGeneric>(new SerialCOM());
+	pTmp = std::unique_ptr<SerialCOM>(new SerialCOM());
 #endif // _WINDOWS
 
 	std::stringstream ss;
@@ -158,19 +187,10 @@ bool Arduino::connectCOMPort(int iPortNum)
 
 	m_pSerial = std::unique_ptr<SerialGeneric>(std::move(pTmp));
 
-	if (!m_pSerial->Connect() ||
-		!confirmVersion(m_pSerial.get(), true) ||
-		!connect(m_pSerial.get(), true) ||
-		!sendParameters(m_pSerial.get(), true))
-	{
-		disconnect();
-		return false;
-	}
-
-	return true;
+	return genericConnect();
 }
 
-bool Arduino::connect(SerialGeneric *pSerial, bool bPrintErrors)
+bool Arduino::readSignature(SerialGeneric *pSerial, bool bPrintErrors)
 {
 	if (pSerial->IsConnected())
 	{
@@ -238,8 +258,9 @@ bool Arduino::confirmVersion(SerialGeneric *pSerial, bool bPrintErrors)
 
 bool Arduino::disconnect()
 {
-	if (m_pSerial && m_pSerial->IsConnected())
+	if (m_pSerial)
 	{
+		m_pSerial->disconnect();
 		m_pSerial.reset();
 	}
 	m_eState = ARDUINO_STATE::UNCONNECTED;
@@ -312,7 +333,7 @@ bool Arduino::IsConnected()
 	return false;
 }
 
-void Arduino::WriteString(std::string sString)
+void Arduino::WriteString(const std::string &sString)
 {
 	if (m_pSerial && m_pSerial->IsConnected() && m_eState == ARDUINO_STATE::CONNECTED)
 	{

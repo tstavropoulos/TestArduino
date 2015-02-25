@@ -44,7 +44,7 @@ namespace SerialComm
 
 		virtual bool WaitReadData(char *buffer, unsigned int nbChar, unsigned long long ullMaxWait);
 		virtual bool WriteData(const char *buffer, unsigned int nbChar);
-		virtual bool WriteData(std::string sData);
+		virtual bool WriteData(const std::string &sData);
 
 		virtual bool IsConnected();
 		virtual bool FlushBuffer();

@@ -141,7 +141,6 @@ namespace SerialComm
 		return m_sArduino.WaitReadData(szMessage, iCharNum, msProperTimeOut);
 	}
 
-
 	bool ArduinoComm::SendString(const std::string csMessage)
 	{
 		inittest("SendString", false);
@@ -167,6 +166,23 @@ namespace SerialComm
 		inittest("WaitForString",false);
 		millisecond msProperTimeOut = msTimeout;
 		return m_sArduino.WaitReadData(sMessage, iCharNum, msProperTimeOut);
+	}
+
+	bool ArduinoComm::ConnectToFirstHID()
+	{
+		inittest("ConnectToFirstHID", false);
+		if (!m_sArduino.findAllHID())
+		{
+			return false;
+		}
+
+		if (!m_sArduino.connectHID(0))
+		{
+			return false;
+		}
+
+		return true;
+
 	}
 }
 

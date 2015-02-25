@@ -15,10 +15,35 @@
 #include "../ArduinoCommDLL/CoreFunctions.h"
 
 
+#ifdef _WINDOWS
+BOOL CtrlHandler(DWORD fdwCtrlType)
+{
+	switch (fdwCtrlType)
+	{
+	case CTRL_CLOSE_EVENT:
+	case CTRL_C_EVENT:
+	case CTRL_SHUTDOWN_EVENT:
+	case CTRL_BREAK_EVENT:
+	case CTRL_LOGOFF_EVENT:
+		SerialComm::ArduinoComm::Disconnect();
+		return FALSE;
+		break;
+	default:
+		break;
+	}
+	return FALSE;
+}
+#endif
+
 int _tmain(int argc, _TCHAR* argv[])
 {
+#ifdef _WINDOWS
+	SetConsoleCtrlHandler((PHANDLER_ROUTINE)CtrlHandler, TRUE);
+#endif
+
 	SerialComm::ArduinoComm::Init();
 
+	/*
 	int piArduinos[10] = {};
 	SerialComm::ArduinoComm::FindArduinos(piArduinos, 10);
 	if (piArduinos[0] != 0)
@@ -45,11 +70,15 @@ int _tmain(int argc, _TCHAR* argv[])
 	std::cout << std::endl << "Connect to Port: ";
 	std::cin >> iPort;
 
+	*/
+
 	SerialComm::ArduinoComm::SetProperties(true);
 
-	if (!SerialComm::ArduinoComm::Connect(iPort))
+	//if (!SerialComm::ArduinoComm::Connect(iPort))
+	if (!SerialComm::ArduinoComm::ConnectToFirstHID())
 	{
-		std::cout << "Failure to connect to Port " << iPort << "." << std::endl << "Quitting" << std::endl;
+		//std::cout << "Failure to connect to Port " << iPort << "." << std::endl << "Quitting" << std::endl;
+		std::cout << "Failure to connect to HID." << std::endl << "Quitting" << std::endl;
 		std::string sInput;
 		std::cin >> sInput;
 		return 0;

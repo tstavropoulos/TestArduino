@@ -8,6 +8,10 @@
 #ifdef _WINDOWS
 #include "targetver.h"
 #include <tchar.h>
+
+#define WIN32_LEAN_AND_MEAN 
+#include <windows.h>
+
 #endif // _WINDOWS
 
 #include <stdio.h>
