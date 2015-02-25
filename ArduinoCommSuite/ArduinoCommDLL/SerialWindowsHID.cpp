@@ -74,7 +74,7 @@ void SerialWindowsHID::ReadThreadMethod()
 	while (!m_bStopRead && m_cvStopRead.wait_for(StopLock, std::chrono::microseconds(500)) == std::cv_status::timeout)
 	{
 		//Read pending data
-		int readResult = DirectReadData(buffer, trueBufferChars);
+		int readResult = DirectReadData(buffer, sizeof(buffer));
 		if (readResult > 0)
 		{
 			//PrintDebugTest(buffer);
@@ -108,7 +108,7 @@ void SerialWindowsHID::ReadThreadMethod()
 					buffer[i++] = '\0';
 				}
 
-				DirectWriteData(buffer, trueBufferChars);
+				DirectWriteData(buffer, sizeof(buffer));
 			}
 		}
 	}
@@ -119,7 +119,6 @@ int SerialWindowsHID::DirectReadData(char *cBuffer, unsigned int uiNumChar)
 	OVERLAPPED ov;
 	DWORD dwCharsRead = 0;
 	DWORD dwResult = 0;
-	bool bSuccess;
 	int iCharsRead;
 
 	if (!m_spCurrentHID)
@@ -142,16 +141,16 @@ int SerialWindowsHID::DirectReadData(char *cBuffer, unsigned int uiNumChar)
 	}
 
 	//std::lock_guard<std::mutex> lock(m_mtxHIDAccess);
-	bSuccess = (ReadFile(m_spCurrentHID->Handle, cBuffer, uiNumChar, &dwCharsRead, &ov) == TRUE);
-	if (bSuccess)
+	if (ReadFile(m_spCurrentHID->Handle, cBuffer, uiNumChar, &dwCharsRead, &ov) == TRUE)
 	{
 		iCharsRead = dwCharsRead;
 	}
 	else
 	{
-		if (GetLastError() == ERROR_IO_PENDING)
+		auto tmp = GetLastError();
+		if (tmp == ERROR_IO_PENDING)
 		{
-			dwResult = WaitForSingleObject(ov.hEvent, 1);
+			dwResult = WaitForSingleObject(ov.hEvent, 2000);
 			if (dwResult == WAIT_OBJECT_0)
 			{
 				if (GetOverlappedResult(m_spCurrentHID->Handle, &ov, &dwCharsRead, FALSE))

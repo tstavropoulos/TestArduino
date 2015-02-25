@@ -15,6 +15,8 @@
 #include "../ArduinoCommDLL/CoreFunctions.h"
 
 
+#define HIDTEST
+
 #ifdef _WINDOWS
 BOOL CtrlHandler(DWORD fdwCtrlType)
 {
@@ -43,7 +45,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	SerialComm::ArduinoComm::Init();
 
-	/*
+#ifndef HIDTEST
 	int piArduinos[10] = {};
 	SerialComm::ArduinoComm::FindArduinos(piArduinos, 10);
 	if (piArduinos[0] != 0)
@@ -70,12 +72,15 @@ int _tmain(int argc, _TCHAR* argv[])
 	std::cout << std::endl << "Connect to Port: ";
 	std::cin >> iPort;
 
-	*/
+#endif
 
 	SerialComm::ArduinoComm::SetProperties(true);
 
-	//if (!SerialComm::ArduinoComm::Connect(iPort))
+#ifdef HIDTEST
 	if (!SerialComm::ArduinoComm::ConnectToFirstHID())
+#else
+	if (!SerialComm::ArduinoComm::Connect(iPort))
+#endif
 	{
 		//std::cout << "Failure to connect to Port " << iPort << "." << std::endl << "Quitting" << std::endl;
 		std::cout << "Failure to connect to HID." << std::endl << "Quitting" << std::endl;

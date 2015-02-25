@@ -72,6 +72,7 @@ char readBuffer[64];
 
 void setup()
 {
+   //Serial.begin(115200);
    millisLastFrame=0;
    
    byReadPos = 0;
@@ -130,7 +131,7 @@ void establishConnection()
       while ( pendingMessages() <= 0 )
       {
          delay ( 200 ); 
-         Serial.print ( versionIdentifier );
+         sendChar ( versionIdentifier );
          delay ( 300 ); 
       }
    
@@ -151,7 +152,7 @@ void establishConnection()
 void identifyMyself()
 {
    delay ( 100 ); 
-   Serial.print ( arduinoIdentifier );
+   sendChars ( arduinoIdentifier );
    delay ( 100 ); 
 }
 
@@ -391,16 +392,20 @@ void requestEvent()
    }
 }
 
-void sendChar(char c)
+void sendChar(const char c)
 {
+   //Serial.print("Sending character ");
+   //Serial.println(&c);
    buffer[0] = byte(c);
    RawHID.send(buffer, 100);
    
    buffer[0] = '\0';
 }
 
-void sendChars(char *c)
+void sendChars(const char *c)
 {
+   //Serial.print("Sending characters ");
+   //Serial.println(c);
    for ( int n =0; n <63 && c[n]!='\0'; n++)
    {
       buffer[n] = byte(c[n]);
@@ -413,6 +418,7 @@ void sendChars(char *c)
 
 char readChar()
 {
+   updatePendingBuffer();
    if ( byReadPos != byWritePos )
    {
       return readBuffer[byReadPos++];
