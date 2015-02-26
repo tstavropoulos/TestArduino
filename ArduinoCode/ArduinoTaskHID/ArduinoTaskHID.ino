@@ -66,9 +66,12 @@ long signed debounce[PINNUMBER];
 long unsigned millisThisFrame;
 long unsigned millisLastFrame;
 
-byte unsigned byReadPos;
-byte unsigned byWritePos;
+byte byReadPos;
+byte byWritePos;
 char readBuffer[256];
+
+// RawHID packets are always 64 bytes
+byte buffer[64];
 
 void setup()
 {
@@ -100,11 +103,6 @@ void setup()
    
 }
 
-// RawHID packets are always 64 bytes
-byte buffer[64];
-elapsedMillis msUntilNextSend;
-unsigned int packetCount = 0;
-
 void loop() {
    millisThisFrame=millis();
 
@@ -128,7 +126,7 @@ void establishConnection()
    
    while ( !bFinished )
    {   
-      while ( pendingMessages() <= 0 )
+      while ( !anyPendingMessages() )
       {
          delay ( 200 ); 
          sendChar ( versionIdentifier );
@@ -163,7 +161,7 @@ void communicateProperties()
 
    while ( !bFinished )
    {
-      if ( pendingMessages() )
+      if ( anyPendingMessages() )
       {
          char inChar = readChar();
         
@@ -253,7 +251,7 @@ void HandleSerialComm()
 {
    if (bMaster)
    {
-      while ( pendingMessages() > 0 )
+      while ( anyPendingMessages() )
       {
          HandleSerialCommMaster();
       }
@@ -386,7 +384,7 @@ void requestEvent()
       Wire.write ( commChar );
    }
    
-   if ( !pendingMessages() )
+   if ( !anyPendingMessages() )
    {
       digitalWrite ( MESSAGEPIN, LOW );
    }
@@ -397,7 +395,7 @@ void sendChar(const char c)
    //Serial.print("Sending character ");
    //Serial.println(&c);
    buffer[0] = byte(c);
-   RawHID.send(buffer, 100);
+   while (!RawHID.send(buffer, 100));
    
    buffer[0] = '\0';
 }
@@ -411,15 +409,14 @@ void sendChars(const char *c)
       buffer[n] = byte(c[n]);
    }
    
-   RawHID.send(buffer, 100);
+   while(!RawHID.send(buffer, 100));
    
    clearBuffer();
 }
 
 char readChar()
 {
-   updatePendingBuffer();
-   if ( byReadPos != byWritePos )
+   if ( anyPendingMessages() )
    {
       return readBuffer[byReadPos++];
    }
@@ -427,32 +424,36 @@ char readChar()
    return '\0';
 }
 
-int pendingMessages()
+boolean anyPendingMessages()
 {
+   if ( byReadPos != byWritePos )
+   {
+      return true;  
+   }
    updatePendingBuffer();
-   return int(byWritePos-byReadPos);
+   return ( byReadPos != byWritePos );
 }
 
 void updatePendingBuffer()
 {
-   int n = RawHID.recv(buffer,0);
-   if ( n > 0 )
+   if ( RawHID.recv(buffer,0) > 0 )
    {
       int i = 0;
-      while ( buffer[i] != '\0' && (byWritePos+1) != byReadPos )
+      while ( (buffer[i] != 0) && (byWritePos+1 != byReadPos) )
       {
-         readBuffer[byWritePos++] = char(buffer[i++]);
+         readBuffer[byWritePos++] = char(buffer[i]);
+         buffer[i++] = 0;
       }
       
-      clearBuffer();
+      //clearBuffer();
    }
 }
 
 void clearBuffer()
 {
-  for ( int n = 0; n < 64; n++ )
-  {
-     buffer[n] = '\0';
-  } 
+   for ( int n = 0; n < 64; n++ )
+   {
+      buffer[n] = '\0';
+   } 
 }
 

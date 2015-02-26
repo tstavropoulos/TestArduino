@@ -2,6 +2,13 @@
 
 #ifdef _WINDOWS
 
+#define READ_SPEED_TEST
+//#define TOTAL_WRITE_SPEED_TEST
+//#define TOTAL_READ_SPEED_TEST
+#define WRITE_SPEED_TEST
+//#define TEST2
+#define TEST3
+
 #include "SerialGeneric.h"
 #include "SerialWindowsHID.h"
 #include "CoreFunctions.h"
@@ -71,17 +78,17 @@ void SerialWindowsHID::ReadThreadMethod()
 	char buffer[65];
 	int trueBufferChars = sizeof(buffer) - 1;
 	std::unique_lock<std::mutex> StopLock(m_mtxStopRead);
-	while (!m_bStopRead && m_cvStopRead.wait_for(StopLock, std::chrono::microseconds(500)) == std::cv_status::timeout)
+	while (!m_bStopRead && m_cvStopRead.wait_for(StopLock, std::chrono::microseconds(100)) == std::cv_status::timeout)
 	{
+#if defined ( READ_SPEED_TEST ) && defined( TEST1 )
 		std::stringstream ss;
 		ss << "ReadThreadMethod Time: ";
 		microsecond usStart = microsecondsNow();
-
+#endif
 		//Read pending data
 		int readResult = DirectReadData(buffer, sizeof(buffer));
 		if (readResult > 0)
 		{
-			//PrintDebugTest(buffer);
 			int i = 0;
 			std::lock_guard<std::recursive_mutex> ReadLock(m_mtxReadBuffer);
 			while ( i < trueBufferChars)
@@ -92,10 +99,6 @@ void SerialWindowsHID::ReadThreadMethod()
 				}
 				i++;
 			}
-		}
-
-		if (readResult > 0)
-		{
 			m_cvReadBufferUpdated.notify_one();
 		}
 
@@ -123,17 +126,20 @@ void SerialWindowsHID::ReadThreadMethod()
 			}
 		}
 
+#if defined ( READ_SPEED_TEST ) && defined( TEST1 )
 		ss << microsecondsNow() - usStart << std::endl;
 		PrintDebugTest(ss.str());
+#endif
 	}
 }
 
 int SerialWindowsHID::DirectReadData(char *cBuffer, unsigned int uiNumChar)
 {
-	//std::stringstream ss;
-	//ss << "DirectReadData Time: ";
-	//microsecond usStart = microsecondsNow();
-
+#if defined ( READ_SPEED_TEST ) && defined( TEST2 )
+	std::stringstream ss;
+	ss << "DirectReadData Time: ";
+	microsecond usStart = microsecondsNow();
+#endif
 	OVERLAPPED ov;
 	DWORD dwCharsRead = 0;
 	DWORD dwResult = 0;
@@ -143,7 +149,7 @@ int SerialWindowsHID::DirectReadData(char *cBuffer, unsigned int uiNumChar)
 	{
 		if (!m_bErrorSuppress)
 		{
-			PrintDebugError(L"Cannot Read: Not connected.");
+			PrintDebugError(L"Cannot Read: Not connected.\n");
 		}
 		return -1;
 	}
@@ -154,46 +160,67 @@ int SerialWindowsHID::DirectReadData(char *cBuffer, unsigned int uiNumChar)
 	{
 		if (!m_bErrorSuppress)
 		{
-			PrintDebugError(L"Read Failure: Create Overlapped failed.");
+			PrintDebugError(L"Read Failure: Create Overlapped failed.\n");
 		}
 		return -1;
 	}
 
-	//std::lock_guard<std::mutex> lock(m_mtxHIDAccess);
+#if defined ( READ_SPEED_TEST ) && defined( TEST3 )
+	microsecond usWait = microsecondsNow();
+#endif
 	if (ReadFile(m_spCurrentHID->Handle, cBuffer, uiNumChar, &dwCharsRead, &ov) == TRUE)
 	{
+#if defined ( READ_SPEED_TEST ) && defined( TEST3 )
+		std::wstringstream wss;
+		wss << L"Immediate ReadFile Delay Time: " << microsecondsNow() - usWait;
+		wss << std::endl;
+		PrintDebugTest(wss.str());
+#endif
 		iCharsRead = dwCharsRead;
 	}
 	else
 	{
 		if (GetLastError() == ERROR_IO_PENDING)
 		{
-			//microsecond usWait = microsecondsNow();
-			if (WaitForSingleObject(ov.hEvent, 100) == WAIT_OBJECT_0)
+			if (WaitForSingleObject(ov.hEvent, 0) == WAIT_OBJECT_0)
 			{
-				//std::wstringstream wss;
-				//wss << L"ReadFile wait: " << microsecondsNow() - usWait << std::endl;
-				//PrintDebugTest(wss.str());
-				if (GetOverlappedResult(m_spCurrentHID->Handle, &ov, &dwCharsRead, FALSE))
+#if defined ( READ_SPEED_TEST ) && defined( TEST3 )
+				std::wstringstream wss;
+				wss << L"Deferred ReadFile Delay Time: " << microsecondsNow() - usWait;
+#endif
+
+				//if (GetOverlappedResult(m_spCurrentHID->Handle, &ov, &dwCharsRead, FALSE))
+				if (GetOverlappedResult(m_spCurrentHID->Handle, &ov, &dwCharsRead, TRUE))
 				{
+#if defined ( READ_SPEED_TEST ) && defined( TEST3 )
+					wss << L"\tRead Successful.";
+#endif
 					iCharsRead = dwCharsRead;
 				}
 				else
 				{
+#if defined ( READ_SPEED_TEST ) && defined( TEST3 )
+					wss << L"\tRead Failed.";
+#endif
 					if (!m_bErrorSuppress)
 					{
-						PrintDebugError(L"Read Failure: Read blocked then failed.");
+						PrintDebugError(L"Read Failure: Read blocked then failed.\n");
 					}
 
 					iCharsRead = -1;
 				}
+
+#if defined ( READ_SPEED_TEST ) && defined( TEST3 )
+				wss << std::endl;
+				PrintDebugTest(wss.str());
+#endif
 			}
 			else
 			{
 				CancelIo(m_spCurrentHID->Handle);
 				if (!m_bErrorSuppress)
 				{
-					PrintDebugTest(L"Read Failure: Read blocked then timeout.");
+					PrintDebugTest(L"Read Failure: Read blocked then timeout.\n");
 				}
 
 				iCharsRead = 0;
@@ -203,7 +230,7 @@ int SerialWindowsHID::DirectReadData(char *cBuffer, unsigned int uiNumChar)
 		{
 			if (!m_bErrorSuppress)
 			{
-				PrintDebugTest(L"Read Failure: Read failed.");
+				PrintDebugTest(L"Read Failure: Read failed.\n");
 			}
 
 			iCharsRead = -1;
@@ -211,14 +238,21 @@ int SerialWindowsHID::DirectReadData(char *cBuffer, unsigned int uiNumChar)
 	}
 	CloseHandle(ov.hEvent);
 
-	//ss << microsecondsNow() - usStart << std::endl;
-	//PrintDebugTest(ss.str());
+#if defined ( READ_SPEED_TEST ) && defined( TEST2 )
+	ss << microsecondsNow() - usStart << std::endl;
+	PrintDebugTest(ss.str());
+#endif
 
 	return iCharsRead;
 }
 
 int SerialWindowsHID::DirectWriteData(char *cBuffer, unsigned int uiNumChar)
 {
+#if defined ( WRITE_SPEED_TEST ) && defined( TEST2 )
+	std::wstringstream wssWholeWriteSpeedTest;
+	wssWholeWriteSpeedTest << "DirectWriteData Time: ";
+	microsecond usStart = microsecondsNow();
+#endif
 	OVERLAPPED ov;
 	DWORD dwCharsRead = 0;
 	DWORD dwResult = 0;
@@ -245,21 +279,44 @@ int SerialWindowsHID::DirectWriteData(char *cBuffer, unsigned int uiNumChar)
 		return -1;
 	}
 
+#if defined ( WRITE_SPEED_TEST ) && defined( TEST3 )
+	microsecond usWait = microsecondsNow();
+#endif
 	bSuccess = (WriteFile(m_spCurrentHID->Handle, cBuffer, uiNumChar, &dwCharsRead, &ov) == TRUE);
 	if (bSuccess)
 	{
+#if defined ( WRITE_SPEED_TEST ) && defined( TEST3 )
+		std::wstringstream wssWriteSpeedTest;
+		wssWriteSpeedTest << L"Immediate WriteFile wait: " << microsecondsNow() - usWait << std::endl;
+		PrintDebugTest(wssWriteSpeedTest.str());
+#endif
+#if defined( TOTAL_WRITE_SPEED_TEST )
+		std::wstringstream wssTotalWriteTest;
+		wssTotalWriteTest << L"Finished Immediate Write.\t";
+		wssTotalWriteTest << L"Total Time: " << microTimerTotal(1) << L"us" << std::endl;
+		PrintDebugTest(wssTotalWriteTest.str());
+		microTimerClear(1);
+#endif
 		iCharsWritten = dwCharsRead;
 	}
 	else
 	{
 		if (GetLastError() == ERROR_IO_PENDING)
 		{
-			//microsecond usWait = microsecondsNow();
 			if (GetOverlappedResult(m_spCurrentHID->Handle, &ov, &dwCharsRead, TRUE) == TRUE)
 			{
-				//std::wstringstream wss;
-				//wss << L"WriteFile wait: " << microsecondsNow() - usWait << std::endl;
-				//PrintDebugTest(wss.str());
+#if defined ( WRITE_SPEED_TEST ) && defined( TEST3 )
+				std::wstringstream wssWriteSpeedTest;
+				wssWriteSpeedTest << L"Deferred WriteFile wait: " << microsecondsNow() - usWait << std::endl;
+				PrintDebugTest(wssWriteSpeedTest.str());
+#endif
+#if defined( TOTAL_WRITE_SPEED_TEST )
+				std::wstringstream wssTotalWriteTest;
+				wssTotalWriteTest << L"Finished Deferred Write.\t";
+				wssTotalWriteTest << L"Total Time: " << microTimerTotal(1) << L"us" << std::endl;
+				PrintDebugTest(wssTotalWriteTest.str());
+				microTimerClear(1);
+#endif
 				iCharsWritten = dwCharsRead;
 			}
 			else
@@ -283,6 +340,11 @@ int SerialWindowsHID::DirectWriteData(char *cBuffer, unsigned int uiNumChar)
 		}
 	}
 	CloseHandle(ov.hEvent);
+
+#if defined ( WRITE_SPEED_TEST ) && defined( TEST2 )
+	wssWholeWriteSpeedTest << microsecondsNow() - usStart << std::endl;
+	PrintDebugTest(wssWholeWriteSpeedTest.str());
+#endif
 	return iCharsWritten;
 }
 
@@ -321,6 +383,10 @@ bool SerialWindowsHID::WaitReadData(char *cBuffer, unsigned int uiNumChar, unsig
 
 bool SerialWindowsHID::WriteData(const char *cBuffer, unsigned int uiNumChar)
 {
+#ifdef TOTAL_WRITE_SPEED_TEST
+	PrintDebugTest(L"Queueing Write\n");
+	microTimerStart(1);
+#endif
 	std::unique_lock<std::mutex> WriteLock(m_mtxWriteBuffer);
 	for (unsigned int i = 0; i < uiNumChar; i++)
 	{
@@ -335,6 +401,10 @@ bool SerialWindowsHID::WriteData(const char *cBuffer, unsigned int uiNumChar)
 
 bool SerialWindowsHID::WriteData(const std::string &sData)
 {
+#ifdef TOTAL_WRITE_SPEED_TEST
+	PrintDebugTest(L"Queueing Write\n");
+	microTimerStart(1);
+#endif
 	std::unique_lock<std::mutex> WriteLock(m_mtxWriteBuffer);
 	for (unsigned int i = 0; i < sData.length(); i++)
 	{

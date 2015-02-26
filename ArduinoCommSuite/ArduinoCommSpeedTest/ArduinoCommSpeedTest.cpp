@@ -13,10 +13,11 @@
 #endif // _UNIX
 
 #include "../ArduinoCommDLL/CoreFunctions.h"
+#include <thread>
 
 
 #define HIDTEST
-#define RUNNUM 100
+#define RUNNUM 1000
 
 const char cPingChar = 'G';
 std::vector<SerialComm::microsecond> vRunTimes;
@@ -127,10 +128,10 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		if (SerialComm::ArduinoComm::GetCharAvailable())
 		{
-			while (SerialComm::ArduinoComm::GetCharAvailable())
+			do
 			{
 				std::cout << SerialComm::ArduinoComm::ReadChar();
-			}
+			} while (SerialComm::ArduinoComm::GetCharAvailable());
 			std::cout << std::endl;
 		}
 

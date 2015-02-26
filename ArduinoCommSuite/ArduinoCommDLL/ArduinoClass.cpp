@@ -196,7 +196,7 @@ bool Arduino::confirmVersion(SerialGeneric *pSerial, bool bPrintErrors)
 	{
 		char szBuffer[2] = "";
 		pSerial->WaitReadData(szBuffer, 1, 6000);
-		if (strcmp(szBuffer, csVersionPhrase) == 0)
+		if (szBuffer[0] == *csVersionPhrase)
 		{
 			pSerial->WriteData(csVersionPhrase);
 			m_eState = ARDUINO_STATE::CONFIRM_VERSION;
@@ -222,10 +222,41 @@ bool Arduino::readSignature(SerialGeneric *pSerial, bool bPrintErrors)
 	if (pSerial->IsConnected())
 	{
 		char incomingData[256] = "";
+		char *namePhrase = incomingData;
 
 		pSerial->WaitReadData(incomingData, 7, 1000);
 
-		if (strcmp(incomingData, csInitPhrase) == 0)
+		/*  It is possible to end up in this situation:
+
+			C is the csVersionPhrase
+			ARDUINO is the Signature
+			The read buffer after acknowledging initialization can have "CARDUINO" or even "CCARDUINO"
+			if things are unusually slow.
+
+			So we find the first character that's not our csVersion Phrase, advance our name pointer to it,
+			and pass the remaining portion of the buffer to ReadData.
+		*/
+
+
+		//Clear out up to 3 remaining Initialization characters
+		int i = 0;
+		for (i = 0; i < 3; i++)
+		{
+			if (incomingData[i] != *csVersionPhrase)
+			{
+				break;
+			}
+		}
+
+		if (i > 0)
+		{
+			//advance the start of the name to the first-non version phrase.
+			namePhrase += i;
+
+			pSerial->ReadData(namePhrase + 7 - i,i);
+		}
+
+		if (strcmp(namePhrase, csInitPhrase) == 0)
 		{
 			m_eState = ARDUINO_STATE::SEND_PARAMETERS;
 			return true;
@@ -238,7 +269,7 @@ bool Arduino::readSignature(SerialGeneric *pSerial, bool bPrintErrors)
 			std::wstringstream wss;
 			wss << L"Unsuccessful communication attempt with " << sPortName.c_str() << std::endl;
 			wss << L" Expected initialization message: \"" << csInitPhrase << L"\"" << std::endl;
-			wss << L" Received initialization message: \"" << incomingData << L"\"" << std::endl << std::endl;
+			wss << L" Received initialization message: \"" << namePhrase << L"\"" << std::endl << std::endl;
 			PrintDebugError(wss.str());
 		}
 	}
