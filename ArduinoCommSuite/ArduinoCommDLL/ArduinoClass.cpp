@@ -141,7 +141,7 @@ bool Arduino::connectHID(int iHIDnum)
 
 	std::unique_ptr<SerialHID> pTmp;
 #ifdef _WINDOWS
-	pTmp = std::make_unique<SerialHID>(true);
+	pTmp = std::make_unique<SerialHID>(false);
 #else
 	pTmp = std::unique_ptr<SerialHID>(new SerialHID(true));
 #endif // _WINDOWS

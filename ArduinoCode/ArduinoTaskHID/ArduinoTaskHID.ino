@@ -395,8 +395,8 @@ void sendChar(const char c)
    //Serial.print("Sending character ");
    //Serial.println(&c);
    buffer[0] = byte(c);
-   while (!RawHID.send(buffer, 100));
-   
+   //while (!RawHID.send(buffer, 0));
+   RawHID.send(buffer,100);
    buffer[0] = '\0';
 }
 
@@ -409,8 +409,8 @@ void sendChars(const char *c)
       buffer[n] = byte(c[n]);
    }
    
-   while(!RawHID.send(buffer, 100));
-   
+   //while(!RawHID.send(buffer, 0));
+   RawHID.send(buffer, 100);
    clearBuffer();
 }
 
@@ -441,11 +441,10 @@ void updatePendingBuffer()
       int i = 0;
       while ( (buffer[i] != 0) && (byWritePos+1 != byReadPos) )
       {
-         readBuffer[byWritePos++] = char(buffer[i]);
-         buffer[i++] = 0;
+         readBuffer[byWritePos++] = char(buffer[i++]);
       }
       
-      //clearBuffer();
+      clearBuffer();
    }
 }
 

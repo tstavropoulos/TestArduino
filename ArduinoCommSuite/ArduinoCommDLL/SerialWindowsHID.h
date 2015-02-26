@@ -35,8 +35,6 @@ namespace SerialComm
 		//  Threaded reading varaibles
 		//
 
-		//std::mutex m_mtxHIDAccess;
-
 		//Unique Pointer to the thread responsible for reading input
 		std::unique_ptr<std::thread> m_upDeviceThread;
 
@@ -51,6 +49,8 @@ namespace SerialComm
 
 		//Buffer holding characters that are waiting to be sent to device
 		std::queue<char> m_qcWriteBuffer;
+
+		std::vector<char> m_vcWriteFailBuffer;
 
 		//Mutex to make accessing Write Buffer threadsafe
 		std::mutex m_mtxWriteBuffer;
@@ -67,7 +67,6 @@ namespace SerialComm
 		int DirectWriteData(char *cBuffer, unsigned int uiNumChar);
 		int DirectReadData(char *cBuffer, unsigned int uiNumChar);
 		void ReadThreadMethod();
-
 
 	public:
 		SerialWindowsHID(bool bErrorSuppress);
