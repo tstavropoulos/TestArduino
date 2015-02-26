@@ -254,9 +254,6 @@ xcopy /y $(ProjectDir)ArduinoCommCDLL.h $(SolutionDir)..\BuiltLibs\OutputCopy\</
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="ArduinoClass.h" />
     <ClInclude Include="ArduinoCommCDLL.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
