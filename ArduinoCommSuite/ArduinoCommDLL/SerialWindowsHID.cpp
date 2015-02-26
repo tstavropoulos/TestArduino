@@ -73,6 +73,10 @@ void SerialWindowsHID::ReadThreadMethod()
 	std::unique_lock<std::mutex> StopLock(m_mtxStopRead);
 	while (!m_bStopRead && m_cvStopRead.wait_for(StopLock, std::chrono::microseconds(500)) == std::cv_status::timeout)
 	{
+		std::stringstream ss;
+		ss << "ReadThreadMethod Time: ";
+		microsecond usStart = microsecondsNow();
+
 		//Read pending data
 		int readResult = DirectReadData(buffer, sizeof(buffer));
 		if (readResult > 0)
@@ -80,9 +84,13 @@ void SerialWindowsHID::ReadThreadMethod()
 			//PrintDebugTest(buffer);
 			int i = 0;
 			std::lock_guard<std::recursive_mutex> ReadLock(m_mtxReadBuffer);
-			while (buffer[i] != '\0' && i < trueBufferChars)
+			while ( i < trueBufferChars)
 			{
-				m_qcReadBuffer.push(buffer[i++]);
+				if (buffer[i] != '\0')
+				{
+					m_qcReadBuffer.push(buffer[i]);
+				}
+				i++;
 			}
 		}
 
@@ -96,7 +104,10 @@ void SerialWindowsHID::ReadThreadMethod()
 			std::lock_guard<std::mutex> WriteLock(m_mtxWriteBuffer);
 			while (!m_qcWriteBuffer.empty())
 			{
-				int i = 0;
+				//The first byte must be 0, since ReportID isn't being used
+				buffer[0] = '\0';
+
+				int i = 1;
 				while (i < trueBufferChars && !m_qcWriteBuffer.empty())
 				{
 					buffer[i++] = m_qcWriteBuffer.front();
@@ -111,11 +122,18 @@ void SerialWindowsHID::ReadThreadMethod()
 				DirectWriteData(buffer, sizeof(buffer));
 			}
 		}
+
+		ss << microsecondsNow() - usStart << std::endl;
+		PrintDebugTest(ss.str());
 	}
 }
 
 int SerialWindowsHID::DirectReadData(char *cBuffer, unsigned int uiNumChar)
 {
+	//std::stringstream ss;
+	//ss << "DirectReadData Time: ";
+	//microsecond usStart = microsecondsNow();
+
 	OVERLAPPED ov;
 	DWORD dwCharsRead = 0;
 	DWORD dwResult = 0;
@@ -130,6 +148,7 @@ int SerialWindowsHID::DirectReadData(char *cBuffer, unsigned int uiNumChar)
 		return -1;
 	}
 
+	memset(&ov, 0, sizeof(OVERLAPPED));
 	ov.hEvent = CreateEvent(nullptr, TRUE, FALSE, nullptr);
 	if (ov.hEvent == NULL)
 	{
@@ -147,12 +166,14 @@ int SerialWindowsHID::DirectReadData(char *cBuffer, unsigned int uiNumChar)
 	}
 	else
 	{
-		auto tmp = GetLastError();
-		if (tmp == ERROR_IO_PENDING)
+		if (GetLastError() == ERROR_IO_PENDING)
 		{
-			dwResult = WaitForSingleObject(ov.hEvent, 2000);
-			if (dwResult == WAIT_OBJECT_0)
+			//microsecond usWait = microsecondsNow();
+			if (WaitForSingleObject(ov.hEvent, 100) == WAIT_OBJECT_0)
 			{
+				//std::wstringstream wss;
+				//wss << L"ReadFile wait: " << microsecondsNow() - usWait << std::endl;
+				//PrintDebugTest(wss.str());
 				if (GetOverlappedResult(m_spCurrentHID->Handle, &ov, &dwCharsRead, FALSE))
 				{
 					iCharsRead = dwCharsRead;
@@ -189,6 +210,10 @@ int SerialWindowsHID::DirectReadData(char *cBuffer, unsigned int uiNumChar)
 		}
 	}
 	CloseHandle(ov.hEvent);
+
+	//ss << microsecondsNow() - usStart << std::endl;
+	//PrintDebugTest(ss.str());
+
 	return iCharsRead;
 }
 
@@ -209,6 +234,7 @@ int SerialWindowsHID::DirectWriteData(char *cBuffer, unsigned int uiNumChar)
 		return -1;
 	}
 
+	memset(&ov, 0, sizeof(OVERLAPPED));
 	ov.hEvent = CreateEvent(nullptr, TRUE, FALSE, nullptr);
 	if (ov.hEvent == NULL)
 	{
@@ -228,8 +254,12 @@ int SerialWindowsHID::DirectWriteData(char *cBuffer, unsigned int uiNumChar)
 	{
 		if (GetLastError() == ERROR_IO_PENDING)
 		{
-			if (GetOverlappedResult(m_spCurrentHID->Handle, &ov, &dwCharsRead, TRUE))
+			//microsecond usWait = microsecondsNow();
+			if (GetOverlappedResult(m_spCurrentHID->Handle, &ov, &dwCharsRead, TRUE) == TRUE)
 			{
+				//std::wstringstream wss;
+				//wss << L"WriteFile wait: " << microsecondsNow() - usWait << std::endl;
+				//PrintDebugTest(wss.str());
 				iCharsWritten = dwCharsRead;
 			}
 			else
@@ -342,7 +372,7 @@ bool SerialWindowsHID::FlushBuffer()
 int SerialWindowsHID::CharsInQueue()
 {
 	std::unique_lock<std::recursive_mutex> ReadLock(m_mtxReadBuffer);
-	return m_qcReadBuffer.size();
+	return (int)(m_qcReadBuffer.size());
 }
 
 std::vector<std::shared_ptr<RawHID>> SerialWindowsHID::findAllHID()

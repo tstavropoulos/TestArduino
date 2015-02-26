@@ -1,4 +1,4 @@
-// ArduinoCommTest.cpp : Defines the entry point for the console application.
+// ArduinoCommSpeedTest.cpp : Defines the entry point for the console application.
 //
 
 #include "stdafx.h"
@@ -16,6 +16,12 @@
 
 
 #define HIDTEST
+#define RUNNUM 100
+
+const char cPingChar = 'G';
+std::vector<SerialComm::microsecond> vRunTimes;
+
+void analyzeOutput(std::vector<SerialComm::microsecond> &vRunTimes);
 
 #ifdef _WINDOWS
 BOOL CtrlHandler(DWORD fdwCtrlType)
@@ -92,35 +98,87 @@ int _tmain(int argc, _TCHAR* argv[])
 		return 0;
 	}
 
-	SerialComm::millisecond msReadyTime = SerialComm::millisecondsNow() + 1000;
+	char readResult = '\0';
 
-	std::cout << std::endl;
 
-	if (SerialComm::ArduinoComm::GetCharAvailable())
+	for (int run = 0; run < RUNNUM; run++)
 	{
-		while (SerialComm::millisecondsNow() < msReadyTime)
+		bool bFinished = false;
+		SerialComm::microsecond start = SerialComm::microsecondsNow();
+
+		SerialComm::ArduinoComm::SendChar(cPingChar);
+		while (!bFinished)
+		{
+			readResult = SerialComm::ArduinoComm::ReadChar();
+			if (readResult != '\0')
+			{
+				if (readResult == cPingChar)
+				{
+					bFinished = true;
+				}
+				else
+				{
+					std::cout << readResult << std::endl;
+				}
+			}
+		}
+
+		SerialComm::microsecond elapsed = SerialComm::microsecondsNow() - start;
+
+		if (SerialComm::ArduinoComm::GetCharAvailable())
 		{
 			while (SerialComm::ArduinoComm::GetCharAvailable())
 			{
 				std::cout << SerialComm::ArduinoComm::ReadChar();
 			}
+			std::cout << std::endl;
 		}
+
+		vRunTimes.push_back(elapsed);
+
+		std::stringstream ss;
+		ss << "Run Number: " << run << std::endl;
+		std::cout << ss.str();
 	}
-	std::cout << std::endl;
-
-	SerialComm::ArduinoComm::SendChar('Q');
-
-	char cReflChar = SerialComm::ArduinoComm::WaitForChar(5000);
-
-	std::cout << "Received Char: " << cReflChar << std::endl;
-	std::cout << "Results: " << ((cReflChar == 'Q') ? "Success!" : "Failure!") << std::endl;
-	std::cout << "More Chars: ";
-	std::cout << std::endl;
 
 	SerialComm::ArduinoComm::Disconnect();
 
-	std::string sInput;
-	std::cin >> sInput;
+	analyzeOutput(vRunTimes);
+
+	std::string input;
+	std::cin >> input;
+
 	return 0;
 }
 
+
+
+void analyzeOutput(std::vector<SerialComm::microsecond> &vRunTimes)
+{
+	double dTimeSum = 0.0;
+	double dTimeSqSum = 0.0;
+	long iNum = 0;
+
+	SerialComm::microsecond usMax = 0;
+
+	for (SerialComm::microsecond time : vRunTimes)
+	{
+		dTimeSum += time;
+		dTimeSqSum += (time * time);
+		iNum++;
+
+		if (time > usMax)
+		{
+			usMax = time;
+		}
+	}
+
+	double dAverage = dTimeSum / iNum;
+
+	double dStandardDeviation = sqrt((dTimeSqSum / iNum) - dAverage*dAverage);
+
+	std::cout << "Trial of " << iNum << " messages finised." << std::endl;
+	std::cout << "  Average turnaround time: " << dAverage << "us" << std::endl;
+	std::cout << "  Turnaround Standard Deviation: " << dStandardDeviation << "us" << std::endl;
+	std::cout << "  Longest Latency: " << usMax << "us" << std::endl;
+}

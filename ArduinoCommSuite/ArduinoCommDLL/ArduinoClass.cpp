@@ -190,6 +190,33 @@ bool Arduino::connectCOMPort(int iPortNum)
 	return genericConnect();
 }
 
+bool Arduino::confirmVersion(SerialGeneric *pSerial, bool bPrintErrors)
+{
+	if (pSerial->IsConnected())
+	{
+		char szBuffer[2] = "";
+		pSerial->WaitReadData(szBuffer, 1, 6000);
+		if (strcmp(szBuffer, csVersionPhrase) == 0)
+		{
+			pSerial->WriteData(csVersionPhrase);
+			m_eState = ARDUINO_STATE::CONFIRM_VERSION;
+			return true;
+		}
+		else if (bPrintErrors)
+		{
+			std::string sPortName;
+			pSerial->GetConnectionName(sPortName);
+
+			std::wstringstream wss;
+			wss << L"Incompatible version with " << sPortName.c_str() << std::endl;
+			wss << L" Expected version message: \"" << csVersionPhrase << L"\"" << std::endl;
+			wss << L" Received version message: \"" << szBuffer << L"\"" << std::endl << std::endl;
+		}
+	}
+
+	return false;
+}
+
 bool Arduino::readSignature(SerialGeneric *pSerial, bool bPrintErrors)
 {
 	if (pSerial->IsConnected())
@@ -223,33 +250,6 @@ bool Arduino::readSignature(SerialGeneric *pSerial, bool bPrintErrors)
 		std::wstringstream wss;
 		wss << L"Unsuccessful connection with " << sPortName.c_str() << std::endl << std::endl;
 		PrintDebugError(wss.str());
-	}
-
-	return false;
-}
-
-bool Arduino::confirmVersion(SerialGeneric *pSerial, bool bPrintErrors)
-{
-	if (pSerial->IsConnected())
-	{
-		char szBuffer[2] = "";
-		pSerial->WaitReadData(szBuffer, 1, 6000);
-		if (strcmp(szBuffer, csVersionPhrase) == 0)
-		{
-			pSerial->WriteData(csVersionPhrase);
-			m_eState = ARDUINO_STATE::CONFIRM_VERSION;
-			return true;
-		}
-		else if (bPrintErrors)
-		{
-			std::string sPortName;
-			pSerial->GetConnectionName(sPortName);
-
-			std::wstringstream wss;
-			wss << L"Incompatible version with " << sPortName.c_str() << std::endl;
-			wss << L" Expected version message: \"" << csVersionPhrase << L"\"" << std::endl;
-			wss << L" Received version message: \"" << szBuffer << L"\"" << std::endl << std::endl;
-		}
 	}
 
 	return false;
@@ -364,7 +364,7 @@ char Arduino::WaitReadChar(unsigned long long ullMaxWait)
 {
 	if (m_pSerial && m_pSerial->IsConnected() && m_eState == ARDUINO_STATE::CONNECTED)
 	{
-		char buffer[2];
+		char buffer[2] = { '\0' };
 		m_pSerial->WaitReadData(buffer, 1, ullMaxWait);
 		return buffer[0];
 	}
@@ -415,7 +415,7 @@ char Arduino::ReadChar()
 {
 	if (m_pSerial && m_pSerial->IsConnected() && m_eState == ARDUINO_STATE::CONNECTED)
 	{
-		char buffer[2];
+		char buffer[2] = { '\0' };
 		m_pSerial->ReadData(buffer, 1);
 		return buffer[0];
 	}

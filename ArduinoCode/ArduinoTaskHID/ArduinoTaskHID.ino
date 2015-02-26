@@ -66,9 +66,9 @@ long signed debounce[PINNUMBER];
 long unsigned millisThisFrame;
 long unsigned millisLastFrame;
 
-byte byReadPos;
-byte byWritePos;
-char readBuffer[64];
+byte unsigned byReadPos;
+byte unsigned byWritePos;
+char readBuffer[256];
 
 void setup()
 {
