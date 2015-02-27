@@ -10,7 +10,7 @@
 using namespace SerialComm;
 
 SerialWindowsHID::SerialWindowsHID(bool bErrorSuppress)
-	: SerialGenericHID(bErrorSuppress), m_upDeviceThread(nullptr), m_bStopRead(false), m_bConnected(false)
+	: SerialGenericHID(bErrorSuppress), m_upDeviceReadThread(nullptr), m_upDeviceWriteThread(nullptr), m_bStopRead(false), m_bConnected(false)
 {
 
 }
@@ -29,13 +29,16 @@ SerialWindowsHID::~SerialWindowsHID()
 bool SerialWindowsHID::disconnect()
 {
 	//Gracefully clean up device thread
-	if (m_upDeviceThread)
+	if (m_upDeviceReadThread || m_upDeviceWriteThread)
 	{
 		m_bStopRead = true;
 		m_cvStopRead.notify_all();
 
-		m_upDeviceThread->join();
-		m_upDeviceThread.reset();
+		m_upDeviceReadThread->join();
+		m_upDeviceWriteThread->join();
+
+		m_upDeviceReadThread.reset();
+		m_upDeviceWriteThread.reset();
 	}
 
 	return true;
@@ -53,14 +56,22 @@ bool SerialWindowsHID::Connect()
 		return false;
 	}
 
-	if (m_upDeviceThread)
+	if (m_upDeviceReadThread)
 	{
 		PrintDebugError(L"WinHID Connect: Read Thread active?!?");
 
 		return false;
 	}
 
-	m_upDeviceThread = std::make_unique<std::thread>(&SerialWindowsHID::ReadThreadMethod, this);
+	if (m_upDeviceWriteThread)
+	{
+		PrintDebugError(L"WinHID Connect: Write Thread active?!?");
+
+		return false;
+	}
+
+	m_upDeviceReadThread = std::make_unique<std::thread>(&SerialWindowsHID::ReadThreadMethod, this);
+	m_upDeviceWriteThread = std::make_unique<std::thread>(&SerialWindowsHID::WriteThreadMethod, this);
 	m_bConnected = true;
 
 	return true;
@@ -69,7 +80,6 @@ bool SerialWindowsHID::Connect()
 void SerialWindowsHID::ReadThreadMethod()
 {
 	char buffer[65];
-	int trueBufferChars = sizeof(buffer) - 1;
 	std::unique_lock<std::mutex> StopLock(m_mtxStopRead);
 	while (!m_bStopRead)
 	{
@@ -80,7 +90,7 @@ void SerialWindowsHID::ReadThreadMethod()
 			{
 				int i = 0;
 				std::lock_guard<std::recursive_mutex> ReadLock(m_mtxReadBuffer);
-				while (i < trueBufferChars)
+				while (i < sizeof(buffer) - 1)
 				{
 					if (buffer[i] != '\0')
 					{
@@ -91,7 +101,15 @@ void SerialWindowsHID::ReadThreadMethod()
 				m_cvReadBufferUpdated.notify_one();
 			}
 		}
+	}
+}
 
+void SerialWindowsHID::WriteThreadMethod()
+{
+	char buffer[65];
+	std::unique_lock<std::mutex> StopLock(m_mtxStopRead);
+	while (!m_bStopRead)
+	{
 		//Write pending data
 		if (!m_bStopRead && m_cvStopRead.wait_for(StopLock, std::chrono::microseconds(50)) == std::cv_status::timeout)
 		{
@@ -105,13 +123,13 @@ void SerialWindowsHID::ReadThreadMethod()
 					//The first byte must be 0, since ReportID isn't being used
 					buffer[0] = '\0';
 
-					while (i < trueBufferChars && (i - 1) < int(m_vcWriteFailBuffer.size()))
+					while (i < (sizeof(buffer) - 1) && (i - 1) < int(m_vcWriteFailBuffer.size()))
 					{
 						buffer[i] = m_vcWriteFailBuffer[i - 1];
 						i++;
 					}
 
-					while (i < trueBufferChars && !m_qcWriteBuffer.empty())
+					while (i < (sizeof(buffer) - 1) && !m_qcWriteBuffer.empty())
 					{
 						buffer[i++] = m_qcWriteBuffer.front();
 						m_vcWriteFailBuffer.push_back(m_qcWriteBuffer.front());
@@ -164,8 +182,9 @@ int SerialWindowsHID::DirectReadData(char *cBuffer, unsigned int uiNumChar)
 		return -1;
 	}
 
-	if (ReadFile(m_spCurrentHID->Handle, cBuffer, uiNumChar, &dwCharsRead, &ov))
+	if (ReadFile(m_spCurrentHID->ReadHandle, cBuffer, uiNumChar, &dwCharsRead, &ov))
 	{
+		microTimerStart(3);
 		iCharsRead = dwCharsRead;
 	}
 	else
@@ -174,8 +193,9 @@ int SerialWindowsHID::DirectReadData(char *cBuffer, unsigned int uiNumChar)
 		{
 			if (WaitForSingleObject(ov.hEvent, 0) == WAIT_OBJECT_0)
 			{
-				if (GetOverlappedResult(m_spCurrentHID->Handle, &ov, &dwCharsRead, FALSE))
+				if (GetOverlappedResult(m_spCurrentHID->ReadHandle, &ov, &dwCharsRead, FALSE))
 				{
+					microTimerStart(3);
 					iCharsRead = dwCharsRead;
 				}
 				else
@@ -192,7 +212,7 @@ int SerialWindowsHID::DirectReadData(char *cBuffer, unsigned int uiNumChar)
 			}
 			else
 			{
-				CancelIo(m_spCurrentHID->Handle);
+				CancelIo(m_spCurrentHID->ReadHandle);
 				if (!m_bErrorSuppress)
 				{
 					PrintDebugTest(L"Read Failure: Read blocked then timed out.\n");
@@ -218,7 +238,6 @@ int SerialWindowsHID::DirectReadData(char *cBuffer, unsigned int uiNumChar)
 
 int SerialWindowsHID::DirectWriteData(char *cBuffer, unsigned int uiNumChar)
 {
-	OVERLAPPED ov;
 	DWORD dwCharsWritten = 0;
 	DWORD dwResult = 0;
 	int iCharsWritten;
@@ -232,18 +251,7 @@ int SerialWindowsHID::DirectWriteData(char *cBuffer, unsigned int uiNumChar)
 		return -1;
 	}
 
-	memset(&ov, 0, sizeof(OVERLAPPED));
-	ov.hEvent = CreateEvent(nullptr, TRUE, FALSE, nullptr);
-	if (ov.hEvent == NULL)
-	{
-		if (!m_bErrorSuppress)
-		{
-			PrintDebugError(L"Write Failure: Create Overlapped failed.");
-		}
-		return -1;
-	}
-
-	if (WriteFile(m_spCurrentHID->Handle, cBuffer, uiNumChar, &dwCharsWritten, &ov))
+	if (WriteFile(m_spCurrentHID->WriteHandle, cBuffer, uiNumChar, &dwCharsWritten, nullptr))
 	{
 		std::wstringstream wssTimeReport;
 		wssTimeReport << L"Total Time for Write: " << microTimerTotal(1) << L"us" << std::endl;
@@ -252,44 +260,15 @@ int SerialWindowsHID::DirectWriteData(char *cBuffer, unsigned int uiNumChar)
 	}
 	else
 	{
-		if (GetLastError() == ERROR_IO_PENDING)
+		if (!m_bErrorSuppress)
 		{
-			while (!GetOverlappedResult(m_spCurrentHID->Handle, &ov, &dwCharsWritten, FALSE))
-			{
-				if (GetLastError() == ERROR_IO_INCOMPLETE)
-				{
-					continue;
-				}
-				else
-				{
-					if (!m_bErrorSuppress)
-					{
-						std::wstringstream wssError;
-						wssError << L"Write Failure: Write failed with error " << GetLastError() << std::endl;
-						PrintDebugTest(wssError.str());
-					}
-					break;
-				}
-			}
-			iCharsWritten = dwCharsWritten;
-			if (dwCharsWritten > 0)
-			{
-				std::wstringstream wssTimeReport;
-				wssTimeReport << L"Total Time for Write: " << microTimerTotal(1) << L"us" << L"\t(Deferred)" <<std::endl;
-				PrintDebugTest(wssTimeReport.str());
-			}
+			std::wstringstream wssError;
+			wssError << L"Write Failure: Write failed with error: " << GetLastError() << std::endl;
+			PrintDebugTest(wssError.str());
 		}
-		else
-		{
-			if (!m_bErrorSuppress)
-			{
-				PrintDebugTest(L"Write Failure: Write failed.\n");
-			}
 
-			iCharsWritten = -1;
-		}
+		iCharsWritten = -1;
 	}
-	CloseHandle(ov.hEvent);
 
 	return iCharsWritten;
 }
@@ -297,6 +276,14 @@ int SerialWindowsHID::DirectWriteData(char *cBuffer, unsigned int uiNumChar)
 int SerialWindowsHID::ReadData(char *cBuffer, unsigned int uiNumChar)
 {
 	std::lock_guard<std::recursive_mutex> ReadLock(m_mtxReadBuffer);
+
+	if (!m_qcReadBuffer.empty())
+	{
+		std::wstringstream wssTimeReport;
+		wssTimeReport << L"Total Time for Acquire: " << microTimerTotal(3) << L"us" << std::endl;
+		PrintDebugTest(wssTimeReport.str());
+	}
+
 	unsigned int index = 0;
 	while (index < uiNumChar && !m_qcReadBuffer.empty())
 	{
@@ -394,7 +381,8 @@ std::vector<std::shared_ptr<RawHID>> SerialWindowsHID::findAllHID()
 	HIDD_ATTRIBUTES attrib;
 	PHIDP_PREPARSED_DATA hid_data;
 	HIDP_CAPS capabilities;
-	HANDLE h;
+	HANDLE hRead;
+	HANDLE hWrite;
 	SP_DEVICE_INTERFACE_DETAIL_DATA *details;
 
 	std::vector<std::shared_ptr<RawHID>> vFoundHIDs;
@@ -431,23 +419,29 @@ std::vector<std::shared_ptr<RawHID>> SerialWindowsHID::findAllHID()
 			continue;
 		}
 
-		h = CreateFile(details->DevicePath,
-			GENERIC_READ | GENERIC_WRITE,
+		hRead = CreateFile(details->DevicePath,
+			GENERIC_READ,
 			FILE_SHARE_READ | FILE_SHARE_WRITE,
 			nullptr, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, nullptr);
-		
+
+		hWrite = CreateFile(details->DevicePath,
+			GENERIC_WRITE,
+			FILE_SHARE_READ | FILE_SHARE_WRITE,
+			nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+
 		free(details);
 
-		if (h == INVALID_HANDLE_VALUE)
+		if ( hRead == INVALID_HANDLE_VALUE || hWrite == INVALID_HANDLE_VALUE)
 		{
 			continue;
 		}
 
 		attrib.Size = sizeof(HIDD_ATTRIBUTES);
 		
-		if (HidD_GetAttributes(h, &attrib) != TRUE)
+		if (HidD_GetAttributes(hRead, &attrib) != TRUE)
 		{
-			CloseHandle(h);
+			CloseHandle(hRead);
+			CloseHandle(hWrite);
 			continue;
 		}
 
@@ -462,24 +456,27 @@ std::vector<std::shared_ptr<RawHID>> SerialWindowsHID::findAllHID()
 
 		if (m_iTargetVID > 0 && m_iTargetVID != (int)attrib.VendorID)
 		{
-			CloseHandle(h);
+			CloseHandle(hRead);
+			CloseHandle(hWrite);
 			continue;
 		}
 
 		if (m_iTargetPID > 0 && m_iTargetPID != (int)attrib.ProductID)
 		{
-			CloseHandle(h);
+			CloseHandle(hRead);
+			CloseHandle(hWrite);
 			continue;
 		}
 
-		if ( !HidD_GetPreparsedData(h, &hid_data) )
+		if ( !HidD_GetPreparsedData(hRead, &hid_data) )
 		{
 			if (!m_bErrorSuppress)
 			{
 				PrintDebugError(L"HID/win32: HidD_GetPreparsedData failed");
 			}
 
-			CloseHandle(h);
+			CloseHandle(hRead);
+			CloseHandle(hWrite);
 			continue;
 		}
 
@@ -491,7 +488,8 @@ std::vector<std::shared_ptr<RawHID>> SerialWindowsHID::findAllHID()
 			}
 
 			HidD_FreePreparsedData(hid_data);
-			CloseHandle(h);
+			CloseHandle(hRead);
+			CloseHandle(hWrite);
 			continue;
 		}
 
@@ -506,14 +504,16 @@ std::vector<std::shared_ptr<RawHID>> SerialWindowsHID::findAllHID()
 		if ( m_iUsagePage > 0 && m_iUsagePage != (int)(capabilities.UsagePage) )
 		{
 			HidD_FreePreparsedData(hid_data);
-			CloseHandle(h);
+			CloseHandle(hRead);
+			CloseHandle(hWrite);
 			continue;
 		}
 
 		if ( m_iUsage > 0 && m_iUsage != (int)(capabilities.Usage) )
 		{
 			HidD_FreePreparsedData(hid_data);
-			CloseHandle(h);
+			CloseHandle(hRead);
+			CloseHandle(hWrite);
 			continue;
 		}
 
@@ -523,7 +523,9 @@ std::vector<std::shared_ptr<RawHID>> SerialWindowsHID::findAllHID()
 
 		newHID->m_iPID = (int)attrib.ProductID;
 		newHID->m_iVID = (int)attrib.VendorID;
-		newHID->Handle = h;
+
+		newHID->ReadHandle = hRead;
+		newHID->WriteHandle = hWrite;
 
 		vFoundHIDs.push_back(std::move(newHID));
 	}
@@ -534,14 +536,23 @@ std::vector<std::shared_ptr<RawHID>> SerialWindowsHID::findAllHID()
 bool SerialWindowsHID::PickConnection(std::shared_ptr<RawHID> &upRawHID)
 {
 	//Clear current read thread, if it's active
-	if (m_upDeviceThread)
+	if (m_upDeviceReadThread || m_upDeviceWriteThread)
 	{
 		std::unique_lock<std::mutex> StopLock(m_mtxStopRead);
 		m_bStopRead = true;
 		m_cvStopRead.notify_all();
 
-		m_upDeviceThread->join();
-		m_upDeviceThread.reset();
+		if (m_upDeviceReadThread)
+		{
+			m_upDeviceReadThread->join();
+			m_upDeviceReadThread.reset();
+		}
+
+		if (m_upDeviceWriteThread)
+		{
+			m_upDeviceWriteThread->join();
+			m_upDeviceWriteThread.reset();
+		}
 	}
 
 	//Clear current connection, if it's active
@@ -575,17 +586,23 @@ void SerialWindowsHID::GetConnectionName(std::string &sName)
 }
 
 RawWinHID::RawWinHID()
-	:RawHID(), Handle(nullptr)
+	:RawHID(), WriteHandle(nullptr), ReadHandle(nullptr)
 {
 
 }
 
 RawWinHID::~RawWinHID()
 {
-	if (Handle)
+	if (WriteHandle)
 	{
-		CloseHandle(Handle);
-		Handle = nullptr;
+		CloseHandle(WriteHandle);
+		WriteHandle = nullptr;
+	}
+
+	if (ReadHandle)
+	{
+		CloseHandle(ReadHandle);
+		ReadHandle = nullptr;
 	}
 }
 

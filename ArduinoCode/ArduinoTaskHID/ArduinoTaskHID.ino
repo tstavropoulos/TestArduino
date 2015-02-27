@@ -426,11 +426,13 @@ char readChar()
 
 boolean anyPendingMessages()
 {
+   updatePendingBuffer();
+   /*
    if ( byReadPos != byWritePos )
    {
       return true;  
    }
-   updatePendingBuffer();
+   */
    return ( byReadPos != byWritePos );
 }
 

@@ -18,7 +18,8 @@ namespace SerialComm
 	{
 		RawWinHID();
 		virtual ~RawWinHID();
-		HANDLE Handle;
+		HANDLE WriteHandle;
+		HANDLE ReadHandle;
 	};
 
 	//Class meant to handle Serial communication in Windows
@@ -36,7 +37,10 @@ namespace SerialComm
 		//
 
 		//Unique Pointer to the thread responsible for reading input
-		std::unique_ptr<std::thread> m_upDeviceThread;
+		std::unique_ptr<std::thread> m_upDeviceReadThread;
+
+		//Unique Pointer to the thread responsible for writing output
+		std::unique_ptr<std::thread> m_upDeviceWriteThread;
 
 		//Buffer holding characters that have been recieved from device
 		std::queue<char> m_qcReadBuffer;
@@ -67,6 +71,7 @@ namespace SerialComm
 		int DirectWriteData(char *cBuffer, unsigned int uiNumChar);
 		int DirectReadData(char *cBuffer, unsigned int uiNumChar);
 		void ReadThreadMethod();
+		void WriteThreadMethod();
 
 	public:
 		SerialWindowsHID(bool bErrorSuppress);
