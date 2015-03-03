@@ -6,6 +6,7 @@
 #include "SerialWindows.h"
 #include "SerialUnix.h"
 #include "SerialWindowsHID.h"
+#include "SerialUnixHID.h"
 #include "Logging.h"
 
 using namespace SerialComm;
