@@ -19,12 +19,15 @@ namespace SerialComm
 	{
 	private:
 		int mFileDescriptor;
-		void InitializeSerialPort();
+		bool InitializeSerialPort();
 		std::queue<char> mqBufferedChars;
 	public:
-		SerialUnix(const std::string sPortName, bool bErrorSuppress);
-		SerialUnix(const std::string sPortName);
+		SerialUnix(bool bErrorSuppress);
+		SerialUnix();
+
 		virtual ~SerialUnix();
+
+		virtual bool Connect();
 
 		virtual int ReadData(char *buffer, unsigned int nbChar);
 

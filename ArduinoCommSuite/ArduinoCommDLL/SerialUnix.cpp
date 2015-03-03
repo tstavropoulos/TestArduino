@@ -36,32 +36,16 @@ using namespace SerialComm;
 	}
 
 
-SerialUnix::SerialUnix(const std::string sPortName)
-	: SerialUnix(sPortName, false)
+SerialUnix::SerialUnix()
+	: SerialUnix(false)
 {
 
 }
 
-SerialUnix::SerialUnix(const std::string sPortName, bool bErrorSuppress)
-	: SerialGenericCOM(sPortName, bErrorSuppress)
+SerialUnix::SerialUnix(bool bErrorSuppress)
+	: SerialGenericCOM(bErrorSuppress), mFileDescriptor(-1)
 {
-	mFileDescriptor = -1;
 
-	mFileDescriptor = ::open(sPortName.c_str(), O_RDWR | O_NOCTTY );
-
-	if ( mFileDescriptor == -1 )
-	{
-		if ( !m_bErrorSuppress )
-		{
-			std::wstringstream wss;
-			wss << L"Failed to open Serial Port.  Port: " << sPortName.c_str();
-			PrintDebugError(wss.str());
-		}
-	}
-	else
-	{
-		InitializeSerialPort();
-	}
 }
 
 SerialUnix::~SerialUnix()
@@ -73,7 +57,32 @@ SerialUnix::~SerialUnix()
 	}
 }
 
-void SerialUnix::InitializeSerialPort()
+bool SerialUnix::Connect()
+{
+	mFileDescriptor = ::open(sPortName.c_str(), O_RDWR | O_NOCTTY);
+
+	if (mFileDescriptor == -1)
+	{
+		if (!m_bErrorSuppress)
+		{
+			std::wstringstream wss;
+			wss << L"Failed to open Serial Port.  Port: " << sPortName.c_str();
+			PrintDebugError(wss.str());
+
+			return false;
+		}
+	}
+
+	if (!InitializeSerialPort())
+	{
+		//Possibly need to close file descriptor here?
+		return false;
+	}
+
+	return true;
+}
+
+bool SerialUnix::InitializeSerialPort()
 {
 	int flags = fcntl(mFileDescriptor, F_GETFL, 0);
 
@@ -87,7 +96,7 @@ void SerialUnix::InitializeSerialPort()
 			PrintDebugError(wss.str());
 		}
 
-		return;
+		return false;
 	}
 
 	//Flush Serial Buffer
@@ -100,7 +109,7 @@ void SerialUnix::InitializeSerialPort()
 			PrintDebugError(wss.str());
 		}
 
-		return;
+		return false;
 	}
 
 	//Get Term Settings
@@ -146,10 +155,10 @@ void SerialUnix::InitializeSerialPort()
 			PrintDebugError(wss.str());
 		}
 
-		return;
+		return false;
 	}
 
-	return;
+	return true;
 }
 
 int SerialUnix::ReadData(char *buffer, unsigned int nbChar)
