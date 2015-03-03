@@ -129,7 +129,11 @@ std::vector<int> Arduino::findAllComPorts(int iPortMax)
 
 bool Arduino::findAllHID()
 {
+#ifdef _WINDOWS
 	std::unique_ptr<SerialHID> upSerialHID = std::make_unique<SerialHID>(false);
+#else
+    std::unique_ptr<SerialHID> upSerialHID = std::unique_ptr<SerialHID>( new SerialHID(false));
+#endif
 	upSerialHID->SetTargetUsage(0xFFAB, 0x0200);
 
 	m_vAllHIDs = upSerialHID->findAllHID();
