@@ -115,6 +115,8 @@ namespace SerialComm
 		*/
 		static ARDUINOCOMMDLL_API bool Disconnect();
 
+		/*  ConnectToFirstHID() Identifies and connects to the first HID with a matching, baked-in Usage and Usage Page.  Preliminary Debug function.
+		*/
 		static ARDUINOCOMMDLL_API bool ConnectToFirstHID();
 	protected:
 		/*  m_bInitialized tracks whether or not the DLL has been initialized.

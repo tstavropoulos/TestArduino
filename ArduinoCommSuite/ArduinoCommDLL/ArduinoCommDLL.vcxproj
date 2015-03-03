@@ -275,6 +275,7 @@ xcopy /y $(ProjectDir)ArduinoCommCDLL.h $(SolutionDir)..\BuiltLibs\OutputCopy\</
     <ClInclude Include="ArduinoCommSO.h" />
     <ClInclude Include="CoreFunctions.h" />
     <ClInclude Include="Logging.h" />
+    <ClInclude Include="SerialUnixHID.h" />
     <ClInclude Include="SerialWindows.h" />
     <ClInclude Include="SerialGeneric.h" />
     <ClInclude Include="SerialUnix.h" />
@@ -322,6 +323,7 @@ xcopy /y $(ProjectDir)ArduinoCommCDLL.h $(SolutionDir)..\BuiltLibs\OutputCopy\</
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Logging.cpp" />
+    <ClCompile Include="SerialUnixHID.cpp" />
     <ClCompile Include="SerialWindows.cpp" />
     <ClCompile Include="SerialGeneric.cpp" />
     <ClCompile Include="SerialUnix.cpp" />
