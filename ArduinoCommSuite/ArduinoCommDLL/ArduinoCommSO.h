@@ -107,6 +107,10 @@ namespace SerialComm
 		/*  Disconnect() disconnects from the Arduino and destroys the serial information.
 		*/
 		static bool Disconnect();
+
+		/*  ConnectToFirstHID() Identifies and connects to the first HID with a matching, baked-in Usage and Usage Page.  Preliminary Debug function.
+		*/
+		static bool ConnectToFirstHID();
 	protected:
 		/*  m_bInitialized tracks whether or not the DLL has been initialized.
 		*/

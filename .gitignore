@@ -14,6 +14,11 @@
 /ArduinoCommSuite/ArduinoCommDLL/*.layout
 /ArduinoCommSuite/ArduinoCommDLL/*.depend
 /ArduinoCommSuite/ArduinoCommDLL/*.gch
+/ArduinoCommSuite/ArduinoCommSpeedTest/Intermediate
+/ArduinoCommSuite/ArduinoCommSpeedTest/*.user
+/ArduinoCommSuite/ArduinoCommSpeedTest/*.layout
+/ArduinoCommSuite/ArduinoCommSpeedTest/*.depend
+/ArduinoCommSuite/ArduinoCommSpeedTest/*.gch
 /PrototypeCommTest/*.sdf
 /PrototypeCommTest/*.opensdf
 /PrototypeCommTest/*.suo

@@ -283,6 +283,8 @@
 			<Option target="Unix_ARM" />
 			<Option target="Matlab_Unix_ARM" />
 		</Unit>
+		<Unit filename="SerialUnixHID.cpp" />
+		<Unit filename="SerialUnixHID.h" />
 		<Unit filename="SerialWindows.cpp">
 			<Option target="Unix_x86" />
 			<Option target="Debug Win32" />
@@ -307,6 +309,8 @@
 			<Option target="Unix_ARM" />
 			<Option target="Matlab_Unix_ARM" />
 		</Unit>
+		<Unit filename="SerialWindowsHID.cpp" />
+		<Unit filename="SerialWindowsHID.h" />
 		<Unit filename="dllmain.cpp">
 			<Option target="Unix_x86" />
 			<Option target="Debug Win32" />

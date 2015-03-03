@@ -32,13 +32,16 @@ namespace SerialComm
 		// Doesn't actually try all ports.  Just searches from COM0 to COM${iPortMax} 
 		std::vector<int> findAllComPorts(int iPortMax);
 
-		std::vector<RawHID> findAllHID();
+		bool findAllHID();
+		bool connectHID(int iHIDnum);
+
+		bool genericConnect();
 
 		bool disconnect();
 
 		bool IsConnected();
 
-		void WriteString(std::string sString);
+		void WriteString(const std::string &sString);
 		void WriteChars(const char *szMessage, int iLength);
 
 		int ReadData(char *buffer, unsigned int nbChar);
@@ -53,6 +56,7 @@ namespace SerialComm
 
 	protected:
 		std::unique_ptr<SerialGeneric> m_pSerial;
+		std::vector<std::shared_ptr<RawHID>> m_vAllHIDs;
 		bool m_bDebug;
 		bool m_bReflexive;
 		bool m_bPaired;
@@ -60,7 +64,7 @@ namespace SerialComm
 		bool m_bPrintAll;
 		ARDUINO_STATE m_eState;
 
-		bool connect(SerialGeneric *pSerial, bool bPrintErrors);
+		bool readSignature(SerialGeneric *pSerial, bool bPrintErrors);
 		bool confirmVersion(SerialGeneric *pSerial, bool bPrintErrors);
 		bool sendParameters(SerialGeneric *pSerial, bool bPrintErrors);
 	};

@@ -35,6 +35,9 @@
 #include <sstream>
 #include <algorithm>
 #include <vector>
+#include <queue>
 #include <stdexcept>
 #include <thread>
 #include <memory>
+#include <mutex>
+#include <condition_variable>

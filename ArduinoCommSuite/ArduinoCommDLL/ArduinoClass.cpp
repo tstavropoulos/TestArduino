@@ -6,8 +6,8 @@
 #include "SerialWindows.h"
 #include "SerialUnix.h"
 #include "SerialWindowsHID.h"
+#include "SerialUnixHID.h"
 #include "Logging.h"
-#include <mutex>
 
 using namespace SerialComm;
 
@@ -79,10 +79,7 @@ Arduino::Arduino(bool bDebug)
 
 Arduino::~Arduino()
 {
-	if (m_pSerial)
-	{
-		m_pSerial.reset();
-	}
+	disconnect();
 }
 
 bool Arduino::tryCOMPort(int iPortNum)
@@ -93,12 +90,10 @@ bool Arduino::tryCOMPort(int iPortNum)
 	SerialCOM testSerial(true);
 	testSerial.SetPortName(ss.str());
 	testSerial.Connect();
-	if (confirmVersion(&testSerial, false))
+	if (confirmVersion(&testSerial, false) &&
+		readSignature(&testSerial, m_bDebug))
 	{
-		if (connect(&testSerial, m_bDebug))
-		{
-			return true;
-		}
+		return true;
 	}
 
 	return false;
@@ -132,9 +127,48 @@ std::vector<int> Arduino::findAllComPorts(int iPortMax)
 }
 
 
-std::vector<RawHID> Arduino::findAllHID()
+bool Arduino::findAllHID()
+{
+#ifdef _WINDOWS
+	std::unique_ptr<SerialHID> upSerialHID = std::make_unique<SerialHID>(false);
+#else
+    std::unique_ptr<SerialHID> upSerialHID = std::unique_ptr<SerialHID>( new SerialHID(false));
+#endif
+	upSerialHID->SetTargetUsage(0xFFAB, 0x0200);
+
+	m_vAllHIDs = upSerialHID->findAllHID();
+
+	return !m_vAllHIDs.empty();
+}
+
+bool Arduino::connectHID(int iHIDnum)
 {
 
+	std::unique_ptr<SerialHID> pTmp;
+#ifdef _WINDOWS
+	pTmp = std::make_unique<SerialHID>(false);
+#else
+	pTmp = std::unique_ptr<SerialHID>(new SerialHID(true));
+#endif // _WINDOWS
+
+	pTmp->PickConnection(m_vAllHIDs[iHIDnum]);
+
+	m_pSerial = std::unique_ptr<SerialGeneric>(std::move(pTmp));
+
+	return genericConnect();
+}
+
+bool Arduino::genericConnect()
+{
+	if (!m_pSerial->Connect() ||
+		!confirmVersion(m_pSerial.get(), true) ||
+		!readSignature(m_pSerial.get(), true) ||
+		!sendParameters(m_pSerial.get(), true))
+	{
+		disconnect();
+		return false;
+	}
+	return true;
 }
 
 bool Arduino::connectCOMPort(int iPortNum)
@@ -144,7 +178,7 @@ bool Arduino::connectCOMPort(int iPortNum)
 #ifdef _WINDOWS
 	pTmp = std::make_unique<SerialCOM>();
 #else
-	pTmp = std::unique_ptr<SerialGeneric>(new SerialCOM());
+	pTmp = std::unique_ptr<SerialCOM>(new SerialCOM());
 #endif // _WINDOWS
 
 	std::stringstream ss;
@@ -158,54 +192,7 @@ bool Arduino::connectCOMPort(int iPortNum)
 
 	m_pSerial = std::unique_ptr<SerialGeneric>(std::move(pTmp));
 
-	if (!m_pSerial->Connect() ||
-		!confirmVersion(m_pSerial.get(), true) ||
-		!connect(m_pSerial.get(), true) ||
-		!sendParameters(m_pSerial.get(), true))
-	{
-		disconnect();
-		return false;
-	}
-
-	return true;
-}
-
-bool Arduino::connect(SerialGeneric *pSerial, bool bPrintErrors)
-{
-	if (pSerial->IsConnected())
-	{
-		char incomingData[256] = "";
-
-		pSerial->WaitReadData(incomingData, 7, 1000);
-
-		if (strcmp(incomingData, csInitPhrase) == 0)
-		{
-			m_eState = ARDUINO_STATE::SEND_PARAMETERS;
-			return true;
-		}
-		else if (bPrintErrors)
-		{
-			std::string sPortName;
-			pSerial->GetConnectionName(sPortName);
-
-			std::wstringstream wss;
-			wss << L"Unsuccessful communication attempt with " << sPortName.c_str() << std::endl;
-			wss << L" Expected initialization message: \"" << csInitPhrase << L"\"" << std::endl;
-			wss << L" Received initialization message: \"" << incomingData << L"\"" << std::endl << std::endl;
-			PrintDebugError(wss.str());
-		}
-	}
-	else if (bPrintErrors)
-	{
-		std::string sPortName;
-		pSerial->GetConnectionName(sPortName);
-
-		std::wstringstream wss;
-		wss << L"Unsuccessful connection with " << sPortName.c_str() << std::endl << std::endl;
-		PrintDebugError(wss.str());
-	}
-
-	return false;
+	return genericConnect();
 }
 
 bool Arduino::confirmVersion(SerialGeneric *pSerial, bool bPrintErrors)
@@ -214,7 +201,7 @@ bool Arduino::confirmVersion(SerialGeneric *pSerial, bool bPrintErrors)
 	{
 		char szBuffer[2] = "";
 		pSerial->WaitReadData(szBuffer, 1, 6000);
-		if (strcmp(szBuffer, csVersionPhrase) == 0)
+		if (szBuffer[0] == *csVersionPhrase)
 		{
 			pSerial->WriteData(csVersionPhrase);
 			m_eState = ARDUINO_STATE::CONFIRM_VERSION;
@@ -235,11 +222,81 @@ bool Arduino::confirmVersion(SerialGeneric *pSerial, bool bPrintErrors)
 	return false;
 }
 
+bool Arduino::readSignature(SerialGeneric *pSerial, bool bPrintErrors)
+{
+	if (pSerial->IsConnected())
+	{
+		char incomingData[256] = "";
+		char *namePhrase = incomingData;
+
+		pSerial->WaitReadData(incomingData, 7, 1000);
+
+		/*  It is possible to end up in this situation:
+
+			C is the csVersionPhrase
+			ARDUINO is the Signature
+			The read buffer after acknowledging initialization can have "CARDUINO" or even "CCARDUINO"
+			if things are unusually slow.
+
+			So we find the first character that's not our csVersion Phrase, advance our name pointer to it,
+			and pass the remaining portion of the buffer to ReadData.
+		*/
+
+
+		//Clear out up to 3 remaining Initialization characters
+		int i = 0;
+		for (i = 0; i < 3; i++)
+		{
+			if (incomingData[i] != *csVersionPhrase)
+			{
+				break;
+			}
+		}
+
+		if (i > 0)
+		{
+			//advance the start of the name to the first-non version phrase.
+			namePhrase += i;
+
+			pSerial->ReadData(namePhrase + 7 - i,i);
+		}
+
+		if (strcmp(namePhrase, csInitPhrase) == 0)
+		{
+			m_eState = ARDUINO_STATE::SEND_PARAMETERS;
+			return true;
+		}
+		else if (bPrintErrors)
+		{
+			std::string sPortName;
+			pSerial->GetConnectionName(sPortName);
+
+			std::wstringstream wss;
+			wss << L"Unsuccessful communication attempt with " << sPortName.c_str() << std::endl;
+			wss << L" Expected initialization message: \"" << csInitPhrase << L"\"" << std::endl;
+			wss << L" Received initialization message: \"" << namePhrase << L"\"" << std::endl << std::endl;
+			PrintDebugError(wss.str());
+		}
+	}
+	else if (bPrintErrors)
+	{
+		std::string sPortName;
+		pSerial->GetConnectionName(sPortName);
+
+		std::wstringstream wss;
+		wss << L"Unsuccessful connection with " << sPortName.c_str() << std::endl << std::endl;
+		PrintDebugError(wss.str());
+	}
+
+	return false;
+}
+
 
 bool Arduino::disconnect()
 {
-	if (m_pSerial && m_pSerial->IsConnected())
+	if (m_pSerial)
 	{
+		m_pSerial->disconnect();
 		m_pSerial.reset();
 	}
 	m_eState = ARDUINO_STATE::UNCONNECTED;
@@ -312,7 +369,7 @@ bool Arduino::IsConnected()
 	return false;
 }
 
-void Arduino::WriteString(std::string sString)
+void Arduino::WriteString(const std::string &sString)
 {
 	if (m_pSerial && m_pSerial->IsConnected() && m_eState == ARDUINO_STATE::CONNECTED)
 	{
@@ -343,7 +400,7 @@ char Arduino::WaitReadChar(unsigned long long ullMaxWait)
 {
 	if (m_pSerial && m_pSerial->IsConnected() && m_eState == ARDUINO_STATE::CONNECTED)
 	{
-		char buffer[2];
+		char buffer[2] = { '\0' };
 		m_pSerial->WaitReadData(buffer, 1, ullMaxWait);
 		return buffer[0];
 	}
@@ -394,7 +451,7 @@ char Arduino::ReadChar()
 {
 	if (m_pSerial && m_pSerial->IsConnected() && m_eState == ARDUINO_STATE::CONNECTED)
 	{
-		char buffer[2];
+		char buffer[2] = { '\0' };
 		m_pSerial->ReadData(buffer, 1);
 		return buffer[0];
 	}

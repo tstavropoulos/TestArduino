@@ -18,6 +18,8 @@ namespace SerialComm
 		//Close the connection
 		virtual ~SerialGeneric();
 
+		virtual bool disconnect() { return true; }
+
 		/****************************
 		**                         **
 		**   Function Prototypes   **
@@ -42,7 +44,7 @@ namespace SerialComm
 		virtual bool WriteData(const char *buffer, unsigned int nbChar) = 0;
 
 		//Writes the whole character string.
-		virtual bool WriteData(std::string sData) = 0;
+		virtual bool WriteData(const std::string &sData) = 0;
 
 		//Check if we are actually connected
 		virtual bool IsConnected() = 0;
@@ -54,7 +56,7 @@ namespace SerialComm
 		virtual int CharsInQueue() = 0;
 
 		//Get a pretty-printing of the connection name
-		virtual void GetConnectionName(std::string &sName);
+		virtual void GetConnectionName(std::string &sName) = 0;
 	};
 
 	struct RawHID
