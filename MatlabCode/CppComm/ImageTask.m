@@ -1,23 +1,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%  EyelinkImageTask.m
+%  ImageTask.m
 %
-%  Global Variables:
-%    Owned:
-%      bQuit - An exposed variable to allow other scripts to declare the end of
-%        the task.
-%       cFlag - This frame's flag character
-%    External:
-%
-%  Required Functions:
-%    Init
-%    MessageMonitor
-%    SerialInit
-%    RegisterUpdate
-%    RewardUpdate
-%    Reward
-%    Looper
-%    SendMessage
-%    SerialCleanup
+%  Task waits for fixation, then presents a random image from one of 6 categories
+%    for a fixed amount of time before administering a reward and moving to the
+%    next trial.  Categories are counter balanced.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
