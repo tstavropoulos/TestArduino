@@ -33,7 +33,6 @@ bPaired = false;
 %Initiate the Serial Device and pass along the Property values.
 SerialInit(bReflective,bPaired);
 
-RegisterUpdate ( @ButtonMonitor );
 RegisterUpdate ( @RewardMonitor );
 
 count = 0;
@@ -46,7 +45,7 @@ while (bQuit == false)
         Reward ( 1, 100 );
     end
 	
-    if ( count > 10000 )
+    if ( count > 1000 )
         bQuit = true;
     end
     

@@ -19,7 +19,7 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 global bQuit;
-
+global cFlag;
 
 bQuit = false;
 
@@ -34,7 +34,6 @@ bPaired = false;
 SerialInit(bReflective,bPaired);
 
 RegisterUpdate ( @MessageMonitor );
-RegisterUpdate ( @ButtonMonitor );
 RegisterUpdate ( @RewardMonitor );
 
 count = 0;
@@ -42,6 +41,11 @@ count = 0;
 while (bQuit == false)
 	Looper();
     count=count+1;
+	
+	%Print incoming messages
+	if ( ~strcmp(cFlag,'') )
+		display(cFlag);
+	end
 	
     if ( count == 50 )
         Reward ( 1, 100 );
@@ -51,11 +55,12 @@ while (bQuit == false)
     if ( count == 100 )
        SendMessage('a'); 
     end
-    
-    if ( count > 10000 )
+	
+    if ( count > 1000 )
         bQuit = true;
     end
-    
+	
+    cFlag = '';
 end
 
 SerialCleanup();

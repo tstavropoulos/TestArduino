@@ -43,18 +43,22 @@ end
 
 tmp1=toc;
 SendMessage('G');
-while ( WaitForMessage() ~= 'G')
-       display('Oh noes!'); 
+tmp = WaitForMessage();
+while ( tmp ~= 'G')
+   display(['Wrong Char: ',int(tmp)]); 
+   tmp = WaitForMessage();
 end
 tmp2=toc;
-display(1000*(tmp2-tmp1));
+%display(1000*(tmp2-tmp1));
 
 
 for i=1:10000
 	tmp1=toc;
     SendMessage('G');
-    while ( WaitForMessage() ~= 'G')
-       display('Oh noes!'); 
+    tmp = WaitForMessage();
+    while ( tmp ~= 'G')
+       display(['Wrong Char: ',tmp]); 
+       tmp = WaitForMessage();
     end
     tmp2=toc;
 	deltat1(i)=tmp2-tmp1;

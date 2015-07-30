@@ -19,7 +19,7 @@ using namespace SerialComm;
 			PrintDebugError(wss.str()); \
 		} \
 		  \
-		return; \
+		return false; \
 	}
 
 #define SETATTR(sSetting) \
@@ -32,7 +32,7 @@ using namespace SerialComm;
 			PrintDebugError(wss.str()); \
 		} \
 		  \
-		return; \
+		return false; \
 	}
 
 
@@ -59,14 +59,14 @@ SerialUnix::~SerialUnix()
 
 bool SerialUnix::Connect()
 {
-	mFileDescriptor = ::open(sPortName.c_str(), O_RDWR | O_NOCTTY);
+	mFileDescriptor = ::open(m_sPortName.c_str(), O_RDWR | O_NOCTTY);
 
 	if (mFileDescriptor == -1)
 	{
 		if (!m_bErrorSuppress)
 		{
 			std::wstringstream wss;
-			wss << L"Failed to open Serial Port.  Port: " << sPortName.c_str();
+			wss << L"Failed to open Serial Port.  Port: " << m_sPortName.c_str();
 			PrintDebugError(wss.str());
 
 			return false;
@@ -213,7 +213,7 @@ bool SerialUnix::WriteData(const char *buffer, unsigned int nbChar)
 	return ( ::write(mFileDescriptor, buffer, nbChar) > 0 );
 }
 
-bool SerialUnix::WriteData(std::string sData)
+bool SerialUnix::WriteData(const std::string &sData)
 {
 	return ( ::write(mFileDescriptor, sData.c_str(), sData.size()) > 0 );
 }
