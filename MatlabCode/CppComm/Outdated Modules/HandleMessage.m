@@ -1,18 +1,16 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%  Function:  MessageMonitor(~)
+%  Function:  HandleMessage(message)
 %
-%  Monitors Serial Communication.
-%    RegisterUpdate ( @MessageMonitor );
+%  Handle function - Used to process incoming messages.
 %
 %  Global Variables:
 %    Owned:
 %    External:
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function MessageMonitor(~)
-	
-	if ( SerialDataAvail() )
-		HandleMessage ( ReadChar() );
-	end
+function HandleMessage(message)
+    disp(message);
+    UpdateButtons(message);
 end
+
 

@@ -6,11 +6,15 @@
 %  Global Variables:
 %    Owned:
 %    External:
+%       char cFlag
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function HandleMessage(message)
+    global cFlag;
     disp(message);
-    UpdateButtons(message);
+    cFlag = message;
+
+%            
 end
 
 
