@@ -21,17 +21,20 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function EyelinkImageTask
+function ImageTask
 clear all;
 %#ok<*MSNU>
 global bQuit;
 global cFlag;
-fprintf('Eyelink Image Task.\n');
+fprintf('Image Task.\n');
 
 %Sets the period of a time flag (in seconds)
 flagPeriod = 6;
 %Initial Delay before first trial
 initialDelay = 3;
+
+%Turn this on to skip eyelink and use the mouse position instead of gaze coordinates
+useMouse = false;
 
 %Eyelink File
 edfFile = 'Img0001.edf';
@@ -87,7 +90,7 @@ scriptName = mfilename('fullpath');
 scriptPath = fileparts(scriptName);
 
 for condition=1:CATEGORY_NUM
-	files = fullfile(scriptPath,IMAGE_DIRECTORY{condition});
+	files = dir([fullfile(scriptPath,IMAGE_DIRECTORY{condition}) '*.jpg']);
 	IMAGE_FILE{condition} = {};
 	
 	for fileNum=1:length(files)
@@ -97,12 +100,12 @@ end
 
 %Set up trial template
 IMAGES_PER_BLOCK = [];
-IMAGES_PER_BLOCK(IMAGE_CATEGORY_1) = 2;
-IMAGES_PER_BLOCK(IMAGE_CATEGORY_2) = 2;
-IMAGES_PER_BLOCK(IMAGE_CATEGORY_3) = 2;
-IMAGES_PER_BLOCK(IMAGE_CATEGORY_4) = 2;
-IMAGES_PER_BLOCK(IMAGE_CATEGORY_5) = 2;
-IMAGES_PER_BLOCK(IMAGE_CATEGORY_6) = 2;
+IMAGES_PER_BLOCK(IMAGE_CATEGORY_1) = 5;
+IMAGES_PER_BLOCK(IMAGE_CATEGORY_2) = 5;
+IMAGES_PER_BLOCK(IMAGE_CATEGORY_3) = 5;
+IMAGES_PER_BLOCK(IMAGE_CATEGORY_4) = 5;
+IMAGES_PER_BLOCK(IMAGE_CATEGORY_5) = 5;
+IMAGES_PER_BLOCK(IMAGE_CATEGORY_6) = 5;
 
 trialVector = [];
 trialVectorTemplate = [];
@@ -122,9 +125,6 @@ STATE_DISPLAY = 2;
 STATE_WAIT_FOR_END = 3;
 
 currentState = STATE_ITI;
-
-%Condition Variables
-currentCondition = IMAGE_CATEGORY_1;
 
 commandwindow;
 PsychDefaultSetup(1);
@@ -156,7 +156,7 @@ ListenChar(2);
 
 try
 	%Initialize Eyelink
-	[error,el] = eyelinkInit(edfFile);
+	error = eyeTrackingInit(edfFile);
 	
 	if error
         fprintf('Init failed.\n');
@@ -249,7 +249,7 @@ try
 				Screen('Flip', window);
 				
 				submitDataFlag('FixationDisplayed');
-                
+                cumulativeFixation = 0;
 				timeLastFrame = toc;
             end
         elseif (currentState==STATE_FIXATION_PERIOD)
@@ -264,8 +264,7 @@ try
 				%And we successfully collect data...
 				if (success)
 					%And we're in the target...
-					if ( x >= const.FixationTarg(1,1) && x < const.FixationTarg(2,1) &&
-					y >= const.FixationTarg(1,2) && y < const.FixationTarg(2,2) )
+					if ( x >= const.FixationTarg(1) && x < const.FixationTarg(3) && y >= const.FixationTarg(2) && y < const.FixationTarg(4) )
 						%Accumulate fixation time
 						cumulativeFixation = cumulativeFixation + (currentTime - timeLastFrame);
 					end
@@ -359,7 +358,9 @@ end
 function cleanup()
 	% finish up: stop recording eye-movements,
 	% close graphics window, close data file and shut down tracker
-	Eyelink('Shutdown');
+	if (~useMouse)
+		Eyelink('Shutdown');
+	end
 
 	%Clean up serial connection
 	SerialCleanup();
@@ -372,7 +373,13 @@ function cleanup()
 end
 
 %Runs Eyelink Initialization procedures
-function [error,el] = eyelinkInit(edfFile)
+function error = eyeTrackingInit(edfFile)
+	error = false;
+	
+	if (useMouse)
+		return;
+	end
+	
     %Initialization of the connection, and exit in case of failure
     dummymode=0;
 	success = EyelinkInit(dummymode,1);
@@ -384,8 +391,6 @@ function [error,el] = eyelinkInit(edfFile)
     Eyelink('command', 'link_event_data = GAZE,GAZERES,HREF,AREA,VELOCITY');
     Eyelink('command', 'link_event_filter = LEFT,RIGHT,FIXATION,BLINK,SACCADE,BUTTON');
 	
-	%Grab default eyelink values
-	el = initeyelinkdefaults();
 	
     Eyelink('Openfile', edfFile);
 	
@@ -397,23 +402,43 @@ end
 
 %Send messages to the Eyelink
 function submitDataFlag(dataFlag)
+	if (useMouse)
+		return;
+	end
 	Eyelink('Message',dataFlag);
 end
 
 %Returns a boolean indicating whether there is new gaze data available
 function dataReady = newGazeDataReady()
-	dataReady = (EYELINK('NewFloatSampleAvailable') > 0);
+	dataReady = true;
+	if (useMouse)
+		return;
+	end
+	dataReady = (Eyelink('NewFloatSampleAvailable') > 0);
 end
 
 %Returns the gaze coordinates and a bool indicating wether or not the query was successful
 function [success, x, y] = getGazeCoordinates()
-	persistent eye_used = -1;
+	persistent eye_used;
+	persistent el;
+	
+	if (~useMouse && isempty(eye_used))
+		eye_used = -1;
+		
+		%Grab default Eyelink values
+		el = InitEyelinkDefaults();
+	end
 	
 	success = false;
 	x = 0;
 	y = 0;
+	if (useMouse)
+		[x,y] = GetMouse();
+		success = true;
+		return;
+	end
 	
-	event = EYELINK('NewestFloatSample');
+	event = Eyelink('NewestFloatSample');
 	if (eye_used ~= -1 )
 		%Get Eye Coordinates
 		x = event.gx(eye_used+1);
@@ -425,7 +450,7 @@ function [success, x, y] = getGazeCoordinates()
 			success = true;
 		end
 	else
-		eye_used = EYELINK('EyeAvailable');
+		eye_used = Eyelink('EyeAvailable');
 		if (eye_used == el.BINOCULAR)
 			eye_used = el.LEFT_EYE;
 		end
@@ -435,11 +460,20 @@ end
 
 %Checks the status of the Eyelink Recording
 function error = checkRecording()
+	error = false;
+	if (useMouse)
+		return;
+	end
+	
 	error = Eyelink('CheckRecording');
 end
 
 %Close down the Eyelink connection and download the file.
 function shutdownEyelink(edfFile)
+	if (useMouse)
+		return;
+	end
+
     WaitSecs(0.1);
     %Finish up - stop recording Eye Movements
     Eyelink('StopRecording');
