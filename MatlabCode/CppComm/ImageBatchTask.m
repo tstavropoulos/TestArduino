@@ -22,6 +22,7 @@ flagPeriod = 6;
 initialDelay = 3;
 
 %Turn this on to skip eyelink and use the mouse position instead of gaze coordinates
+global useMouse;
 useMouse = false;
 
 %Eyelink File
@@ -40,7 +41,7 @@ BatchNumber = 10;
 FixationDuration = 0.3;
 
 %Delay after last reward before ending experiment
-FinalDelay = 10;
+FinalDelay = 4;
 
 %Reward Parameters
 rewardDuration = 100; %in milliseconds
@@ -49,32 +50,32 @@ rewardDuration = 100; %in milliseconds
 rewardChannel = 1;
 
 %Conditions
-IMAGE_CATEGORY_1 = 1;
-IMAGE_CATEGORY_2 = 2;
-IMAGE_CATEGORY_3 = 3;
-IMAGE_CATEGORY_4 = 4;
-IMAGE_CATEGORY_5 = 5;
-IMAGE_CATEGORY_6 = 6;
+IMAGE_CATEGORY_BLUE = 1;
+IMAGE_CATEGORY_GREEN = 2;
+IMAGE_CATEGORY_MAGENTA = 3;
+IMAGE_CATEGORY_ORANGE = 4;
+IMAGE_CATEGORY_RED = 5;
+IMAGE_CATEGORY_YELLOW = 6;
 
 %Category Name Strings
 IMAGE_CATEGORY_NAMES = {};
-IMAGE_CATEGORY_NAMES{IMAGE_CATEGORY_1} = 'Category_1';
-IMAGE_CATEGORY_NAMES{IMAGE_CATEGORY_2} = 'Category_2';
-IMAGE_CATEGORY_NAMES{IMAGE_CATEGORY_3} = 'Category_3';
-IMAGE_CATEGORY_NAMES{IMAGE_CATEGORY_4} = 'Category_4';
-IMAGE_CATEGORY_NAMES{IMAGE_CATEGORY_5} = 'Category_5';
-IMAGE_CATEGORY_NAMES{IMAGE_CATEGORY_6} = 'Category_6';
+IMAGE_CATEGORY_NAMES{IMAGE_CATEGORY_BLUE} = 'Blue';
+IMAGE_CATEGORY_NAMES{IMAGE_CATEGORY_GREEN} = 'Green';
+IMAGE_CATEGORY_NAMES{IMAGE_CATEGORY_MAGENTA} = 'Magenta';
+IMAGE_CATEGORY_NAMES{IMAGE_CATEGORY_ORANGE} = 'Orange';
+IMAGE_CATEGORY_NAMES{IMAGE_CATEGORY_RED} = 'Red';
+IMAGE_CATEGORY_NAMES{IMAGE_CATEGORY_YELLOW} = 'Yellow';
 
 CATEGORY_NUM = 6;
 
 %Condition Directories
 IMAGE_DIRECTORY = {};
-IMAGE_DIRECTORY{IMAGE_CATEGORY_1} = 'dir1\';
-IMAGE_DIRECTORY{IMAGE_CATEGORY_2} = 'dir2\';
-IMAGE_DIRECTORY{IMAGE_CATEGORY_3} = 'dir3\';
-IMAGE_DIRECTORY{IMAGE_CATEGORY_4} = 'dir4\';
-IMAGE_DIRECTORY{IMAGE_CATEGORY_5} = 'dir5\';
-IMAGE_DIRECTORY{IMAGE_CATEGORY_6} = 'dir6\';
+IMAGE_DIRECTORY{IMAGE_CATEGORY_BLUE} = 'ImageTask\blue\';
+IMAGE_DIRECTORY{IMAGE_CATEGORY_GREEN} = 'ImageTask\green\';
+IMAGE_DIRECTORY{IMAGE_CATEGORY_MAGENTA} = 'ImageTask\magenta\';
+IMAGE_DIRECTORY{IMAGE_CATEGORY_ORANGE} = 'ImageTask\orange\';
+IMAGE_DIRECTORY{IMAGE_CATEGORY_RED} = 'ImageTask\red\';
+IMAGE_DIRECTORY{IMAGE_CATEGORY_YELLOW} = 'ImageTask\yellow\';
 
 %Load image files
 IMAGE_FILE = {};
@@ -93,12 +94,12 @@ end
 
 %Set up trial template
 IMAGES_PER_BLOCK = [];
-IMAGES_PER_BLOCK(IMAGE_CATEGORY_1) = 5;
-IMAGES_PER_BLOCK(IMAGE_CATEGORY_2) = 5;
-IMAGES_PER_BLOCK(IMAGE_CATEGORY_3) = 5;
-IMAGES_PER_BLOCK(IMAGE_CATEGORY_4) = 5;
-IMAGES_PER_BLOCK(IMAGE_CATEGORY_5) = 5;
-IMAGES_PER_BLOCK(IMAGE_CATEGORY_6) = 5;
+IMAGES_PER_BLOCK(IMAGE_CATEGORY_BLUE) = 5;
+IMAGES_PER_BLOCK(IMAGE_CATEGORY_GREEN) = 5;
+IMAGES_PER_BLOCK(IMAGE_CATEGORY_MAGENTA) = 5;
+IMAGES_PER_BLOCK(IMAGE_CATEGORY_ORANGE) = 5;
+IMAGES_PER_BLOCK(IMAGE_CATEGORY_RED) = 5;
+IMAGES_PER_BLOCK(IMAGE_CATEGORY_YELLOW) = 5;
 
 trialVector = [];
 trialVectorTemplate = [];
@@ -369,6 +370,7 @@ end
 
 %Cleanup routine:
 function cleanup()
+    global useMouse;
 	% finish up: stop recording eye-movements,
 	% close graphics window, close data file and shut down tracker
 	if (~useMouse)
@@ -387,6 +389,7 @@ end
 
 %Runs Eyelink Initialization procedures
 function error = eyeTrackingInit(edfFile)
+    global useMouse;
 	error = false;
 	
 	if (useMouse)
@@ -415,6 +418,7 @@ end
 
 %Send messages to the Eyelink
 function submitDataFlag(dataFlag)
+    global useMouse;
 	if (useMouse)
 		display(['Eyelink Message: ' dataFlag]);
 		return;
@@ -424,6 +428,7 @@ end
 
 %Returns a boolean indicating whether there is new gaze data available
 function dataReady = newGazeDataReady()
+    global useMouse;
 	dataReady = true;
 	if (useMouse)
 		return;
@@ -433,6 +438,7 @@ end
 
 %Returns the gaze coordinates and a bool indicating wether or not the query was successful
 function [success, x, y] = getGazeCoordinates()
+    global useMouse;
 	persistent eye_used;
 	persistent el;
 	
@@ -474,6 +480,7 @@ end
 
 %Checks the status of the Eyelink Recording
 function error = checkRecording()
+    global useMouse;
 	error = false;
 	if (useMouse)
 		return;
@@ -484,6 +491,7 @@ end
 
 %Close down the Eyelink connection and download the file.
 function shutdownEyelink(edfFile)
+    global useMouse;
 	if (useMouse)
 		return;
 	end
