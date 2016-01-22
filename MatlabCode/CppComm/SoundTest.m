@@ -27,7 +27,7 @@ rewardPause = 1000;
 %Load the audio data
 global audioData;
 global audioSampleRate;
-[audioData,audioSampleRate] = audioread('Solenoid.wav');
+[audioData,audioSampleRate] = audioread('Click.wav');
 
 %Reward Parameters
 smallRewardPulses = 1;
