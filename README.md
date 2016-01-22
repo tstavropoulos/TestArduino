@@ -47,6 +47,8 @@ For very low latency, I recommend getting:
 
 ###Unix
 
+(Not Complete)
+
 If you are developing in Unix, you will need:
 
 * g++ version 4.8+
@@ -93,5 +95,5 @@ Communicating with MatLab through the C++ Shared Library and a PCIe RS232 Card t
 
 ##To Do
 
-* Test Unix port.
+* Complete Unix port.
 * Explore portability to Octave.  Will require changes to project build.
