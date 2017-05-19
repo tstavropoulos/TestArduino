@@ -1,6 +1,6 @@
 # TestArduino
 
-###A C++ application to interface with an Arduino.
+### A C++ application to interface with an Arduino.
 
 TargetPlatform: Windows. (Highly OS-specific COM Port API)
 
@@ -11,7 +11,7 @@ Communication is available in three flavors:
 * Native C++/WinAPI serial communicaiton
 * C++/WinAPI DLL to import into MatLab
 
-##Purpose
+## Purpose
 
 The ultimate intended purpose is scientific data acquisition (at a 2% the cost, with comparable effort).
 
@@ -19,7 +19,7 @@ The Arduino connects to the PC via USB cable.  The design has been tested succes
 
 The original usecase is an interactive psychology experiment (explaining some of the quirks of the naming conventions in the Arduino sketch).
 
-##Install
+## Install
 
 The C++ software was developed on a Windows 8.1 machine with Visual Studio 2013.  Outside of this platform, your mileage may vary.  No special API needed, as far as I am aware, outside of the default installs.  Probably WinAPI or something of the sort.
 
@@ -27,9 +27,9 @@ The Arduino sketches can be flashed to any Arduino-compatible device with the Ar
 
 Any MatLab scripts can be run with MatLab.  Modifications would be required to be compatible with Octave.  MatLab scripts developed on R2014a, but it should not be specifically required.
 
-##What do I need?
+## What do I need?
 
-###Windows
+### Windows
 
 Well, for starters you will probably need a recent release of Visual Studio.  If *free* is in your price range, and you're developing in a Windows environment, you might want to check out [Microsoft Visual Studio - Community 2013](http://www.visualstudio.com/downloads/).  If you're not developing in Windows, you better know what you're doing, because the libraries are currently heavily dependent on the Windows API.
 
@@ -45,7 +45,7 @@ For very low latency, I recommend getting:
     * [Or you can build your own](http://arduino.cc/en/Tutorial/ArduinoSoftwareRS232)
 * [A PCIe card with a RS232 Port](http://www.newegg.com/Product/Product.aspx?Item=N82E16815124084)
 
-###Unix
+### Unix
 
 (Not Complete)
 
@@ -63,11 +63,11 @@ There may be a better way, but you should create a link to the compiled librarys
     sudo ln -sf libArduinoCommDLLx64.so /usr/lib/libArduinoCommDLLx64.so
     sudo ln -sf libArduinoCommDLLARM.so /usr/lib/libArduinoCommDLLARM.so
 
-##Latency Details
+## Latency Details
 
 When paired with the collection of Neural data, it is important to get latency as low and consistent as possible.  Unfortunately, in this respect, MatLab fairs poorly.  It appears that for comparable tasks, the MatLab Serial functionality (derived from Java) is noticeably more variable.
 
-###A simple Serial Reflection task for profiling:
+### A simple Serial Reflection task for profiling:
   Send a character, have the Arduino send that character back, but embed this logic in the middle of its experiment monitoring routines to create a realistic profile of response time.  Repeat 10,000 times.
 
 For this task, using an Arduino Uno R3, the C++ program had a response with these characteristics:
@@ -90,10 +90,10 @@ Communicating with MatLab through the C++ Shared Library and a PCIe RS232 Card t
 * Standard Deviation of Response Time:  0.0055 ms
 * Max Response Time:                    0.7923 ms
 
-##Known Issues
+## Known Issues
 
 
-##To Do
+## To Do
 
 * Complete Unix port.
 * Explore portability to Octave.  Will require changes to project build.
